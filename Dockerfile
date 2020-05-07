@@ -1,6 +1,5 @@
 FROM fthomas/scala-steward:latest
 RUN apk --no-cache add gnupg
-RUN apk --no-cache add firejail
 RUN apk --no-cache add curl
 RUN apk --no-cache add bash
 RUN apk --no-cache add jq
