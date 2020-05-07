@@ -103,6 +103,7 @@ Otherwise, set it to the name of the repository to update in the form `owner/rep
     ```
 4. Add it as a new `GPG_SCALA_STEWARD` repository secret.
 5. Provide it to the action using `gpg-secret-key`.
+6. Add your GPG key to the [user's Github Account](https://github.com/settings/keys)
 
 ## Credit
 
