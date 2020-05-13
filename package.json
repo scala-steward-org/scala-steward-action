@@ -2,6 +2,9 @@
   "name": "scala-steward-action",
   "description": "A Github Action to launch Scala Steward in your repository",
   "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc && ncc build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/scala-steward-org/scala-steward-action.git"
@@ -23,6 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.7.12",
+    "@zeit/ncc": "^0.20.5",
     "typescript": "^3.6.4"
   }
 }
