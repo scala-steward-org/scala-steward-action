@@ -13,14 +13,7 @@ inputs:
   github-token:
     description: 'Github Personal Access Token with permission to create branches on repo'
     required: true
-  gpg-secret-key:
-    description: 'The GPG secret key used to sign the commits'
-    required: true
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.github-repository }}
-    - ${{ inputs.github-token }}
-    - ${{ inputs.gpg-secret-key }}
+  using: 'node12'
+  main: 'dist/index.js'
