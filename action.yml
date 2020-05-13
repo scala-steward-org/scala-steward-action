@@ -15,9 +15,5 @@ inputs:
     required: true
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.github-repository }}
-    - ${{ inputs.github-token }}
-    - ${{ inputs.gpg-secret-key }}
+  using: 'node12'
+  main: 'dist/index.js'
