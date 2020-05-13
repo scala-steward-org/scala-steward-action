@@ -12,12 +12,6 @@ curl -sf https://repo1.maven.org/maven2/ >/dev/null || {
   exit 1
 }
 
-# Don't start if gpg-secret-key is empty
-[ -z "$3" ] && {
-  echo 'ERROR: gpg-secret-key is empty'
-  exit 1
-}
-
 # Extract authenticated user information from Github API
 currentUser=$(curl -sSf -H "Authorization: token $2" https://api.github.com/user)
 login=$(echo "$currentUser" | jq .login)
@@ -55,11 +49,6 @@ fi
 # Store Github Personal Access Token in an executable file (as requested by steward)
 echo -e "#!/bin/sh\n\necho '$2'" >/opt/scala-steward/askpass.sh
 chmod +x /opt/scala-steward/askpass.sh
-
-# Add GPG secret key
-echo -e "$3" | base64 -d | gpg --import | grep '^gpg: key'
-read -r signingkey <<<"$(gpg --with-colons --list-secret-keys --keyid-format LONG | grep '^sec:-:4096:1:' | cut -d: -f5)"
-git config --global user.signingkey "$signingkey"
 
 /opt/docker/bin/scala-steward \
   --workspace "/opt/scala-steward/workspace" \
