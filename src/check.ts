@@ -42,11 +42,14 @@ export async function githubToken(): Promise<string> {
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
 export async function githubRepository(): Promise<string> {
-  const github_repository: string | undefined = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
+  const github_repository: string | undefined =
+    core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
 
   if (github_repository === undefined) {
-    throw new Error('Unable to read Github repository from `github-repository` ' +
-        'input or `GITHUB_REPOSITORY` environment variable')
+    throw new Error(
+      'Unable to read Github repository from `github-repository` ' +
+        'input or `GITHUB_REPOSITORY` environment variable'
+    )
   }
 
   core.info(`✓ Github Repository set to: ${github_repository}`)

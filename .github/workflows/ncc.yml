@@ -1,0 +1,23 @@
+name: Build, format and propagate changes
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  ncc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+      - name: Install
+        run: npm install
+      - name: Format
+        run: npm run format
+      - name: Build
+        run: npm run build
+      - name: Push changes
+        uses: stefanzweifel/git-auto-commit-action@v4.2.0
+        with:
+          commit_message: Format & Build
