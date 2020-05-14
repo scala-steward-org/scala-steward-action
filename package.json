@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc && ncc build",
     "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts"
+    "format-check": "prettier --check **/*.ts",
+    "lint": "eslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,10 @@
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
+    "@typescript-eslint/parser": "^2.8.0",
     "@zeit/ncc": "^0.22.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-github": "^2.0.0",
     "prettier": "^2.0.5",
     "typescript": "^3.9.2"
   }
