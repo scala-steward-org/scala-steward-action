@@ -31,7 +31,7 @@ async function run(): Promise<void> {
       '--sign-commits'
     ])
   } catch (error) {
-    core.setFailed(' ✕ ' + error.message)
+    core.setFailed(` ✕ ${error.message}`)
   }
 }
 
