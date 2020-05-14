@@ -6,7 +6,8 @@
     "build": "tsc && ncc build",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "all": "npm run build && npm run format && npm run lint"
   },
   "repository": {
     "type": "git",
