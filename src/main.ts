@@ -17,6 +17,7 @@ async function run(): Promise<void> {
     const version = core.getInput('scala-steward-version')
 
     const signCommits = /true/i.test(core.getInput('sign-commits'))
+    const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
       ['--workspace', '/opt/scala-steward/workspace'],
@@ -27,10 +28,10 @@ async function run(): Promise<void> {
       ['--vcs-login', `${user.login}"`],
       ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
       ['--process-timeout', '20min'],
+      ignoreOptsFiles ? '--ignore-opts-files' : [],
+      signCommits ? '--sign-commits' : [],
       '--do-not-fork',
-      '--ignore-opts-files',
-      '--disable-sandbox',
-      signCommits ? ['--sign-commits'] : []
+      '--disable-sandbox'
     ])
   } catch (error) {
     core.setFailed(` ✕ ${error.message}`)
