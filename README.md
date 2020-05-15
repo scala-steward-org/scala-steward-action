@@ -36,6 +36,7 @@ jobs:
         with:
           github-repository: owner/repo
           github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          gpg-secret-key: ${{ secrets.GPG_SCALA_STEWARD }}
 ```
 
 If you want to be able to trigger the action manually, you can add a `repository_dispatch` event:
@@ -76,6 +77,33 @@ Otherwise, set it to the name of the repository to update in the form `owner/rep
 1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens).
 2. Add it as a secret repository.
 3. Provide it to the action using `github-token`.
+
+### GPG
+
+1. Create a fresh GPG key:
+
+    ```bash
+    gpg --gen-key
+    ```
+
+    > :exclamation: Do not add a passphrase to the GPG key, since you won't be able to add it when Scala Steward writes a commit.
+
+2. Annotate the key ID from the previous command.
+3. Export the base64 encoded secret of your private key to the clipboard:
+    
+    ```bash
+    # macOS
+    gpg --armor --export-secret-keys $LONG_ID | base64 | pbcopy
+    # Ubuntu (assuming GNU base64)
+    gpg --armor --export-secret-keys $LONG_ID | base64 -w0 | xclip
+    # Arch
+    gpg --armor --export-secret-keys $LONG_ID | base64 | sed -z 's;\n;;g' | xclip -selection clipboard -i
+    # FreeBSD (assuming BSD base64)
+    gpg --armor --export-secret-keys $LONG_ID | base64 | xclip
+    ```
+4. Add it as a new `GPG_SCALA_STEWARD` repository secret.
+5. Provide it to the action using `gpg-secret-key`.
+6. Add your GPG key to the [user's Github Account](https://github.com/settings/keys)
 
 ## Credit
 
