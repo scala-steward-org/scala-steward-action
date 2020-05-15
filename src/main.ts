@@ -14,7 +14,7 @@ async function run(): Promise<void> {
 
     await files.prepareScalaStewardWorkspace(repo, token)
 
-    const version = '0.5.0-385-e5e4789c-SNAPSHOT'
+    const version = core.getInput('scala-steward-version')
 
     const signCommits = /true/i.test(core.getInput('sign-commits'))
 

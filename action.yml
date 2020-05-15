@@ -13,6 +13,10 @@ inputs:
   github-token:
     description: 'Github Personal Access Token with permission to create branches on repo'
     required: true
+  scala-steward-version:
+    description: 'Scala Steward version to use'
+    default: '0.5.0-385-e5e4789c-SNAPSHOT'
+    required: false
   sign-commits:
     description: 'Whether to sign commits or not'
     default: 'false'
