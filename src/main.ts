@@ -16,6 +16,8 @@ async function run(): Promise<void> {
 
     const version = '0.5.0-385-e5e4789c-SNAPSHOT'
 
+    const signCommits = /true/i.test(core.getInput('sign-commits'))
+
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
       ['--workspace', '/opt/scala-steward/workspace'],
       ['--repos-file', '/opt/scala-steward/repos.md'],
@@ -28,7 +30,7 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--ignore-opts-files',
       '--disable-sandbox',
-      '--sign-commits'
+      signCommits ? ['--sign-commits'] : []
     ])
   } catch (error) {
     core.setFailed(` ✕ ${error.message}`)
