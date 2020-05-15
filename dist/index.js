@@ -3921,7 +3921,9 @@ function run() {
             const repo = yield check.githubRepository();
             const user = yield github.getAuthUser(token);
             yield files.prepareScalaStewardWorkspace(repo, token);
-            const version = '0.5.0-385-e5e4789c-SNAPSHOT';
+            const version = core.getInput('scala-steward-version');
+            const signCommits = /true/i.test(core.getInput('sign-commits'));
+            const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
             yield coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
                 ['--workspace', '/opt/scala-steward/workspace'],
                 ['--repos-file', '/opt/scala-steward/repos.md'],
@@ -3931,10 +3933,10 @@ function run() {
                 ['--vcs-login', `${user.login}"`],
                 ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
                 ['--process-timeout', '20min'],
+                ignoreOptsFiles ? '--ignore-opts-files' : [],
+                signCommits ? '--sign-commits' : [],
                 '--do-not-fork',
-                '--ignore-opts-files',
-                '--disable-sandbox',
-                '--sign-commits'
+                '--disable-sandbox'
             ]);
         }
         catch (error) {
