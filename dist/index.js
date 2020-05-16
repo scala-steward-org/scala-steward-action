@@ -2324,8 +2324,8 @@ const exec = __importStar(__webpack_require__(986));
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param repository The repository to update
- * @param token The Github Token used to authenticate into Github
+ * @param {string} repository - The repository to update.
+ * @param {string} token - The Github Token used to authenticate into Github.
  */
 function prepareScalaStewardWorkspace(repository, token) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -3912,13 +3912,22 @@ const github = __importStar(__webpack_require__(824));
 const check = __importStar(__webpack_require__(447));
 const files = __importStar(__webpack_require__(65));
 const coursier = __importStar(__webpack_require__(540));
+/**
+ * Runs the action main code. In order it will do the following:
+ * - Check connection with Maven Central
+ * - Install Coursier
+ * - Recover user inputs
+ * - Get authenticated user data from provided Github Token
+ * - Prepare Scala Steward's workspace
+ * - Run Scala Steward using Coursier.
+ */
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield check.mavenCentral();
             yield coursier.install();
-            const token = yield check.githubToken();
-            const repo = yield check.githubRepository();
+            const token = check.githubToken();
+            const repo = check.githubRepository();
             const user = yield github.getAuthUser(token);
             yield files.prepareScalaStewardWorkspace(repo, token);
             const version = core.getInput('scala-steward-version');
@@ -5576,7 +5585,7 @@ exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
 const node_fetch_1 = __importDefault(__webpack_require__(454));
 const core = __importStar(__webpack_require__(470));
 /**
- * Checks connection with Maven Central, throws error if unable to connect
+ * Checks connection with Maven Central, throws error if unable to connect.
  */
 function mavenCentral() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -5592,17 +5601,15 @@ exports.mavenCentral = mavenCentral;
  * Reads the Github Token from the `github-token` input. Throws error if the
  * input is empty or returns the token in case it is not.
  *
- * @returns   string the Github Token read from the `github-token` input
+ * @returns {string} The Github Token read from the `github-token` input.
  */
 function githubToken() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const token = core.getInput('github-token');
-        if (token === '') {
-            throw new Error('You need to provide a Github token in the `github-token` input');
-        }
-        core.info('✓ Github Token provided as input');
-        return token;
-    });
+    const token = core.getInput('github-token');
+    if (token === '') {
+        throw new Error('You need to provide a Github token in the `github-token` input');
+    }
+    core.info('✓ Github Token provided as input');
+    return token;
 }
 exports.githubToken = githubToken;
 /**
@@ -5611,19 +5618,17 @@ exports.githubToken = githubToken;
  *
  * Throws error if the fallback fails or returns the repository in case it doesn't.
  *
- * @returns   string the Github repository read from the `github-repository` input
+ * @returns {string} The Github repository read from the `github-repository` input
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
 function githubRepository() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const github_repository = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY;
-        if (github_repository === undefined) {
-            throw new Error('Unable to read Github repository from `github-repository` ' +
-                'input or `GITHUB_REPOSITORY` environment variable');
-        }
-        core.info(`✓ Github Repository set to: ${github_repository}`);
-        return github_repository;
-    });
+    const repo = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY;
+    if (repo === undefined) {
+        throw new Error('Unable to read Github repository from `github-repository` ' +
+            'input or `GITHUB_REPOSITORY` environment variable');
+    }
+    core.info(`✓ Github Repository set to: ${repo}`);
+    return repo;
 }
 exports.githubRepository = githubRepository;
 
@@ -9271,10 +9276,10 @@ exports.install = install;
  *
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
  *
- * @param org The application's organization
- * @param app The application's artifact name
- * @param version The application's version
- * @param args The args to pass to the application launcher
+ * @param {string} org - The application's organization.
+ * @param {string} app - The application's artifact name.
+ * @param {string} version - The application's version.
+ * @param {(string | string[])[]} args - The args to pass to the application launcher.
  */
 function launch(org, app, version, args = []) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -11380,8 +11385,8 @@ const core = __importStar(__webpack_require__(470));
  * Returns the login, email and name of the authenticated user using
  * the provided Github token.
  *
- * @param token the token whose user data will be extracted
- * @return the login, email and name of token's user
+ * @param {string} token - The token whose user data will be extracted.
+ * @returns {Promise<AuthUser>} The login, email and name of token's user.
  */
 function getAuthUser(token) {
     return __awaiter(this, void 0, void 0, function* () {
