@@ -20,7 +20,7 @@ export async function mavenCentral(): Promise<void> {
  *
  * @returns   string the Github Token read from the `github-token` input
  */
-export async function githubToken(): Promise<string> {
+export function githubToken(): string {
   const token: string = core.getInput('github-token')
 
   if (token === '') {
@@ -41,7 +41,7 @@ export async function githubToken(): Promise<string> {
  * @returns   string the Github repository read from the `github-repository` input
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
-export async function githubRepository(): Promise<string> {
+export function githubRepository(): string {
   const github_repository: string | undefined =
     core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
 

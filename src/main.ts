@@ -8,8 +8,8 @@ async function run(): Promise<void> {
   try {
     await check.mavenCentral()
     await coursier.install()
-    const token = await check.githubToken()
-    const repo = await check.githubRepository()
+    const token = check.githubToken()
+    const repo = check.githubRepository()
     const user = await github.getAuthUser(token)
 
     await files.prepareScalaStewardWorkspace(repo, token)
