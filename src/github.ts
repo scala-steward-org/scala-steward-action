@@ -5,8 +5,8 @@ import * as core from '@actions/core'
  * Returns the login, email and name of the authenticated user using
  * the provided Github token.
  *
- * @param token the token whose user data will be extracted
- * @return the login, email and name of token's user
+ * @param {string} token - The token whose user data will be extracted.
+ * @returns {Promise<AuthUser>} The login, email and name of token's user.
  */
 export async function getAuthUser(token: string): Promise<AuthUser> {
   const octokit = new github.GitHub(token)

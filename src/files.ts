@@ -12,8 +12,8 @@ import * as exec from '@actions/exec'
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param repository The repository to update
- * @param token The Github Token used to authenticate into Github
+ * @param {string} repository - The repository to update.
+ * @param {string} token - The Github Token used to authenticate into Github.
  */
 export async function prepareScalaStewardWorkspace(
   repository: string,

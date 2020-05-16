@@ -4,6 +4,15 @@ import * as check from './check'
 import * as files from './files'
 import * as coursier from './coursier'
 
+/**
+ * Runs the action main code. In order it will do the following:
+ * - Check connection with Maven Central
+ * - Install Coursier
+ * - Recover user inputs
+ * - Get authenticated user data from provided Github Token
+ * - Prepare Scala Steward's workspace
+ * - Run Scala Steward using Coursier.
+ */
 async function run(): Promise<void> {
   try {
     await check.mavenCentral()
