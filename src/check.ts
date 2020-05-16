@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import * as core from '@actions/core'
 
 /**
- * Checks connection with Maven Central, throws error if unable to connect
+ * Checks connection with Maven Central, throws error if unable to connect.
  */
 export async function mavenCentral(): Promise<void> {
   const response = await fetch('https://repo1.maven.org/maven2/')
@@ -18,9 +18,9 @@ export async function mavenCentral(): Promise<void> {
  * Reads the Github Token from the `github-token` input. Throws error if the
  * input is empty or returns the token in case it is not.
  *
- * @returns   string the Github Token read from the `github-token` input
+ * @returns {string} The Github Token read from the `github-token` input.
  */
-export async function githubToken(): Promise<string> {
+export function githubToken(): string {
   const token: string = core.getInput('github-token')
 
   if (token === '') {
@@ -38,21 +38,21 @@ export async function githubToken(): Promise<string> {
  *
  * Throws error if the fallback fails or returns the repository in case it doesn't.
  *
- * @returns   string the Github repository read from the `github-repository` input
+ * @returns {string} The Github repository read from the `github-repository` input
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
-export async function githubRepository(): Promise<string> {
-  const github_repository: string | undefined =
+export function githubRepository(): string {
+  const repo: string | undefined =
     core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
 
-  if (github_repository === undefined) {
+  if (repo === undefined) {
     throw new Error(
       'Unable to read Github repository from `github-repository` ' +
         'input or `GITHUB_REPOSITORY` environment variable'
     )
   }
 
-  core.info(`✓ Github Repository set to: ${github_repository}`)
+  core.info(`✓ Github Repository set to: ${repo}`)
 
-  return github_repository
+  return repo
 }

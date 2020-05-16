@@ -45,10 +45,10 @@ export async function install(): Promise<void> {
  *
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
  *
- * @param org The application's organization
- * @param app The application's artifact name
- * @param version The application's version
- * @param args The args to pass to the application launcher
+ * @param {string} org - The application's organization.
+ * @param {string} app - The application's artifact name.
+ * @param {string} version - The application's version.
+ * @param {(string | string[])[]} args - The args to pass to the application launcher.
  */
 export async function launch(
   org: string,
