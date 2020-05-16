@@ -42,17 +42,17 @@ export function githubToken(): string {
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
 export function githubRepository(): string {
-  const github_repository: string | undefined =
+  const repo: string | undefined =
     core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
 
-  if (github_repository === undefined) {
+  if (repo === undefined) {
     throw new Error(
       'Unable to read Github repository from `github-repository` ' +
         'input or `GITHUB_REPOSITORY` environment variable'
     )
   }
 
-  core.info(`✓ Github Repository set to: ${github_repository}`)
+  core.info(`✓ Github Repository set to: ${repo}`)
 
-  return github_repository
+  return repo
 }
