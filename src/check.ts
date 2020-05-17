@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import * as core from '@actions/core'
+import fs from 'fs'
 
 /**
  * Checks connection with Maven Central, throws error if unable to connect.
@@ -55,4 +56,32 @@ export function githubRepository(): string {
   core.info(`✓ Github Repository set to: ${repo}`)
 
   return repo
+}
+
+/**
+ * Reads the path of the file containing the list of repositories to update  from the `repos-file`
+ * input.
+ *
+ * If the input isn't provided this function will return `undefined`.
+ * On the other hand, if it is provided, it will check if the path exists:
+ * - If the file exists, its contents will be returned.
+ * - If it doesn't exists, an error will be thrown.
+ *
+ * @returns {string | undefined} The contents of the file indicated in `repos-file` input, if is
+ *                               defined; otherwise, `undefined`.
+ */
+export function reposFile(): Buffer | undefined {
+  const file: string | undefined = core.getInput('repos-file')
+
+  if (file === undefined) {
+    return undefined
+  }
+
+  if (fs.existsSync(file)) {
+    core.info(`✓ Using multiple repos file: ${file}`)
+
+    return fs.readFileSync(file)
+  }
+
+  throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`)
 }
