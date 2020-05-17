@@ -2319,19 +2319,25 @@ const exec = __importStar(__webpack_require__(986));
  * Prepares the Scala Steward workspace that will be used when launching the app.
  *
  * This will involve:
- * - Creating a folder `/ops/scala-steward`
- * - Creating a `repos.md` file inside workspace containing the repository to update
+ * - Creating a folder `/ops/scala-steward`.
+ * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {string} repository - The repository to update.
+ * @param {string | Buffer} repository - The repository to update or a file containing a list of
+ *                                       repositories in Markdown format.
  * @param {string} token - The Github Token used to authenticate into Github.
  */
 function prepareScalaStewardWorkspace(repository, token) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield io.mkdirP('/opt/scala-steward');
-            fs_1.default.writeFileSync('/opt/scala-steward/repos.md', `- ${repository}`);
+            if (typeof repository === 'string') {
+                fs_1.default.writeFileSync('/opt/scala-steward/repos.md', `- ${repository}`);
+            }
+            else {
+                fs_1.default.writeFileSync('/opt/scala-steward/repos.md', repository);
+            }
             fs_1.default.writeFileSync('/opt/scala-steward/askpass.sh', `#!/bin/sh\n\necho '${token}'`);
             yield exec.exec('chmod', ['+x', '/opt/scala-steward/askpass.sh'], { silent: true });
         }
@@ -3927,7 +3933,7 @@ function run() {
             yield check.mavenCentral();
             yield coursier.install();
             const token = check.githubToken();
-            const repo = check.githubRepository();
+            const repo = check.reposFile() || check.githubRepository();
             const user = yield github.getAuthUser(token);
             yield files.prepareScalaStewardWorkspace(repo, token);
             const version = core.getInput('scala-steward-version');
@@ -5581,9 +5587,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
+exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
 const node_fetch_1 = __importDefault(__webpack_require__(454));
 const core = __importStar(__webpack_require__(470));
+const fs_1 = __importDefault(__webpack_require__(747));
 /**
  * Checks connection with Maven Central, throws error if unable to connect.
  */
@@ -5631,6 +5638,30 @@ function githubRepository() {
     return repo;
 }
 exports.githubRepository = githubRepository;
+/**
+ * Reads the path of the file containing the list of repositories to update  from the `repos-file`
+ * input.
+ *
+ * If the input isn't provided this function will return `undefined`.
+ * On the other hand, if it is provided, it will check if the path exists:
+ * - If the file exists, its contents will be returned.
+ * - If it doesn't exists, an error will be thrown.
+ *
+ * @returns {string | undefined} The contents of the file indicated in `repos-file` input, if is
+ *                               defined; otherwise, `undefined`.
+ */
+function reposFile() {
+    const file = core.getInput('repos-file');
+    if (file === undefined) {
+        return undefined;
+    }
+    if (fs_1.default.existsSync(file)) {
+        core.info(`✓ Using multiple repos file: ${file}`);
+        return fs_1.default.readFileSync(file);
+    }
+    throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`);
+}
+exports.reposFile = reposFile;
 
 
 /***/ }),
