@@ -82,14 +82,14 @@ curl -d "{\"event_type\": \"scala-steward\"}" \
 
 The following inputs are available:
 
-| Input                   | Allowed values                                                                     | Description                                                                                         |
-|-------------------------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
-| `repos-file`            | File paths                                                                         | Path to a file containing the list of repositories to update in markdown format (- owner/repo)      |
-| `github-repository`     | {{owner}}/{{repo}}                                                                 | Repository to update. The current repository will be used by default                                |
-| `github-token`          | Valid [Github Token](https://github.com/settings/tokens)                           | Github Personal Access Token with permission to create branches on repo                             |
-| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | Scala Steward version to use                                                                        |
-| `ignore-opts-files`     | true \| false                                                                      | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
-| `sign-commits`          | true \| false                                                                      | Whether to sign commits or not                                                                      |
+| Input                   | Allowed values                                                                     | Required | Default                     | Description                                                                                         |
+|-------------------------|------------------------------------------------------------------------------------|----------|-----------------------------|-----------------------------------------------------------------------------------------------------|
+| `repos-file`            | File paths                                                                         | no       | ''                          | Path to a file containing the list of repositories to update in markdown format (- owner/repo)      |
+| `github-repository`     | {{owner}}/{{repo}}                                                                 | no       | $GITHUB_REPOSITORY          | Repository to update. The current repository will be used by default                                |
+| `github-token`          | Valid [Github Token](https://github.com/settings/tokens)                           | yes      | ''                          | Github Personal Access Token with permission to create branches on repo                             |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | no       | 0.5.0-385-e5e4789c-SNAPSHOT | Scala Steward version to use                                                                        |
+| `ignore-opts-files`     | true/false                                                                         | no       | true                        | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
+| `sign-commits`          | true/false                                                                         | no       | false                       | Whether to sign commits or not                                                                      |
 
 ### Github Token
 
