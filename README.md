@@ -10,6 +10,20 @@ A Github Action to launch [Scala Steward](https://github.com/fthomas/scala-stewa
   </a>
 </p>
 
+---
+
+* [What does this action do?](#what-does-this-action-do)
+* [Usage](#usage)
+    + [How can I trigger a run?](#how-can-i-trigger-a-run)
+* [Configuration](#configuration)
+    + [Github Token](#github-token)
+    + [Updating one repository](#updating-one-repository)
+    + [Updating multiple repositories](#updating-multiple-repositories)
+    + [GPG](#gpg)
+    + [Ignoring OPTS files](#ignoring-opts-files)
+* [Credit](#credit)
+* [License](#license)
+
 ## What does this action do?
 
 When added, this action will launch [Scala Steward](https://github.com/fthomas/scala-steward) on your own repository and create PRs to update your Scala dependencies using your own user:
@@ -24,7 +38,7 @@ Create a new `.github/workflows/scala-steward.yml` file:
 # This workflow will launch at 00:00 every Sunday
 on:
   schedule:    
-    - cron:  '0 0 * * 0'
+    - cron: '0 0 * * 0'
 
 jobs:
   scala-steward:
@@ -32,24 +46,24 @@ jobs:
     name: Launch Scala Steward
     steps:
       - name: Launch Scala Steward
-        uses: alejandrohdezma/scala-steward-action@v1
+        uses: scala-steward-org/scala-steward-action@v2
         with:
-          github-repository: owner/repo
           github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          gpg-secret-key: ${{ secrets.GPG_SCALA_STEWARD }}
 ```
 
-If you want to be able to trigger the action manually, you can add a `repository_dispatch` event:
+### How can I trigger a run?
+
+If you want to be able to trigger the action manually, you make it respond to [`repository_dispatch`](https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch) events:
 
 ```yaml
 on:
   schedule:    
-    - cron:  '0 0 * * 0'
+    - cron: '0 0 * * 0'
   repository_dispatch:
     types: [scala-steward]
 ```
 
-Finally, call the trigger from your local machine with:
+Then, you can call the trigger from your local machine with:
 
 ```bash
 # Change `owner/repo` to your own repository
@@ -66,44 +80,124 @@ curl -d "{\"event_type\": \"scala-steward\"}" \
 
 ## Configuration
 
-### Repository
+The following inputs are available:
 
-The `github-repository` setting isn't required if the workflow launches from the same repository that you wish to update.
-
-Otherwise, set it to the name of the repository to update in the form `owner/repository`.
+| Input                   | Allowed values                                                                     | Description                                                                                         |
+|-------------------------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `repos-file`            | File paths                                                                         | Path to a file containing the list of repositories to update in markdown format (- owner/repo)      |
+| `github-repository`     | {{owner}}/{{repo}}                                                                 | Repository to update. The current repository will be used by default                                |
+| `github-token`          | Valid [Github Token](https://github.com/settings/tokens)                           | Github Personal Access Token with permission to create branches on repo                             |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | Scala Steward version to use                                                                        |
+| `ignore-opts-files`     | true \| false                                                                      | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
+| `sign-commits`          | true \| false                                                                      | Whether to sign commits or not                                                                      |
 
 ### Github Token
 
-1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens).
+1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens) with permissions for reading/writing in the repository/repositories you wish to update.
 2. Add it as a secret repository.
-3. Provide it to the action using `github-token`.
+3. Provide it to the action using `github-token` input:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+```
+
+### Updating one repository
+
+To update only one repository we can use the `github-repository` input. Just set it to the name (owner/repo) of the repository you would like to update.
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-repository: owner/repository
+```
+ 
+> This input isn't required if the workflow launches from the same repository that you wish to update.
+
+### Updating multiple repositories
+
+To update multiple repositories you would need to perform the following steps:
+ 
+1. Create a markdown file containing the list of repositories in markdown format:
+    
+    ```markdown
+    # repos.md
+    - owner/repo_1
+    - owner/repo_2
+    ```
+   
+2. Put that file inside the repository directory (so it is accessible to Scala Steward's action).
+3. Provide it to the action using `repos-file`:
+
+    ```yaml
+    - name: Launch Scala Steward
+      uses: scala-steward-org/scala-steward-action@v2
+      with:
+        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        repos-file: 'repos.md'
+    ```
+
+> This input (if present) will always take precedence over `github-repository`.
 
 ### GPG
 
-1. Create a fresh GPG key:
+If you want commits created by Scala Steward to be automatically signed with a GPG key, follow this steps:
 
-    ```bash
-    gpg --gen-key
-    ```
-
-    > :exclamation: Do not add a passphrase to the GPG key, since you won't be able to add it when Scala Steward writes a commit.
-
-2. Annotate the key ID from the previous command.
-3. Export the base64 encoded secret of your private key to the clipboard:
+1. Generate a new GPG key following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key).
+2. Add your new GPG key to your [user's Github account](https://github.com/settings/keys) following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account).
+3. Export the GPG private key as an ASCII armored version to your clipboard (change `joe@foo.bar` with your key email address):
     
     ```bash
     # macOS
-    gpg --armor --export-secret-keys $LONG_ID | base64 | pbcopy
+    gpg --armor --export-secret-key joe@foo.bar | pbcopy
+    
     # Ubuntu (assuming GNU base64)
-    gpg --armor --export-secret-keys $LONG_ID | base64 -w0 | xclip
+    gpg --armor --export-secret-key joe@foo.bar -w0 | xclip
+    
     # Arch
-    gpg --armor --export-secret-keys $LONG_ID | base64 | sed -z 's;\n;;g' | xclip -selection clipboard -i
+    gpg --armor --export-secret-key joe@foo.bar | sed -z 's;\n;;g' | xclip -selection clipboard -i
+    
     # FreeBSD (assuming BSD base64)
-    gpg --armor --export-secret-keys $LONG_ID | base64 | xclip
+    gpg --armor --export-secret-key joe@foo.bar | xclip
     ```
-4. Add it as a new `GPG_SCALA_STEWARD` repository secret.
-5. Provide it to the action using `gpg-secret-key`.
-6. Add your GPG key to the [user's Github Account](https://github.com/settings/keys)
+4. Paste your clipboard as a new `GPG_PRIVATE_KEY` repository secret.
+5. If the key is passphrase protected, add the passphrase as another repository secret called `GPG_PASSPHRASE`.
+6. Import it to the workflow using an action such us [crazy-max/ghaction-import-gpg](https://github.com/crazy-max/ghaction-import-gpg):
+
+    ```yaml
+    - name: Import GPG key
+      uses: crazy-max/ghaction-import-gpg@v2
+      with:
+        git_user_signingkey: true
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        PASSPHRASE:      ${{ secrets.GPG_PASSPHRASE }}
+    ```
+7. Tell Scala Steward to sign commits using the `sign-commits` input:
+
+    ```yaml
+    - name: Launch Scala Steward
+      uses: scala-steward-org/scala-steward-action@v2
+      with:
+        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        sign-commits: true
+    ```
+
+### Ignoring OPTS files
+
+By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories, if you want to disable this feature, use the `ignore-opts-files` input:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    ignore-opts-files: false
+```
 
 ## Credit
 
