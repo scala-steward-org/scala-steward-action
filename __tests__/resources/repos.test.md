@@ -1,0 +1,3 @@
+- owner1/repo1
+- owner1/repo2
+- owner2/repo
