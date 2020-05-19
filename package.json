@@ -7,7 +7,8 @@
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
-    "all": "npm run build && npm run format-check && npm run lint"
+    "test": "jest",
+    "all": "npm run build && npm run format-check && npm run lint && npm test"
   },
   "repository": {
     "type": "git",
@@ -30,11 +31,16 @@
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
+    "@types/jest": "^25.2.3",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "@zeit/ncc": "^0.22.2",
+    "jest": "^26.0.1",
+    "jest-circus": "^26.0.1",
+    "ts-jest": "^26.0.0",
     "eslint": "^6.8.0",
     "eslint-plugin-github": "^3.4.1",
+    "eslint-plugin-jest": "^23.13.1",
     "eslint-plugin-jsdoc": "^25.4.2",
     "prettier": "^2.0.5",
     "typescript": "^3.9.2"
