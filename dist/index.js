@@ -5658,7 +5658,7 @@ exports.githubRepository = githubRepository;
  */
 function reposFile() {
     const file = core.getInput('repos-file');
-    if (file === undefined) {
+    if (!file) {
         return undefined;
     }
     if (fs_1.default.existsSync(file)) {
