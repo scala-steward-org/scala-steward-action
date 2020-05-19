@@ -71,9 +71,9 @@ export function githubRepository(): string {
  *                               defined; otherwise, `undefined`.
  */
 export function reposFile(): Buffer | undefined {
-  const file: string | undefined = core.getInput('repos-file')
+  const file: string = core.getInput('repos-file')
 
-  if (file === undefined) {
+  if (!file) {
     return undefined
   }
 
