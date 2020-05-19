@@ -8,11 +8,9 @@ branding:
 inputs:
   repos-file:
     description: 'Path to a file containing the list of repositories to update in markdown format (- owner/repo)'
-    default: ''
     required: false
   github-repository:
     description: 'Repository to update. The current repository will be used by default'
-    default: ''
     required: false
   github-token:
     description: 'Github Personal Access Token with permission to create branches on repo'
