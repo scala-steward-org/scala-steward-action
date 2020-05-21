@@ -17,7 +17,8 @@ export async function install(): Promise<void> {
 
     const binPath = '/home/runner/bin'
     await io.mkdirP(binPath)
-    await io.mv(temp, path.join(binPath, 'cs'))
+    await io.cp(temp, path.join(binPath, 'cs'))
+    await io.rmRF(temp)
 
     core.addPath(binPath)
   } catch (error) {
