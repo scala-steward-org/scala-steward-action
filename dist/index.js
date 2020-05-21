@@ -9461,7 +9461,8 @@ function install() {
             yield exec.exec('chmod', ['+x', temp], { silent: true, ignoreReturnCode: true });
             const binPath = '/home/runner/bin';
             yield io.mkdirP(binPath);
-            yield io.mv(temp, path.join(binPath, 'cs'));
+            yield io.cp(temp, path.join(binPath, 'cs'));
+            yield io.rmRF(temp);
             core.addPath(binPath);
         }
         catch (error) {
