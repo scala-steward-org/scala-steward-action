@@ -198,7 +198,17 @@ If you want commits created by Scala Steward to be automatically signed with a G
         PASSPHRASE:      ${{ secrets.GPG_PASSPHRASE }}
     ```
 
-7. Tell Scala Steward to sign commits using the `sign-commits` input, and to use commit author details from the imported private key:
+7. Tell Scala Steward to sign commits using the `sign-commits` input:
+
+    ```yaml
+    - name: Launch Scala Steward
+      uses: scala-steward-org/scala-steward-action@v2
+      with:
+        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        sign-commits: true
+    ```
+
+8. **Optional**. By default, Scala Steward will use the email/name of the user that created the token added in `github-token`, if you want to override that behavior, you can use `author-email`/`author-name` inputs, for example with the values extracted from the imported private key:
 
     ```yaml
     - name: Launch Scala Steward
