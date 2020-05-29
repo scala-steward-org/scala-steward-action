@@ -20,7 +20,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     core.debug(`- Email: ${email}`)
     core.debug(`- Name: ${name}`)
 
-    return {login, email, name}
+    return {login, email: () => email, name: () => name}
   } catch (error) {
     core.debug(error)
     throw new Error('Unable to retrieve user information from Github')
@@ -28,7 +28,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
 }
 
 interface AuthUser {
-  email: string
+  email: () => string
   login: string
-  name: string
+  name: () => string
 }
