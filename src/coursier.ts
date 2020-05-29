@@ -3,6 +3,7 @@ import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
 import * as path from 'path'
+import * as os from 'os'
 
 /**
  * Install `coursier` and add its executable to the `PATH`.
@@ -15,7 +16,9 @@ export async function install(): Promise<void> {
 
     await exec.exec('chmod', ['+x', temp], {silent: true, ignoreReturnCode: true})
 
-    const binPath = '/home/runner/bin'
+    const homedir = os.homedir()
+    const binPath = path.join(homedir, 'bin')
+
     await io.mkdirP(binPath)
     await io.cp(temp, path.join(binPath, 'cs'))
     await io.rmRF(temp)
