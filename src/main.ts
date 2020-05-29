@@ -20,10 +20,12 @@ async function run(): Promise<void> {
     const token = check.githubToken()
     const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)
+
+    const authorEmail = core.getInput('author-email') || user.email()
+    const authorName = core.getInput('author-name') || user.name()
+
     const workspace = await files.prepareScalaStewardWorkspace(repo, token)
 
-    const authorEmail = core.getInput('author-email') ?? user.email()
-    const authorName = core.getInput('author-name') ?? user.name()
     const version = core.getInput('scala-steward-version')
 
     const signCommits = /true/i.test(core.getInput('sign-commits'))
