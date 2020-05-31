@@ -2434,6 +2434,7 @@ const core = __importStar(__webpack_require__(470));
 const io = __importStar(__webpack_require__(1));
 const fs_1 = __importDefault(__webpack_require__(747));
 const exec = __importStar(__webpack_require__(986));
+const os_1 = __importDefault(__webpack_require__(87));
 /**
  * Prepares the Scala Steward workspace that will be used when launching the app.
  *
@@ -2446,25 +2447,28 @@ const exec = __importStar(__webpack_require__(986));
  * @param {string | Buffer} repository - The repository to update or a file containing a list of
  *                                       repositories in Markdown format.
  * @param {string} token - The Github Token used to authenticate into Github.
+ * @returns {string} The workspace directory path
  */
 function prepareScalaStewardWorkspace(repository, token) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield io.mkdirP('/opt/scala-steward');
+            const stewarddir = `${os_1.default.homedir()}/scala-steward`;
+            yield io.mkdirP(stewarddir);
             if (typeof repository === 'string') {
-                fs_1.default.writeFileSync('/opt/scala-steward/repos.md', `- ${repository}`);
+                fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
             }
             else {
-                fs_1.default.writeFileSync('/opt/scala-steward/repos.md', repository);
+                fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
             }
-            fs_1.default.writeFileSync('/opt/scala-steward/askpass.sh', `#!/bin/sh\n\necho '${token}'`);
-            yield exec.exec('chmod', ['+x', '/opt/scala-steward/askpass.sh'], { silent: true });
+            fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
+            yield exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
+            core.info('✓ Scala Steward workspace created');
+            return stewarddir;
         }
         catch (error) {
             core.debug(error.message);
             throw new Error('Unable to create Scala Steward workspace');
         }
-        core.info('✓ Scala Steward workspace created');
     });
 }
 exports.prepareScalaStewardWorkspace = prepareScalaStewardWorkspace;
@@ -4054,14 +4058,14 @@ function run() {
             const token = check.githubToken();
             const repo = check.reposFile() || check.githubRepository();
             const user = yield github.getAuthUser(token);
-            yield files.prepareScalaStewardWorkspace(repo, token);
+            const workspace = yield files.prepareScalaStewardWorkspace(repo, token);
             const version = core.getInput('scala-steward-version');
             const signCommits = /true/i.test(core.getInput('sign-commits'));
             const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
             yield coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
-                ['--workspace', '/opt/scala-steward/workspace'],
-                ['--repos-file', '/opt/scala-steward/repos.md'],
-                ['--git-ask-pass', '/opt/scala-steward/askpass.sh'],
+                ['--workspace', `${workspace}/workspace`],
+                ['--repos-file', `${workspace}/repos.md`],
+                ['--git-ask-pass', `${workspace}/askpass.sh`],
                 ['--git-author-email', `${user.email}"`],
                 ['--git-author-name', `${user.name}"`],
                 ['--vcs-login', `${user.login}"`],
