@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as io from '@actions/io'
 import fs from 'fs'
 import * as exec from '@actions/exec'
+import os from 'os'
 
 /**
  * Prepares the Scala Steward workspace that will be used when launching the app.
@@ -15,26 +16,30 @@ import * as exec from '@actions/exec'
  * @param {string | Buffer} repository - The repository to update or a file containing a list of
  *                                       repositories in Markdown format.
  * @param {string} token - The Github Token used to authenticate into Github.
+ * @returns {string} The workspace directory path
  */
 export async function prepareScalaStewardWorkspace(
   repository: Buffer | string,
   token: string
-): Promise<void> {
+): Promise<string> {
   try {
-    await io.mkdirP('/opt/scala-steward')
+    const stewarddir = `${os.homedir()}/scala-steward`
+    await io.mkdirP(stewarddir)
 
     if (typeof repository === 'string') {
-      fs.writeFileSync('/opt/scala-steward/repos.md', `- ${repository}`)
+      fs.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`)
     } else {
-      fs.writeFileSync('/opt/scala-steward/repos.md', repository)
+      fs.writeFileSync(`${stewarddir}/repos.md`, repository)
     }
 
-    fs.writeFileSync('/opt/scala-steward/askpass.sh', `#!/bin/sh\n\necho '${token}'`)
-    await exec.exec('chmod', ['+x', '/opt/scala-steward/askpass.sh'], {silent: true})
+    fs.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`)
+    await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], {silent: true})
+
+    core.info('✓ Scala Steward workspace created')
+
+    return stewarddir
   } catch (error) {
     core.debug(error.message)
     throw new Error('Unable to create Scala Steward workspace')
   }
-
-  core.info('✓ Scala Steward workspace created')
 }

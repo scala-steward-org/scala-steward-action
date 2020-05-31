@@ -21,7 +21,7 @@ async function run(): Promise<void> {
     const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)
 
-    await files.prepareScalaStewardWorkspace(repo, token)
+    const workspace = await files.prepareScalaStewardWorkspace(repo, token)
 
     const version = core.getInput('scala-steward-version')
 
@@ -29,9 +29,9 @@ async function run(): Promise<void> {
     const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
-      ['--workspace', '/opt/scala-steward/workspace'],
-      ['--repos-file', '/opt/scala-steward/repos.md'],
-      ['--git-ask-pass', '/opt/scala-steward/askpass.sh'],
+      ['--workspace', `${workspace}/workspace`],
+      ['--repos-file', `${workspace}/repos.md`],
+      ['--git-ask-pass', `${workspace}/askpass.sh`],
       ['--git-author-email', `${user.email}"`],
       ['--git-author-name', `${user.name}"`],
       ['--vcs-login', `${user.login}"`],
