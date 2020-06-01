@@ -21,6 +21,9 @@ async function run(): Promise<void> {
     const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)
 
+    const authorEmail = core.getInput('author-email') || user.email()
+    const authorName = core.getInput('author-name') || user.name()
+
     const workspace = await files.prepareScalaStewardWorkspace(repo, token)
 
     const version = core.getInput('scala-steward-version')
@@ -32,8 +35,8 @@ async function run(): Promise<void> {
       ['--workspace', `${workspace}/workspace`],
       ['--repos-file', `${workspace}/repos.md`],
       ['--git-ask-pass', `${workspace}/askpass.sh`],
-      ['--git-author-email', `${user.email}"`],
-      ['--git-author-name', `${user.name}"`],
+      ['--git-author-email', `${authorEmail}"`],
+      ['--git-author-name', `${authorName}"`],
       ['--vcs-login', `${user.login}"`],
       ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
       ['--process-timeout', '20min'],

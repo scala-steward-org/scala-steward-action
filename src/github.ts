@@ -1,6 +1,14 @@
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 
+const emailErrorMessage =
+  "Unable to find author's email. Either ensure that the token's Github Account has the email " +
+  'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
+
+const nameErrorMessage =
+  "Unable to find author's name. Either ensure that the token's Github Account has a valid name " +
+  'set in its profile or use the `author-name` input to provide one.'
+
 /**
  * Returns the login, email and name of the authenticated user using
  * the provided Github token.
@@ -20,7 +28,17 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     core.debug(`- Email: ${email}`)
     core.debug(`- Name: ${name}`)
 
-    return {login, email, name}
+    return {
+      login,
+      email: () => {
+        if (!email) throw new Error(emailErrorMessage)
+        return email
+      },
+      name: () => {
+        if (!name) throw new Error(nameErrorMessage)
+        return name
+      }
+    }
   } catch (error) {
     core.debug(error)
     throw new Error('Unable to retrieve user information from Github')
@@ -28,7 +46,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
 }
 
 interface AuthUser {
-  email: string
+  email: () => string
   login: string
-  name: string
+  name: () => string
 }

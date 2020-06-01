@@ -15,6 +15,12 @@ inputs:
   github-token:
     description: 'Github Personal Access Token with permission to create branches on repo'
     required: true
+  author-email:
+    description: Author email address to use in commits
+    required: false
+  author-name:
+    description: Author name to use in commits
+    required: false
   scala-steward-version:
     description: 'Scala Steward version to use'
     default: '0.5.0-385-e5e4789c-SNAPSHOT'
