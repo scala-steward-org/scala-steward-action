@@ -4058,6 +4058,8 @@ function run() {
             const token = check.githubToken();
             const repo = check.reposFile() || check.githubRepository();
             const user = yield github.getAuthUser(token);
+            const authorEmail = core.getInput('author-email') || user.email();
+            const authorName = core.getInput('author-name') || user.name();
             const workspace = yield files.prepareScalaStewardWorkspace(repo, token);
             const version = core.getInput('scala-steward-version');
             const signCommits = /true/i.test(core.getInput('sign-commits'));
@@ -4066,8 +4068,8 @@ function run() {
                 ['--workspace', `${workspace}/workspace`],
                 ['--repos-file', `${workspace}/repos.md`],
                 ['--git-ask-pass', `${workspace}/askpass.sh`],
-                ['--git-author-email', `${user.email}"`],
-                ['--git-author-name', `${user.name}"`],
+                ['--git-author-email', `${authorEmail}"`],
+                ['--git-author-name', `${authorName}"`],
                 ['--vcs-login', `${user.login}"`],
                 ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
                 ['--process-timeout', '20min'],
@@ -11598,6 +11600,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthUser = void 0;
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
+const emailErrorMessage = "Unable to find author's email. Either ensure that the token's Github Account has the email " +
+    'privacy feature disabled for at least one email or use the `author-email` input to provide one.';
+const nameErrorMessage = "Unable to find author's name. Either ensure that the token's Github Account has a valid name " +
+    'set in its profile or use the `author-name` input to provide one.';
 /**
  * Returns the login, email and name of the authenticated user using
  * the provided Github token.
@@ -11614,7 +11620,19 @@ function getAuthUser(token) {
             core.debug(`- Login: ${login}`);
             core.debug(`- Email: ${email}`);
             core.debug(`- Name: ${name}`);
-            return { login, email, name };
+            return {
+                login,
+                email: () => {
+                    if (!email)
+                        throw new Error(emailErrorMessage);
+                    return email;
+                },
+                name: () => {
+                    if (!name)
+                        throw new Error(nameErrorMessage);
+                    return name;
+                }
+            };
         }
         catch (error) {
             core.debug(error);
