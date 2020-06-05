@@ -43,6 +43,6 @@
     "eslint-plugin-jest": "^23.13.2",
     "eslint-plugin-jsdoc": "^27.0.4",
     "prettier": "^2.0.5",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.5"
   }
 }
