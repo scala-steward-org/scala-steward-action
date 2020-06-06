@@ -18,10 +18,7 @@ import os from 'os'
  * @param {string} token - The Github Token used to authenticate into Github.
  * @returns {string} The workspace directory path
  */
-export async function prepareScalaStewardWorkspace(
-  repository: Buffer | string,
-  token: string
-): Promise<string> {
+export async function prepare(repository: Buffer | string, token: string): Promise<string> {
   try {
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)
@@ -42,4 +39,11 @@ export async function prepareScalaStewardWorkspace(
     core.debug(error.message)
     throw new Error('Unable to create Scala Steward workspace')
   }
+}
+
+/**
+ * Removes the Scala Steward's workspace.
+ */
+export async function remove(): Promise<void> {
+  await io.rmRF(`${os.homedir()}/scala-steward`)
 }

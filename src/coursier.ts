@@ -80,3 +80,10 @@ export async function launch(
     throw new Error(`Launching ${name} failed`)
   }
 }
+
+/**
+ * Removes coursier binary
+ */
+export async function remove(): Promise<void> {
+  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'))
+}
