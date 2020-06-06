@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(198);
+/******/ 		return __webpack_require__(131);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -2287,90 +2287,6 @@ module.exports = windowsRelease;
 
 /***/ }),
 
-/***/ 65:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prepareScalaStewardWorkspace = void 0;
-const core = __importStar(__webpack_require__(470));
-const io = __importStar(__webpack_require__(1));
-const fs_1 = __importDefault(__webpack_require__(747));
-const exec = __importStar(__webpack_require__(986));
-const os_1 = __importDefault(__webpack_require__(87));
-/**
- * Prepares the Scala Steward workspace that will be used when launching the app.
- *
- * This will involve:
- * - Creating a folder `/ops/scala-steward`.
- * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
- * - Creating a `askpass.sh` file inside workspace containing the Github token.
- * - Making the previous file executable.
- *
- * @param {string | Buffer} repository - The repository to update or a file containing a list of
- *                                       repositories in Markdown format.
- * @param {string} token - The Github Token used to authenticate into Github.
- * @returns {string} The workspace directory path
- */
-function prepareScalaStewardWorkspace(repository, token) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const stewarddir = `${os_1.default.homedir()}/scala-steward`;
-            yield io.mkdirP(stewarddir);
-            if (typeof repository === 'string') {
-                fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
-            }
-            else {
-                fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
-            }
-            fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
-            yield exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
-            core.info('✓ Scala Steward workspace created');
-            return stewarddir;
-        }
-        catch (error) {
-            core.debug(error.message);
-            throw new Error('Unable to create Scala Steward workspace');
-        }
-    });
-}
-exports.prepareScalaStewardWorkspace = prepareScalaStewardWorkspace;
-
-
-/***/ }),
-
 /***/ 87:
 /***/ (function(module) {
 
@@ -2472,6 +2388,82 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ (function(module) {
 
 module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 131:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(__webpack_require__(470));
+const github = __importStar(__webpack_require__(146));
+const check = __importStar(__webpack_require__(562));
+const files = __importStar(__webpack_require__(556));
+const coursier = __importStar(__webpack_require__(421));
+/**
+ * Runs the action main code. In order it will do the following:
+ * - Check connection with Maven Central
+ * - Install Coursier
+ * - Recover user inputs
+ * - Get authenticated user data from provided Github Token
+ * - Prepare Scala Steward's workspace
+ * - Run Scala Steward using Coursier.
+ */
+async function run() {
+    try {
+        await check.mavenCentral();
+        await coursier.install();
+        const token = check.githubToken();
+        const repo = check.reposFile() || check.githubRepository();
+        const user = await github.getAuthUser(token);
+        const authorEmail = core.getInput('author-email') || user.email();
+        const authorName = core.getInput('author-name') || user.name();
+        const workspace = await files.prepareScalaStewardWorkspace(repo, token);
+        const version = core.getInput('scala-steward-version');
+        const signCommits = /true/i.test(core.getInput('sign-commits'));
+        const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
+        await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
+            ['--workspace', `${workspace}/workspace`],
+            ['--repos-file', `${workspace}/repos.md`],
+            ['--git-ask-pass', `${workspace}/askpass.sh`],
+            ['--git-author-email', `${authorEmail}"`],
+            ['--git-author-name', `${authorName}"`],
+            ['--vcs-login', `${user.login}"`],
+            ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
+            ['--process-timeout', '20min'],
+            ignoreOptsFiles ? '--ignore-opts-files' : [],
+            signCommits ? '--sign-commits' : [],
+            '--do-not-fork',
+            '--disable-sandbox'
+        ]);
+    }
+    catch (error) {
+        core.setFailed(` ✕ ${error.message}`);
+    }
+}
+run();
+
 
 /***/ }),
 
@@ -2820,6 +2812,77 @@ module.exports.MaxBufferError = MaxBufferError;
 
 /***/ }),
 
+/***/ 146:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAuthUser = void 0;
+const github_1 = __webpack_require__(469);
+const core = __importStar(__webpack_require__(470));
+const emailErrorMessage = "Unable to find author's email. Either ensure that the token's Github Account has the email " +
+    'privacy feature disabled for at least one email or use the `author-email` input to provide one.';
+const nameErrorMessage = "Unable to find author's name. Either ensure that the token's Github Account has a valid name " +
+    'set in its profile or use the `author-name` input to provide one.';
+/**
+ * Returns the login, email and name of the authenticated user using
+ * the provided Github token.
+ *
+ * @param {string} token - The token whose user data will be extracted.
+ * @returns {Promise<AuthUser>} The login, email and name of token's user.
+ */
+async function getAuthUser(token) {
+    const github = github_1.getOctokit(token);
+    try {
+        const { login, email, name } = (await github.users.getAuthenticated()).data;
+        core.info('✓ User information retrieved from Github');
+        core.debug(`- Login: ${login}`);
+        core.debug(`- Email: ${email}`);
+        core.debug(`- Name: ${name}`);
+        return {
+            login,
+            email: () => {
+                if (!email)
+                    throw new Error(emailErrorMessage);
+                return email;
+            },
+            name: () => {
+                if (!name)
+                    throw new Error(nameErrorMessage);
+                return name;
+            }
+        };
+    }
+    catch (error) {
+        core.debug(error);
+        throw new Error('Unable to retrieve user information from Github');
+    }
+}
+exports.getAuthUser = getAuthUser;
+
+
+/***/ }),
+
 /***/ 168:
 /***/ (function(module) {
 
@@ -2913,93 +2976,6 @@ function checkMode (stat, options) {
 
   return ret
 }
-
-
-/***/ }),
-
-/***/ 198:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(__webpack_require__(470));
-const github = __importStar(__webpack_require__(824));
-const check = __importStar(__webpack_require__(447));
-const files = __importStar(__webpack_require__(65));
-const coursier = __importStar(__webpack_require__(540));
-/**
- * Runs the action main code. In order it will do the following:
- * - Check connection with Maven Central
- * - Install Coursier
- * - Recover user inputs
- * - Get authenticated user data from provided Github Token
- * - Prepare Scala Steward's workspace
- * - Run Scala Steward using Coursier.
- */
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield check.mavenCentral();
-            yield coursier.install();
-            const token = check.githubToken();
-            const repo = check.reposFile() || check.githubRepository();
-            const user = yield github.getAuthUser(token);
-            const authorEmail = core.getInput('author-email') || user.email();
-            const authorName = core.getInput('author-name') || user.name();
-            const workspace = yield files.prepareScalaStewardWorkspace(repo, token);
-            const version = core.getInput('scala-steward-version');
-            const signCommits = /true/i.test(core.getInput('sign-commits'));
-            const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
-            yield coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
-                ['--workspace', `${workspace}/workspace`],
-                ['--repos-file', `${workspace}/repos.md`],
-                ['--git-ask-pass', `${workspace}/askpass.sh`],
-                ['--git-author-email', `${authorEmail}"`],
-                ['--git-author-name', `${authorName}"`],
-                ['--vcs-login', `${user.login}"`],
-                ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
-                ['--process-timeout', '20min'],
-                ignoreOptsFiles ? '--ignore-opts-files' : [],
-                signCommits ? '--sign-commits' : [],
-                '--do-not-fork',
-                '--disable-sandbox'
-            ]);
-        }
-        catch (error) {
-            core.setFailed(` ✕ ${error.message}`);
-        }
-    });
-}
-run();
 
 
 /***/ }),
@@ -3880,6 +3856,99 @@ module.exports = require("crypto");
 
 /***/ }),
 
+/***/ 421:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.launch = exports.install = void 0;
+const core = __importStar(__webpack_require__(470));
+const tc = __importStar(__webpack_require__(533));
+const io = __importStar(__webpack_require__(1));
+const exec = __importStar(__webpack_require__(986));
+const path = __importStar(__webpack_require__(622));
+const os = __importStar(__webpack_require__(87));
+/**
+ * Install `coursier` and add its executable to the `PATH`.
+ *
+ * Throws error if the installation fails.
+ */
+async function install() {
+    try {
+        const temp = await tc.downloadTool('https://git.io/coursier-cli-linux');
+        await exec.exec('chmod', ['+x', temp], { silent: true, ignoreReturnCode: true });
+        const homedir = os.homedir();
+        const binPath = path.join(homedir, 'bin');
+        await io.mkdirP(binPath);
+        await io.cp(temp, path.join(binPath, 'cs'));
+        await io.rmRF(temp);
+        core.addPath(binPath);
+    }
+    catch (error) {
+        core.debug(error.message);
+        throw new Error('Unable to install coursier');
+    }
+    let version = '';
+    const code = await exec.exec('cs', ['--version'], {
+        silent: true,
+        ignoreReturnCode: true,
+        listeners: { stdout: data => (version += data.toString()), errline: core.error }
+    });
+    if (code !== 0) {
+        throw new Error('Unable to install coursier');
+    }
+    core.info(`✓ Coursier installed, version: ${version.trim()}`);
+}
+exports.install = install;
+/**
+ * Launches an app using `coursier`.
+ *
+ * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
+ *
+ * @param {string} org - The application's organization.
+ * @param {string} app - The application's artifact name.
+ * @param {string} version - The application's version.
+ * @param {(string | string[])[]} args - The args to pass to the application launcher.
+ */
+async function launch(org, app, version, args = []) {
+    const name = `${org}:${app}:${version}`;
+    core.startGroup(`Launching ${name}`);
+    const launchArgs = ['launch', '-r', 'sonatype:snapshots', name, '--'].concat(args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg)));
+    const code = await exec.exec('cs', launchArgs, {
+        silent: true,
+        ignoreReturnCode: true,
+        listeners: { stdline: core.info, errline: core.error }
+    });
+    core.endGroup();
+    if (code !== 0) {
+        throw new Error(`Launching ${name} failed`);
+    }
+}
+exports.launch = launch;
+
+
+/***/ }),
+
 /***/ 427:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -4023,122 +4092,6 @@ function escapeProperty(s) {
         .replace(/,/g, '%2C');
 }
 //# sourceMappingURL=command.js.map
-
-/***/ }),
-
-/***/ 447:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
-const node_fetch_1 = __importDefault(__webpack_require__(454));
-const core = __importStar(__webpack_require__(470));
-const fs_1 = __importDefault(__webpack_require__(747));
-/**
- * Checks connection with Maven Central, throws error if unable to connect.
- */
-function mavenCentral() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield node_fetch_1.default('https://repo1.maven.org/maven2/');
-        if (!response.ok) {
-            throw new Error('Unable to connect to Maven Central');
-        }
-        core.info('✓ Connected to Maven Central');
-    });
-}
-exports.mavenCentral = mavenCentral;
-/**
- * Reads the Github Token from the `github-token` input. Throws error if the
- * input is empty or returns the token in case it is not.
- *
- * @returns {string} The Github Token read from the `github-token` input.
- */
-function githubToken() {
-    const token = core.getInput('github-token');
-    if (token === '') {
-        throw new Error('You need to provide a Github token in the `github-token` input');
-    }
-    core.info('✓ Github Token provided as input');
-    return token;
-}
-exports.githubToken = githubToken;
-/**
- * Reads a Github repository from the `github-repository` input. Fallback to the
- * `GITHUB_REPOSITORY` environment variable.
- *
- * Throws error if the fallback fails or returns the repository in case it doesn't.
- *
- * @returns {string} The Github repository read from the `github-repository` input
- *                   or the `GITHUB_REPOSITORY` environment variable.
- */
-function githubRepository() {
-    const repo = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY;
-    if (repo === undefined) {
-        throw new Error('Unable to read Github repository from `github-repository` ' +
-            'input or `GITHUB_REPOSITORY` environment variable');
-    }
-    core.info(`✓ Github Repository set to: ${repo}`);
-    return repo;
-}
-exports.githubRepository = githubRepository;
-/**
- * Reads the path of the file containing the list of repositories to update  from the `repos-file`
- * input.
- *
- * If the input isn't provided this function will return `undefined`.
- * On the other hand, if it is provided, it will check if the path exists:
- * - If the file exists, its contents will be returned.
- * - If it doesn't exists, an error will be thrown.
- *
- * @returns {string | undefined} The contents of the file indicated in `repos-file` input, if is
- *                               defined; otherwise, `undefined`.
- */
-function reposFile() {
-    const file = core.getInput('repos-file');
-    if (!file) {
-        return undefined;
-    }
-    if (fs_1.default.existsSync(file)) {
-        core.info(`✓ Using multiple repos file: ${file}`);
-        return fs_1.default.readFileSync(file);
-    }
-    throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`);
-}
-exports.reposFile = reposFile;
-
 
 /***/ }),
 
@@ -7805,112 +7758,6 @@ exports.HttpClient = HttpClient;
 
 /***/ }),
 
-/***/ 540:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.launch = exports.install = void 0;
-const core = __importStar(__webpack_require__(470));
-const tc = __importStar(__webpack_require__(533));
-const io = __importStar(__webpack_require__(1));
-const exec = __importStar(__webpack_require__(986));
-const path = __importStar(__webpack_require__(622));
-const os = __importStar(__webpack_require__(87));
-/**
- * Install `coursier` and add its executable to the `PATH`.
- *
- * Throws error if the installation fails.
- */
-function install() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const temp = yield tc.downloadTool('https://git.io/coursier-cli-linux');
-            yield exec.exec('chmod', ['+x', temp], { silent: true, ignoreReturnCode: true });
-            const homedir = os.homedir();
-            const binPath = path.join(homedir, 'bin');
-            yield io.mkdirP(binPath);
-            yield io.cp(temp, path.join(binPath, 'cs'));
-            yield io.rmRF(temp);
-            core.addPath(binPath);
-        }
-        catch (error) {
-            core.debug(error.message);
-            throw new Error('Unable to install coursier');
-        }
-        let version = '';
-        const code = yield exec.exec('cs', ['--version'], {
-            silent: true,
-            ignoreReturnCode: true,
-            listeners: { stdout: data => (version += data.toString()), errline: core.error }
-        });
-        if (code !== 0) {
-            throw new Error('Unable to install coursier');
-        }
-        core.info(`✓ Coursier installed, version: ${version.trim()}`);
-    });
-}
-exports.install = install;
-/**
- * Launches an app using `coursier`.
- *
- * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
- *
- * @param {string} org - The application's organization.
- * @param {string} app - The application's artifact name.
- * @param {string} version - The application's version.
- * @param {(string | string[])[]} args - The args to pass to the application launcher.
- */
-function launch(org, app, version, args = []) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const name = `${org}:${app}:${version}`;
-        core.startGroup(`Launching ${name}`);
-        const launchArgs = ['launch', '-r', 'sonatype:snapshots', name, '--'].concat(args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg)));
-        const code = yield exec.exec('cs', launchArgs, {
-            silent: true,
-            ignoreReturnCode: true,
-            listeners: { stdline: core.info, errline: core.error }
-        });
-        core.endGroup();
-        if (code !== 0) {
-            throw new Error(`Launching ${name} failed`);
-        }
-    });
-}
-exports.launch = launch;
-
-
-/***/ }),
-
 /***/ 548:
 /***/ (function(module) {
 
@@ -7963,6 +7810,184 @@ function isPlainObject(o) {
 }
 
 module.exports = isPlainObject;
+
+
+/***/ }),
+
+/***/ 556:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prepareScalaStewardWorkspace = void 0;
+const core = __importStar(__webpack_require__(470));
+const io = __importStar(__webpack_require__(1));
+const fs_1 = __importDefault(__webpack_require__(747));
+const exec = __importStar(__webpack_require__(986));
+const os_1 = __importDefault(__webpack_require__(87));
+/**
+ * Prepares the Scala Steward workspace that will be used when launching the app.
+ *
+ * This will involve:
+ * - Creating a folder `/ops/scala-steward`.
+ * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
+ * - Creating a `askpass.sh` file inside workspace containing the Github token.
+ * - Making the previous file executable.
+ *
+ * @param {string | Buffer} repository - The repository to update or a file containing a list of
+ *                                       repositories in Markdown format.
+ * @param {string} token - The Github Token used to authenticate into Github.
+ * @returns {string} The workspace directory path
+ */
+async function prepareScalaStewardWorkspace(repository, token) {
+    try {
+        const stewarddir = `${os_1.default.homedir()}/scala-steward`;
+        await io.mkdirP(stewarddir);
+        if (typeof repository === 'string') {
+            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
+        }
+        else {
+            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
+        }
+        fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
+        await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
+        core.info('✓ Scala Steward workspace created');
+        return stewarddir;
+    }
+    catch (error) {
+        core.debug(error.message);
+        throw new Error('Unable to create Scala Steward workspace');
+    }
+}
+exports.prepareScalaStewardWorkspace = prepareScalaStewardWorkspace;
+
+
+/***/ }),
+
+/***/ 562:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
+const node_fetch_1 = __importDefault(__webpack_require__(454));
+const core = __importStar(__webpack_require__(470));
+const fs_1 = __importDefault(__webpack_require__(747));
+/**
+ * Checks connection with Maven Central, throws error if unable to connect.
+ */
+async function mavenCentral() {
+    const response = await node_fetch_1.default('https://repo1.maven.org/maven2/');
+    if (!response.ok) {
+        throw new Error('Unable to connect to Maven Central');
+    }
+    core.info('✓ Connected to Maven Central');
+}
+exports.mavenCentral = mavenCentral;
+/**
+ * Reads the Github Token from the `github-token` input. Throws error if the
+ * input is empty or returns the token in case it is not.
+ *
+ * @returns {string} The Github Token read from the `github-token` input.
+ */
+function githubToken() {
+    const token = core.getInput('github-token');
+    if (token === '') {
+        throw new Error('You need to provide a Github token in the `github-token` input');
+    }
+    core.info('✓ Github Token provided as input');
+    return token;
+}
+exports.githubToken = githubToken;
+/**
+ * Reads a Github repository from the `github-repository` input. Fallback to the
+ * `GITHUB_REPOSITORY` environment variable.
+ *
+ * Throws error if the fallback fails or returns the repository in case it doesn't.
+ *
+ * @returns {string} The Github repository read from the `github-repository` input
+ *                   or the `GITHUB_REPOSITORY` environment variable.
+ */
+function githubRepository() {
+    const repo = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY;
+    if (repo === undefined) {
+        throw new Error('Unable to read Github repository from `github-repository` ' +
+            'input or `GITHUB_REPOSITORY` environment variable');
+    }
+    core.info(`✓ Github Repository set to: ${repo}`);
+    return repo;
+}
+exports.githubRepository = githubRepository;
+/**
+ * Reads the path of the file containing the list of repositories to update  from the `repos-file`
+ * input.
+ *
+ * If the input isn't provided this function will return `undefined`.
+ * On the other hand, if it is provided, it will check if the path exists:
+ * - If the file exists, its contents will be returned.
+ * - If it doesn't exists, an error will be thrown.
+ *
+ * @returns {string | undefined} The contents of the file indicated in `repos-file` input, if is
+ *                               defined; otherwise, `undefined`.
+ */
+function reposFile() {
+    const file = core.getInput('repos-file');
+    if (!file) {
+        return undefined;
+    }
+    if (fs_1.default.existsSync(file)) {
+        core.info(`✓ Using multiple repos file: ${file}`);
+        return fs_1.default.readFileSync(file);
+    }
+    throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`);
+}
+exports.reposFile = reposFile;
 
 
 /***/ }),
@@ -9763,88 +9788,6 @@ function isexe (path, options, cb) {
 function sync (path, options) {
   return checkStat(fs.statSync(path), path, options)
 }
-
-
-/***/ }),
-
-/***/ 824:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAuthUser = void 0;
-const github_1 = __webpack_require__(469);
-const core = __importStar(__webpack_require__(470));
-const emailErrorMessage = "Unable to find author's email. Either ensure that the token's Github Account has the email " +
-    'privacy feature disabled for at least one email or use the `author-email` input to provide one.';
-const nameErrorMessage = "Unable to find author's name. Either ensure that the token's Github Account has a valid name " +
-    'set in its profile or use the `author-name` input to provide one.';
-/**
- * Returns the login, email and name of the authenticated user using
- * the provided Github token.
- *
- * @param {string} token - The token whose user data will be extracted.
- * @returns {Promise<AuthUser>} The login, email and name of token's user.
- */
-function getAuthUser(token) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const github = github_1.getOctokit(token);
-        try {
-            const { login, email, name } = (yield github.users.getAuthenticated()).data;
-            core.info('✓ User information retrieved from Github');
-            core.debug(`- Login: ${login}`);
-            core.debug(`- Email: ${email}`);
-            core.debug(`- Name: ${name}`);
-            return {
-                login,
-                email: () => {
-                    if (!email)
-                        throw new Error(emailErrorMessage);
-                    return email;
-                },
-                name: () => {
-                    if (!name)
-                        throw new Error(nameErrorMessage);
-                    return name;
-                }
-            };
-        }
-        catch (error) {
-            core.debug(error);
-            throw new Error('Unable to retrieve user information from Github');
-        }
-    });
-}
-exports.getAuthUser = getAuthUser;
 
 
 /***/ }),
