@@ -40,3 +40,10 @@ export async function prepare(repository: Buffer | string, token: string): Promi
     throw new Error('Unable to create Scala Steward workspace')
   }
 }
+
+/**
+ * Removes the Scala Steward's workspace.
+ */
+export async function remove(): Promise<void> {
+  await io.rmRF(`${os.homedir()}/scala-steward`)
+}
