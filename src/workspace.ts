@@ -18,10 +18,7 @@ import os from 'os'
  * @param {string} token - The Github Token used to authenticate into Github.
  * @returns {string} The workspace directory path
  */
-export async function prepareScalaStewardWorkspace(
-  repository: Buffer | string,
-  token: string
-): Promise<string> {
+export async function prepare(repository: Buffer | string, token: string): Promise<string> {
   try {
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)

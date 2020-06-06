@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as github from './github'
 import * as check from './check'
-import * as files from './files'
+import * as workspace from './workspace'
 import * as coursier from './coursier'
 
 /**
@@ -24,7 +24,7 @@ async function run(): Promise<void> {
     const authorEmail = core.getInput('author-email') || user.email()
     const authorName = core.getInput('author-name') || user.name()
 
-    const workspace = await files.prepareScalaStewardWorkspace(repo, token)
+    const workspaceDir = await workspace.prepare(repo, token)
 
     const version = core.getInput('scala-steward-version')
 
@@ -32,9 +32,9 @@ async function run(): Promise<void> {
     const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
-      ['--workspace', `${workspace}/workspace`],
-      ['--repos-file', `${workspace}/repos.md`],
-      ['--git-ask-pass', `${workspace}/askpass.sh`],
+      ['--workspace', `${workspaceDir}/workspace`],
+      ['--repos-file', `${workspaceDir}/repos.md`],
+      ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
       ['--git-author-email', `${authorEmail}"`],
       ['--git-author-name', `${authorName}"`],
       ['--vcs-login', `${user.login}"`],
