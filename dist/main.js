@@ -2419,7 +2419,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(146));
 const check = __importStar(__webpack_require__(562));
-const files = __importStar(__webpack_require__(556));
+const workspace = __importStar(__webpack_require__(846));
 const coursier = __importStar(__webpack_require__(421));
 /**
  * Runs the action main code. In order it will do the following:
@@ -2439,14 +2439,14 @@ async function run() {
         const user = await github.getAuthUser(token);
         const authorEmail = core.getInput('author-email') || user.email();
         const authorName = core.getInput('author-name') || user.name();
-        const workspace = await files.prepareScalaStewardWorkspace(repo, token);
+        const workspaceDir = await workspace.prepare(repo, token);
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
         const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
-            ['--workspace', `${workspace}/workspace`],
-            ['--repos-file', `${workspace}/repos.md`],
-            ['--git-ask-pass', `${workspace}/askpass.sh`],
+            ['--workspace', `${workspaceDir}/workspace`],
+            ['--repos-file', `${workspaceDir}/repos.md`],
+            ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
             ['--git-author-email', `${authorEmail}"`],
             ['--git-author-name', `${authorName}"`],
             ['--vcs-login', `${user.login}"`],
@@ -3881,7 +3881,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.launch = exports.install = void 0;
+exports.remove = exports.launch = exports.install = void 0;
 const core = __importStar(__webpack_require__(470));
 const tc = __importStar(__webpack_require__(533));
 const io = __importStar(__webpack_require__(1));
@@ -3945,6 +3945,13 @@ async function launch(org, app, version, args = []) {
     }
 }
 exports.launch = launch;
+/**
+ * Removes coursier binary
+ */
+async function remove() {
+    await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'));
+}
+exports.remove = remove;
 
 
 /***/ }),
@@ -7814,79 +7821,6 @@ module.exports = isPlainObject;
 
 /***/ }),
 
-/***/ 556:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.prepareScalaStewardWorkspace = void 0;
-const core = __importStar(__webpack_require__(470));
-const io = __importStar(__webpack_require__(1));
-const fs_1 = __importDefault(__webpack_require__(747));
-const exec = __importStar(__webpack_require__(986));
-const os_1 = __importDefault(__webpack_require__(87));
-/**
- * Prepares the Scala Steward workspace that will be used when launching the app.
- *
- * This will involve:
- * - Creating a folder `/ops/scala-steward`.
- * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
- * - Creating a `askpass.sh` file inside workspace containing the Github token.
- * - Making the previous file executable.
- *
- * @param {string | Buffer} repository - The repository to update or a file containing a list of
- *                                       repositories in Markdown format.
- * @param {string} token - The Github Token used to authenticate into Github.
- * @returns {string} The workspace directory path
- */
-async function prepareScalaStewardWorkspace(repository, token) {
-    try {
-        const stewarddir = `${os_1.default.homedir()}/scala-steward`;
-        await io.mkdirP(stewarddir);
-        if (typeof repository === 'string') {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
-        }
-        else {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
-        }
-        fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
-        await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
-        core.info('✓ Scala Steward workspace created');
-        return stewarddir;
-    }
-    catch (error) {
-        core.debug(error.message);
-        throw new Error('Unable to create Scala Steward workspace');
-    }
-}
-exports.prepareScalaStewardWorkspace = prepareScalaStewardWorkspace;
-
-
-/***/ }),
-
 /***/ 562:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -11228,6 +11162,86 @@ restEndpointMethods.VERSION = VERSION;
 
 exports.restEndpointMethods = restEndpointMethods;
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 846:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.remove = exports.prepare = void 0;
+const core = __importStar(__webpack_require__(470));
+const io = __importStar(__webpack_require__(1));
+const fs_1 = __importDefault(__webpack_require__(747));
+const exec = __importStar(__webpack_require__(986));
+const os_1 = __importDefault(__webpack_require__(87));
+/**
+ * Prepares the Scala Steward workspace that will be used when launching the app.
+ *
+ * This will involve:
+ * - Creating a folder `/ops/scala-steward`.
+ * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
+ * - Creating a `askpass.sh` file inside workspace containing the Github token.
+ * - Making the previous file executable.
+ *
+ * @param {string | Buffer} repository - The repository to update or a file containing a list of
+ *                                       repositories in Markdown format.
+ * @param {string} token - The Github Token used to authenticate into Github.
+ * @returns {string} The workspace directory path
+ */
+async function prepare(repository, token) {
+    try {
+        const stewarddir = `${os_1.default.homedir()}/scala-steward`;
+        await io.mkdirP(stewarddir);
+        if (typeof repository === 'string') {
+            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
+        }
+        else {
+            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
+        }
+        fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
+        await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
+        core.info('✓ Scala Steward workspace created');
+        return stewarddir;
+    }
+    catch (error) {
+        core.debug(error.message);
+        throw new Error('Unable to create Scala Steward workspace');
+    }
+}
+exports.prepare = prepare;
+/**
+ * Removes the Scala Steward's workspace.
+ */
+async function remove() {
+    await io.rmRF(`${os_1.default.homedir()}/scala-steward`);
+}
+exports.remove = remove;
 
 
 /***/ }),
