@@ -1,4 +1,4 @@
-import * as github from '@actions/github'
+import {getOctokit} from '@actions/github'
 import * as core from '@actions/core'
 
 const emailErrorMessage =
@@ -17,10 +17,10 @@ const nameErrorMessage =
  * @returns {Promise<AuthUser>} The login, email and name of token's user.
  */
 export async function getAuthUser(token: string): Promise<AuthUser> {
-  const octokit = new github.GitHub(token)
+  const github = getOctokit(token)
 
   try {
-    const {login, email, name} = (await octokit.users.getAuthenticated()).data
+    const {login, email, name} = (await github.users.getAuthenticated()).data
 
     core.info('✓ User information retrieved from Github')
 
