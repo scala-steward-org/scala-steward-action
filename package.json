@@ -3,7 +3,7 @@
   "description": "A Github Action to launch Scala Steward in your repository",
   "main": "lib/main.js",
   "scripts": {
-    "build": "ncc build src/main.ts",
+    "build": "ncc build src/main.ts && mv dist/index.js dist/main.js",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
