@@ -3,6 +3,20 @@ import * as io from '@actions/io'
 import fs from 'fs'
 import * as exec from '@actions/exec'
 import os from 'os'
+import jsSHA from 'jssha/dist/sha256'
+
+/**
+ * Gets the first eight characters of the SHA-256 hash value for the
+ * provided file's contents.
+ *
+ * @param {string} file - the file for which to calculate the hash
+ * @returns {string} the file content's hash
+ */
+export function hashFile(file: string): string {
+  const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
+  sha.update(fs.readFileSync(file).toString())
+  return sha.getHash('HEX').slice(0, 8)
+}
 
 /**
  * Prepares the Scala Steward workspace that will be used when launching the app.
