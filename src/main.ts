@@ -25,6 +25,7 @@ async function run(): Promise<void> {
     const authorName = core.getInput('author-name') || user.name()
 
     const workspaceDir = await workspace.prepare(repo, token)
+    await workspace.restoreWorkspaceCache(workspaceDir)
 
     const version = core.getInput('scala-steward-version')
 
@@ -45,6 +46,8 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--disable-sandbox'
     ])
+
+    await workspace.saveWorkspaceCache(workspaceDir)
   } catch (error) {
     core.setFailed(` ✕ ${error.message}`)
   }
