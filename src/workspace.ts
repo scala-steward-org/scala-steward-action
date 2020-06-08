@@ -57,8 +57,9 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
   try {
     core.startGroup('Saving workspace to cache...')
 
-    //We don't want to save the `store/refresh_error` folder in the cache
+    //We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
     await io.rmRF(path.join(workspace, 'workspace', 'store', 'refresh_error'))
+    await io.rmRF(path.join(workspace, 'workspace', 'repos'))
 
     const hash = hashFile(path.join(workspace, 'repos.md'))
 
