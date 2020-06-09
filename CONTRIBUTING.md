@@ -14,7 +14,7 @@ _scala-steward-action_ follows a standard [fork and pull](https://help.github.co
 
 The process is simple:
 
- 1. Find something you want to work on
+ 1. Find something you want to work on (a good starting point are [good-first issues](https://github.com/scala-steward-org/scala-steward-action/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3A%22good+first+issue%22))
  2. Let us know you are working on it via GitHub issues/pull requests
  3. Implement your contribution
  4. Write tests
