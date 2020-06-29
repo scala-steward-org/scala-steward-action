@@ -16,6 +16,7 @@ A Github Action to launch [Scala Steward](https://github.com/fthomas/scala-stewa
 * [Usage](#usage)
   * [How can I trigger a run?](#how-can-i-trigger-a-run)
 * [Configuration](#configuration)
+  * [Specify JVM version](#specify-jvm-version)
   * [Github Token](#github-token)
   * [Updating one repository](#updating-one-repository)
   * [Updating multiple repositories](#updating-multiple-repositories)
@@ -93,6 +94,16 @@ The following inputs are available:
 | `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | no       | 0.6.0   | Scala Steward version to use                                                                        |
 | `ignore-opts-files`     | true/false                                                                         | no       | true                          | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
 | `sign-commits`          | true/false                                                                         | no       | false                         | Whether to sign commits or not                                                                      |
+
+### Specify JVM version
+
+If you would like to specify a specific Java version (e.g Java 11) please add the following step before `Launch Scala Steward`:
+```
+- name: Set up JDK 11
+  uses: actions/setup-java@v1.3.0
+  with:
+    java-version: 1.11
+```
 
 ### Github Token
 
