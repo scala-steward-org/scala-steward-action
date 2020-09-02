@@ -40,7 +40,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
       }
     }
   } catch (error) {
-    core.debug(error)
+    core.debug(`- User information retrieve Error: ${error.message}`)
     throw new Error('Unable to retrieve user information from Github')
   }
 }
