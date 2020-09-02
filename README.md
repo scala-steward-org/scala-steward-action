@@ -164,6 +164,8 @@ To update multiple repositories you would need to perform the following steps:
 3. Provide it to the action using `repos-file`:
 
     ```yaml
+    # Need to checkout to read the markdown file
+    - uses: actions/checkout@v2
     - name: Launch Scala Steward
       uses: scala-steward-org/scala-steward-action@v2
       with:
