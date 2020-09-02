@@ -5803,7 +5803,7 @@ async function getAuthUser(token) {
         };
     }
     catch (error) {
-        core.debug(error);
+        core.debug(`- User information retrieve Error: ${error.message}`);
         throw new Error('Unable to retrieve user information from Github');
     }
 }
