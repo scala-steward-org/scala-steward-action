@@ -33,6 +33,10 @@ inputs:
     description: 'Whether to sign commits or not'
     default: 'false'
     required: false
+  cache-ttl:
+    description: 'TTL of cache for fetching dependency versions and metadata'
+    default: '2hours'
+    required: false
 
 runs:
   using: 'node12'
