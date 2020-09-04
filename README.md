@@ -94,7 +94,7 @@ The following inputs are available:
 | `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | no       | 0.6.0   | Scala Steward version to use                                                                        |
 | `ignore-opts-files`     | true/false                                                                         | no       | true                          | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
 | `sign-commits`          | true/false                                                                         | no       | false                         | Whether to sign commits or not                                                                      |
-| `cache-ttl`             | like 24 hours, 5 min, 10s, or 0s                                                   | no       | 2hours                        | TTL of cache for fetching dependency versions and metadata                                          |
+| `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                   | no       | 2hours                        | TTL of cache for fetching dependency versions and metadata                                          |
 
 ### Specify JVM version
 
