@@ -54,31 +54,17 @@ jobs:
 
 ### How can I trigger a run?
 
-If you want to be able to trigger the action manually, you make it respond to [`repository_dispatch`](https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch) events:
+You can manually trigger workflow runs using the [`workflow_dispatch` event](https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#workflow_dispatch):
 
 ```yaml
 on:
   schedule:
     - cron: '0 0 * * 0'
-  repository_dispatch:
-    types: [scala-steward]
+  workflow_dispatch:
 ```
 
-Then, you can call the trigger from your local machine with:
+Once you added this trigger Github will show a "Run workflow" button at the workflow page.
 
-```bash
-# Change `owner/repo` to your own repository
-curl -d "{\"event_type\": \"scala-steward\"}" \
-    -H "Content-Type: application/json" \
-    -H "Authorization: token ${GITHUB_TOKEN}" \
-    "https://api.github.com/repos/owner/repo/dispatches"
-```
-
-> Remember to have a valid github token exported as GITHUB_TOKEN in your local environment:
->
-> ```bash
-> export GITHUB_TOKEN="your_github_token"
-> ```
 
 ## Configuration
 
