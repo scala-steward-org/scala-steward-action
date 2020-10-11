@@ -37,6 +37,10 @@ inputs:
     description: 'TTL of cache for fetching dependency versions and metadata'
     default: '2hours'
     required: false
+  github-api-url:
+    description: 'The URL of the Github API, only use this input if you are using Github Enterprise'
+    default: 'https://api.github.com'
+    required: false
 
 runs:
   using: 'node12'
