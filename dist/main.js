@@ -5363,6 +5363,7 @@ async function run() {
         const signCommits = /true/i.test(core.getInput('sign-commits'));
         const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         const cacheTTL = core.getInput('cache-ttl');
+        const githubApiUrl = core.getInput('github-api-url');
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
             ['--workspace', `${workspaceDir}/workspace`],
             ['--repos-file', `${workspaceDir}/repos.md`],
@@ -5372,6 +5373,7 @@ async function run() {
             ['--vcs-login', `${user.login}"`],
             ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
             ['--process-timeout', '20min'],
+            ['--vcs-api-host', githubApiUrl],
             ignoreOptsFiles ? '--ignore-opts-files' : [],
             signCommits ? '--sign-commits' : [],
             ['--cache-ttl', cacheTTL],
