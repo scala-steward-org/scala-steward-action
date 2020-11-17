@@ -34,6 +34,8 @@ async function run(): Promise<void> {
     const cacheTTL = core.getInput('cache-ttl')
     const githubApiUrl = core.getInput('github-api-url')
 
+    await coursier.install('scalafmt')
+
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
       ['--workspace', `${workspaceDir}/workspace`],
       ['--repos-file', `${workspaceDir}/repos.md`],
