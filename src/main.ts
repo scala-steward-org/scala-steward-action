@@ -16,7 +16,7 @@ import * as coursier from './coursier'
 async function run(): Promise<void> {
   try {
     await check.mavenCentral()
-    await coursier.install()
+    await coursier.selfInstall()
     const token = check.githubToken()
     const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)

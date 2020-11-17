@@ -10,7 +10,7 @@ import * as os from 'os'
  *
  * Throws error if the installation fails.
  */
-export async function install(): Promise<void> {
+export async function selfInstall(): Promise<void> {
   try {
     const temp = await tc.downloadTool('https://git.io/coursier-cli-linux')
 
