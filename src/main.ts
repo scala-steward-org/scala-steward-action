@@ -16,7 +16,7 @@ import * as coursier from './coursier'
 async function run(): Promise<void> {
   try {
     await check.mavenCentral()
-    await coursier.install()
+    await coursier.selfInstall()
     const token = check.githubToken()
     const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)
@@ -33,6 +33,8 @@ async function run(): Promise<void> {
     const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
     const cacheTTL = core.getInput('cache-ttl')
     const githubApiUrl = core.getInput('github-api-url')
+
+    await coursier.install('scalafmt')
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
       ['--workspace', `${workspaceDir}/workspace`],
