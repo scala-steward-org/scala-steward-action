@@ -5329,7 +5329,7 @@ const coursier = __importStar(__webpack_require__(421));
 async function run() {
     try {
         await check.mavenCentral();
-        await coursier.install();
+        await coursier.selfInstall();
         const token = check.githubToken();
         const repo = check.reposFile() || check.githubRepository();
         const user = await github.getAuthUser(token);
@@ -5342,6 +5342,7 @@ async function run() {
         const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         const cacheTTL = core.getInput('cache-ttl');
         const githubApiUrl = core.getInput('github-api-url');
+        await coursier.install('scalafmt');
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
             ['--workspace', `${workspaceDir}/workspace`],
             ['--repos-file', `${workspaceDir}/repos.md`],
@@ -37293,7 +37294,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.remove = exports.launch = exports.install = void 0;
+exports.remove = exports.launch = exports.install = exports.selfInstall = void 0;
 const core = __importStar(__webpack_require__(470));
 const tc = __importStar(__webpack_require__(533));
 const io = __importStar(__webpack_require__(1));
@@ -37305,7 +37306,7 @@ const os = __importStar(__webpack_require__(87));
  *
  * Throws error if the installation fails.
  */
-async function install() {
+async function selfInstall() {
     try {
         const temp = await tc.downloadTool('https://git.io/coursier-cli-linux');
         await exec.exec('chmod', ['+x', temp], { silent: true, ignoreReturnCode: true });
@@ -37330,6 +37331,26 @@ async function install() {
         throw new Error('Unable to install coursier');
     }
     core.info(`✓ Coursier installed, version: ${version.trim()}`);
+}
+exports.selfInstall = selfInstall;
+/**
+ * Installs an app using `coursier`.
+ *
+ * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
+ *
+ * @param {string} app - The application's name.
+ */
+async function install(app) {
+    core.startGroup(`Installing ${app}`);
+    const code = await exec.exec('cs', ['install', app], {
+        silent: true,
+        ignoreReturnCode: true,
+        listeners: { stdline: core.info, errline: core.error }
+    });
+    core.endGroup();
+    if (code !== 0) {
+        throw new Error(`Installing ${app} failed`);
+    }
 }
 exports.install = install;
 /**
