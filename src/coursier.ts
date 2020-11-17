@@ -45,6 +45,29 @@ export async function selfInstall(): Promise<void> {
 }
 
 /**
+ * Installs an app using `coursier`.
+ *
+ * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
+ *
+ * @param {string} app - The application's name.
+ */
+export async function install(app: string): Promise<void> {
+  core.startGroup(`Installing ${app}`)
+
+  const code = await exec.exec('cs', ['install', app], {
+    silent: true,
+    ignoreReturnCode: true,
+    listeners: {stdline: core.info, errline: core.error}
+  })
+
+  core.endGroup()
+
+  if (code !== 0) {
+    throw new Error(`Installing ${app} failed`)
+  }
+}
+
+/**
  * Launches an app using `coursier`.
  *
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
