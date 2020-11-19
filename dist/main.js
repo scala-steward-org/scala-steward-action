@@ -5349,7 +5349,7 @@ async function run() {
             ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
             ['--git-author-email', `${authorEmail}"`],
             ['--git-author-name', `${authorName}"`],
-            ['--vcs-login', `${user.login}"`],
+            ['--vcs-login', `${user.login()}"`],
             ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
             ['--process-timeout', '20min'],
             ['--vcs-api-host', githubApiUrl],
@@ -6138,7 +6138,11 @@ async function getAuthUser(token) {
         core.debug(`- Email: ${email}`);
         core.debug(`- Name: ${name}`);
         return {
-            login,
+            login: () => {
+                if (!login)
+                    throw new Error('Unable to retrieve user information from Github');
+                return login;
+            },
             email: () => {
                 if (!email)
                     throw new Error(emailErrorMessage);
@@ -6153,7 +6157,13 @@ async function getAuthUser(token) {
     }
     catch (error) {
         core.debug(`- User information retrieve Error: ${error.message}`);
-        throw new Error('Unable to retrieve user information from Github');
+        // https://github.community/t/github-actions-bot-email-address/17204/6
+        // https://api.github.com/users/github-actions%5Bbot%5D
+        return {
+            login: () => 'github-actions[bot]',
+            email: () => '41898282+github-actions[bot]@users.noreply.github.com',
+            name: () => 'github-actions[bot]'
+        };
     }
 }
 exports.getAuthUser = getAuthUser;
