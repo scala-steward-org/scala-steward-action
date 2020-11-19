@@ -52,19 +52,32 @@ export async function selfInstall(): Promise<void> {
  * @param {string} app - The application's name.
  */
 export async function install(app: string): Promise<void> {
-  core.startGroup(`Installing ${app}`)
+  const homedir = os.homedir()
+  const binPath = path.join(homedir, 'bin')
 
-  const code = await exec.exec('cs', ['install', app], {
+  let code = await exec.exec('cs', ['install', app, '--install-dir', binPath], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.error}
+    listeners: {stdline: core.info, errline: core.debug}
   })
-
-  core.endGroup()
 
   if (code !== 0) {
     throw new Error(`Installing ${app} failed`)
   }
+
+  let version = ''
+
+  code = await exec.exec(app, ['--version'], {
+    silent: true,
+    ignoreReturnCode: true,
+    listeners: {stdout: data => (version += data.toString()), errline: core.error}
+  })
+
+  if (code !== 0) {
+    throw new Error(`Installing ${app} failed`)
+  }
+
+  core.info(`✓ ${app} installed, version: ${version.trim()}`)
 }
 
 /**
@@ -109,4 +122,5 @@ export async function launch(
  */
 export async function remove(): Promise<void> {
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'))
+  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'))
 }
