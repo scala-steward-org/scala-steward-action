@@ -29,7 +29,10 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     core.debug(`- Name: ${name}`)
 
     return {
-      login,
+      login: () => {
+        if (!login) throw new Error('Unable to retrieve user information from Github')
+        return login
+      },
       email: () => {
         if (!email) throw new Error(emailErrorMessage)
         return email
@@ -41,12 +44,19 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     }
   } catch (error) {
     core.debug(`- User information retrieve Error: ${error.message}`)
-    throw new Error('Unable to retrieve user information from Github')
+
+    // https://github.community/t/github-actions-bot-email-address/17204/6
+    // https://api.github.com/users/github-actions%5Bbot%5D
+    return {
+      login: () => 'github-actions[bot]',
+      email: () => '41898282+github-actions[bot]@users.noreply.github.com',
+      name: () => 'github-actions[bot]'
+    }
   }
 }
 
 interface AuthUser {
   email: () => string
-  login: string
+  login: () => string
   name: () => string
 }

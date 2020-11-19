@@ -42,7 +42,7 @@ async function run(): Promise<void> {
       ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
       ['--git-author-email', `${authorEmail}"`],
       ['--git-author-name', `${authorName}"`],
-      ['--vcs-login', `${user.login}"`],
+      ['--vcs-login', `${user.login()}"`],
       ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
       ['--process-timeout', '20min'],
       ['--vcs-api-host', githubApiUrl],
