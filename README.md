@@ -18,7 +18,9 @@ A Github Action to launch [Scala Steward](https://github.com/fthomas/scala-stewa
 * [Configuration](#configuration)
    * [Specify JVM version](#specify-jvm-version)
    * [Github Token](#github-token)
-      * [Note on Github User account](#note-on-github-user-account)
+      * [Using the default Github Action Token](#using-the-default-github-action-token)
+      * [Using a Personal Access Token](#using-a-personal-access-token)
+         * [Note on Github User account](#note-on-github-user-account)
    * [Updating one repository](#updating-one-repository)
    * [Updating multiple repositories](#updating-multiple-repositories)
    * [GPG](#gpg)
@@ -71,18 +73,18 @@ Once you added this trigger Github will show a "Run workflow" button at the work
 
 The following inputs are available:
 
-| Input                   | Allowed values                                                                     | Required | Default                       | Description                                                                                         |
-|-------------------------|------------------------------------------------------------------------------------|----------|-------------------------------|-----------------------------------------------------------------------------------------------------|
-| `repos-file`            | File paths                                                                         | no       | ''                            | Path to a file containing the list of repositories to update in markdown format (- owner/repo)      |
-| `github-repository`     | {{owner}}/{{repo}}                                                                 | no       | $GITHUB_REPOSITORY            | Repository to update. The current repository will be used by default                                |
-| `github-token`          | Valid [Github Token](https://github.com/settings/tokens)                           | yes      | ''                            | Github Personal Access Token with permission to create branches on repo                             |
-| `author-email`          | Email address                                                                      | no       | Github user's *Public email*  | Author email address to use in commits                                                              |
-| `author-name`           | String                                                                             | no       | Github user's *Name*          | Author name to use in commits                                                                       |
-| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases) | no       | 0.6.0                         | Scala Steward version to use                                                                        |
-| `ignore-opts-files`     | true/false                                                                         | no       | true                          | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not |
-| `sign-commits`          | true/false                                                                         | no       | false                         | Whether to sign commits or not                                                                      |
-| `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                     | no       | 2hours                        | TTL of cache for fetching dependency versions and metadata                                          |
-| `github-api-url`        | https://git.yourcompany.com/api/v3                                                 | no       | https://api.github.com        | The URL of the Github API, only use this input if you are using Github Enterprise                   |
+| Input                   | Allowed values                                                                              | Required | Default                      | Description                                                                                                |
+|-------------------------|---------------------------------------------------------------------------------------------|----------|------------------------------|------------------------------------------------------------------------------------------------------------|
+| `repos-file`            | File paths                                                                                  | no       | ''                           | Path to a file containing the list of repositories to update in markdown format (- owner/repo)             |
+| `github-repository`     | {{owner}}/{{repo}}                                                                          | no       | $GITHUB_REPOSITORY           | Repository to update. The current repository will be used by default                                       |
+| `github-token`          | Valid [Github Token](https://github.com/settings/tokens) (or `${{ secrets.GITHUB_TOKEN }}`) | yes      | ''                           | Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`) |
+| `author-email`          | Email address                                                                               | no       | Github user's *Public email* | Author email address to use in commits                                                                     |
+| `author-name`           | String                                                                                      | no       | Github user's *Name*         | Author name to use in commits                                                                              |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases)          | no       | 0.6.0                        | Scala Steward version to use                                                                               |
+| `ignore-opts-files`     | true/false                                                                                  | no       | true                         | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not        |
+| `sign-commits`          | true/false                                                                                  | no       | false                        | Whether to sign commits or not                                                                             |
+| `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                              | no       | 2hours                       | TTL of cache for fetching dependency versions and metadata                                                 |
+| `github-api-url`        | https://git.yourcompany.com/api/v3                                                          | no       | https://api.github.com       | The URL of the Github API, only use this input if you are using Github Enterprise                          |
 
 ### Specify JVM version
 
@@ -96,6 +98,23 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
 
 ### Github Token
 
+There are two options for the Github Token:
+
+#### Using the default Github Action Token
+
+Just provide to the action using `github-token` input:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+> Beware that if you use the default github-token [no workflows will run](https://docs.github.com/en/free-pro-team@latest/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow) on Scala Steward PRs.
+
+#### Using a Personal Access Token
+
 1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens) with permissions for reading/writing in the repository/repositories you wish to update.
 2. Add it as a secret repository.
 3. Provide it to the action using `github-token` input:
@@ -107,7 +126,7 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
     github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
 ```
 
-#### Note on Github User account
+##### Note on Github User account
 
 The [Github Personal Access Token](https://github.com/settings/tokens) can be created under your own Github user account, or under a separate account that has [Collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) permission in the repository/repositories you wish to update.
 
