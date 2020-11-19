@@ -52,15 +52,14 @@ export async function selfInstall(): Promise<void> {
  * @param {string} app - The application's name.
  */
 export async function install(app: string): Promise<void> {
-  core.startGroup(`Installing ${app}`)
+  const homedir = os.homedir()
+  const binPath = path.join(homedir, 'bin')
 
-  const code = await exec.exec('cs', ['install', app], {
+  const code = await exec.exec('cs', ['install', app, '--install-dir', binPath], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.error}
+    listeners: {stdline: core.info, errline: core.debug}
   })
-
-  core.endGroup()
 
   if (code !== 0) {
     throw new Error(`Installing ${app} failed`)
