@@ -2,11 +2,11 @@
 
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
-A Github Action to launch [Scala Steward](https://github.com/fthomas/scala-steward) in your repository.
+A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/scala-steward) in your repository.
 
 <p align="center">
-  <a href="https://github.com/fthomas/scala-steward" target="_blank">
-    <img src="https://github.com/fthomas/scala-steward/raw/master/data/images/scala-steward-logo-circle-0.png" height="180px">
+  <a href="https://github.com/scala-steward-org/scala-steward" target="_blank">
+    <img src="https://github.com/scala-steward-org/scala-steward/raw/master/data/images/scala-steward-logo-circle-0.png" height="180px">
   </a>
 </p>
 
@@ -30,7 +30,7 @@ A Github Action to launch [Scala Steward](https://github.com/fthomas/scala-stewa
 
 ## What does this action do?
 
-When added, this action will launch [Scala Steward](https://github.com/fthomas/scala-steward) on your own repository and create PRs to update your Scala dependencies using your own user:
+When added, this action will launch [Scala Steward](https://github.com/scala-steward-org/scala-steward) on your own repository and create PRs to update your Scala dependencies using your own user:
 
 ![PR example](./data/images/example-pr.png)
 
@@ -80,7 +80,7 @@ The following inputs are available:
 | `github-token`          | Valid [Github Token](https://github.com/settings/tokens) (or `${{ secrets.GITHUB_TOKEN }}`) | yes      | ''                           | Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`) |
 | `author-email`          | Email address                                                                               | no       | Github user's *Public email* | Author email address to use in commits                                                                     |
 | `author-name`           | String                                                                                      | no       | Github user's *Name*         | Author name to use in commits                                                                              |
-| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/fthomas/scala-steward/releases)          | no       | 0.6.0                        | Scala Steward version to use                                                                               |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases)          | no       | 0.8.1                        | Scala Steward version to use                                                                               |
 | `ignore-opts-files`     | true/false                                                                                  | no       | true                         | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not        |
 | `sign-commits`          | true/false                                                                                  | no       | false                        | Whether to sign commits or not                                                                             |
 | `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                              | no       | 2hours                       | TTL of cache for fetching dependency versions and metadata                                                 |
@@ -252,10 +252,6 @@ By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbto
     github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
     ignore-opts-files: false
 ```
-
-## Credit
-
-All the credit goes to [fthomas](https://github.com/fthomas) for creating such an awesome tool as Scala Steward
 
 ## License
 
