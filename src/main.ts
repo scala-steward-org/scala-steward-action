@@ -33,6 +33,12 @@ async function run(): Promise<void> {
     const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
     const cacheTTL = core.getInput('cache-ttl')
     const githubApiUrl = core.getInput('github-api-url')
+    const scalafixMigrations = core.getInput('scalafix-migrations')
+      ? ['--scalafix-migrations', core.getInput('scalafix-migrations')]
+      : []
+    const artifactMigrations = core.getInput('artifact-migrations')
+      ? ['--artifact-migrations', core.getInput('artifact-migrations')]
+      : []
 
     await coursier.install('scalafmt')
 
@@ -49,6 +55,8 @@ async function run(): Promise<void> {
       ignoreOptsFiles ? '--ignore-opts-files' : [],
       signCommits ? '--sign-commits' : [],
       ['--cache-ttl', cacheTTL],
+      scalafixMigrations,
+      artifactMigrations,
       '--do-not-fork',
       '--disable-sandbox'
     ])

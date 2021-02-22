@@ -41,6 +41,12 @@ inputs:
     description: 'The URL of the Github API, only use this input if you are using Github Enterprise'
     default: 'https://api.github.com'
     required: false
+  scalafix-migrations:
+    description: 'https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/scalafix-migrations.md'
+    required: false
+  artifact-migrations:
+    description: 'https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md'
+    required: false
 
 runs:
   using: 'node12'
