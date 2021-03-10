@@ -47,6 +47,12 @@ inputs:
   artifact-migrations:
     description: 'https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md'
     required: false
+  github-app-id:
+    description: 'Github application ID'
+    required: false
+  github-app-key:
+    description: 'Github application private key'
+    required: false
 
 runs:
   using: 'node12'

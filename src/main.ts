@@ -3,6 +3,7 @@ import * as github from './github'
 import * as check from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
+import fs from 'fs'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -40,6 +41,14 @@ async function run(): Promise<void> {
       ? ['--artifact-migrations', core.getInput('artifact-migrations')]
       : []
 
+    const githubAppInfo = check.githubAppInfo()
+    const githubAppArgs = githubAppInfo
+      ? [
+        '--github-app-id', githubAppInfo.id,
+        '--github-app-key-file', githubAppInfo.keyFile
+      ]
+      : []
+
     await coursier.install('scalafmt')
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
@@ -58,7 +67,8 @@ async function run(): Promise<void> {
       scalafixMigrations,
       artifactMigrations,
       '--do-not-fork',
-      '--disable-sandbox'
+      '--disable-sandbox',
+      githubAppArgs
     ])
 
     await workspace.saveWorkspaceCache(workspaceDir)
