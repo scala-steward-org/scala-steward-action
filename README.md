@@ -158,6 +158,8 @@ To update only one repository we can use the `github-repository` input. Just set
 
 ### Updating multiple repositories
 
+#### Using `repos.md`
+
 To update multiple repositories you would need to perform the following steps:
 
 1. Create a markdown file containing the list of repositories in markdown format:
@@ -182,6 +184,23 @@ To update multiple repositories you would need to perform the following steps:
     ```
 
 > This input (if present) will always take precedence over `github-repository`.
+
+#### Using Github Application
+
+You can create a Github App and install it in the repositories you want to update from this action.
+
+The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766). Once you create the app and generate a private key, you can pass these parameters to the action:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-app-id: 123456
+    github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
+```
+
+Scala Steward will use Github API to list all app installations and run updates on those repositories.
 
 ### GPG
 
