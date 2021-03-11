@@ -24,11 +24,14 @@ async function run(): Promise<void> {
     const authorName = core.getInput('author-name') || user.name()
 
     const githubAppInfo = check.githubAppInfo()
+    core.info(`githubAppInfo: ${JSON.stringify(githubAppInfo)}`)
+
     // content of the repos.md file either comes from the input file
     // or is empty (replaced by the Github App info) or is a single repo
     const reposList =
       check.reposFile() ||
       (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`))
+    core.info(`reposList: ${reposList.toString()}`)
 
     const workspaceDir = await workspace.prepare(reposList, token)
     await workspace.restoreWorkspaceCache(workspaceDir)
