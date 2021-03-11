@@ -43,10 +43,7 @@ async function run(): Promise<void> {
 
     const githubAppInfo = check.githubAppInfo()
     const githubAppArgs = githubAppInfo
-      ? [
-        '--github-app-id', githubAppInfo.id,
-        '--github-app-key-file', githubAppInfo.keyFile
-      ]
+      ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
       : []
 
     await coursier.install('scalafmt')

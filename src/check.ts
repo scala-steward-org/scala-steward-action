@@ -94,7 +94,7 @@ export function reposFile(): Buffer | undefined {
  *
  * @returns {string | undefined} Path to the private key file or undefined if both inputs are empty.
  */
-export function githubAppInfo(): { id: string, keyFile: string } | undefined {
+export function githubAppInfo(): {id: string; keyFile: string} | undefined {
   const id: string = core.getInput('github-app-id')
   const key: string = core.getInput('github-app-key')
 
@@ -108,7 +108,7 @@ export function githubAppInfo(): { id: string, keyFile: string } | undefined {
 
     core.info(`✓ Github App ID: ${id}`)
     core.info(`✓ Github App private key is written to: ${keyFile}`)
-    return { id, keyFile }
+    return {id, keyFile}
   }
 
   throw new Error(
