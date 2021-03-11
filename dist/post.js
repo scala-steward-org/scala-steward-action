@@ -50698,21 +50698,15 @@ exports.saveWorkspaceCache = saveWorkspaceCache;
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {string | Buffer} repository - The repository to update or a file containing a list of
- *                                       repositories in Markdown format.
+ * @param {Buffer} reposList - The Markdown list of repositories to write to the `repos.md` file.
  * @param {string} token - The Github Token used to authenticate into Github.
  * @returns {string} The workspace directory path
  */
-async function prepare(repository, token) {
+async function prepare(reposList, token) {
     try {
         const stewarddir = `${os_1.default.homedir()}/scala-steward`;
         await io.mkdirP(stewarddir);
-        if (typeof repository === 'string') {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
-        }
-        else {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
-        }
+        fs_1.default.writeFileSync(`${stewarddir}/repos.md`, reposList);
         fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
         await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
         core.info('✓ Scala Steward workspace created');
