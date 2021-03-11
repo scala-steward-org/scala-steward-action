@@ -3,7 +3,6 @@ import * as github from './github'
 import * as check from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
-import fs from 'fs'
 
 /**
  * Runs the action main code. In order it will do the following:
