@@ -207,6 +207,41 @@ The only permission you need for this app is `Metadata: read-only`. See more det
 
 Scala Steward will use Github API to list all app installations and run updates on those repositories.
 
+##### Authoring pull requests
+
+You can also use a Github App to author update pull requests. It can be the same app as above or a different one.
+To be able to create branches and pull requests it needs these permissions:
+
+- `Contents: read & write`
+- `Pull requests: read & write`
+
+Then you can use an action like [tibdex/github-app-token](https://github.com/tibdex/github-app-token) to generate an [installation access token](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation) and pass it to the Scala Steward action:
+
+```yaml
+- name: Generate token
+  id: generate-token
+  uses: tibdex/github-app-token@v1
+  with:
+    app_id: 123456
+    private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    # used for authoring updates:
+    github-token: ${{ steps.generate-token.outputs.token }}
+    author-email: 123456+app-name[bot]@users.noreply.github.com
+    author-name: app-name[bot]
+    # used for listing repositories (optional, can be a different app):
+    github-app-id: 123456
+    github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
+```
+
+- `author-*` inputs are optional here: if you don't add them, pull requests will be authored by your app, but commits will be authored by the `@github-actions[bot]` account.
+    App email is constructed from the app ID, app name and the `[bot]` suffix ([details](https://github.community/t/logging-into-git-as-a-github-app/115916/2)).
+- `github-app-*` inputs are also optional. If you have an app with write access to many repositories, but want to enable Scala Steward only in some of them, then you can use `repos-file` or another app with minimal permissions just to mark reposities for updates.
+- The app used to author updates has to be also installed in the repository where the action is running from, otherwise the first step won't be able to generate tokens.
+
 ### GPG
 
 If you want commits created by Scala Steward to be automatically signed with a GPG key, follow this steps:
