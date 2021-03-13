@@ -192,9 +192,13 @@ To update multiple repositories you can either maintain a list in a markdown fil
 
 #### Using a Github App
 
-You can create a Github App and install it in the repositories you want to update from this action.
+You can create your own Scala Steward GitHub App and use this action as a backend for it:
 
-The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766). Once you do that you will get an App ID and will be able to generate a private key file. Save the content of that file to a repository secret and pass it the action input:
+1. [Create a new Github App](https://docs.github.com/en/developers/apps/creating-a-github-app)
+2. The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766).
+3. Once you do that you will get an App ID and will be able to generate a private key file.
+4. Save the content of that private key file to a repository secret.
+5. Add your App ID and your secret to the scala-steward-action:
 
 ```yaml
 - name: Launch Scala Steward
@@ -205,7 +209,7 @@ The only permission you need for this app is `Metadata: read-only`. See more det
     github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
 ```
 
-Scala Steward will use Github API to list all app installations and run updates on those repositories.
+Now Scala Steward will use Github API to list all app installations and run updates on those repositories.
 
 ##### Authoring pull requests
 
@@ -215,7 +219,7 @@ To be able to create branches and pull requests it needs these permissions:
 - `Contents: read & write`
 - `Pull requests: read & write`
 
-Then you can use an action like [tibdex/github-app-token](https://github.com/tibdex/github-app-token) to generate an [installation access token](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation) and pass it to the Scala Steward action:
+Then you can use an action like [tibdex/github-app-token](https://github.com/tibdex/github-app-token) to generate an [installation access token](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation) and pass it to the scala-steward-action:
 
 ```yaml
 - name: Generate token
