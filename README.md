@@ -146,6 +146,9 @@ If the account has [personal email address protection](https://help.github.com/e
     author-email: 12345+octocat@users.noreply.github.com
 ```
 
+##### Using a Github App installation tokens
+
+You can create a Github App with write access, install it in the repositories you want to update and use it to generate installation access tokens. See detailed instructions [below](#using-a-github-app-to-author-pull-requests).
 
 ### Updating one repository
 
@@ -163,9 +166,9 @@ To update only one repository we can use the `github-repository` input. Just set
 
 ### Updating multiple repositories
 
-To update multiple repositories you can either maintain a list in a markdown file or use a Github app that you can install in each repository you want to update.
+To update multiple repositories you can either maintain the list in a markdown file or use a Github app that you can install in each repository you want to update.
 
-#### Using a file
+#### Using a file to list repositories
 
 1. Create a file containing the list of repositories in markdown format:
 
@@ -190,7 +193,7 @@ To update multiple repositories you can either maintain a list in a markdown fil
 
 > This input (if present) will always take precedence over `github-repository`.
 
-#### Using a Github App
+#### Using a Github App to list repositories
 
 You can create your own Scala Steward GitHub App and use this action as a backend for it:
 
@@ -211,7 +214,7 @@ You can create your own Scala Steward GitHub App and use this action as a backen
 
 Now Scala Steward will use Github API to list all app installations and run updates on those repositories.
 
-##### Authoring pull requests
+##### Using a Github App to author pull requests
 
 You can also use a Github App to author update pull requests. It can be the same app as above or a different one.
 To be able to create branches and pull requests it needs these permissions:
