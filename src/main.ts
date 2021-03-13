@@ -18,13 +18,19 @@ async function run(): Promise<void> {
     await check.mavenCentral()
     await coursier.selfInstall()
     const token = check.githubToken()
-    const repo = check.reposFile() || check.githubRepository()
     const user = await github.getAuthUser(token)
 
     const authorEmail = core.getInput('author-email') || user.email()
     const authorName = core.getInput('author-name') || user.name()
 
-    const workspaceDir = await workspace.prepare(repo, token)
+    const githubAppInfo = check.githubAppInfo()
+    // content of the repos.md file either comes from the input file
+    // or is empty (replaced by the Github App info) or is a single repo
+    const reposList =
+      check.reposFile() ||
+      (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`))
+
+    const workspaceDir = await workspace.prepare(reposList, token)
     await workspace.restoreWorkspaceCache(workspaceDir)
 
     const version = core.getInput('scala-steward-version')
@@ -38,6 +44,10 @@ async function run(): Promise<void> {
       : []
     const artifactMigrations = core.getInput('artifact-migrations')
       ? ['--artifact-migrations', core.getInput('artifact-migrations')]
+      : []
+
+    const githubAppArgs = githubAppInfo
+      ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
       : []
 
     await coursier.install('scalafmt')
@@ -58,7 +68,8 @@ async function run(): Promise<void> {
       scalafixMigrations,
       artifactMigrations,
       '--do-not-fork',
-      '--disable-sandbox'
+      '--disable-sandbox',
+      githubAppArgs
     ])
 
     await workspace.saveWorkspaceCache(workspaceDir)

@@ -80,7 +80,7 @@ The following inputs are available:
 | `github-token`          | Valid [Github Token](https://github.com/settings/tokens) (or `${{ secrets.GITHUB_TOKEN }}`) | yes      | ''                           | Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`) |
 | `author-email`          | Email address                                                                               | no       | Github user's *Public email* | Author email address to use in commits                                                                     |
 | `author-name`           | String                                                                                      | no       | Github user's *Name*         | Author name to use in commits                                                                              |
-| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases)          | no       | 0.8.1                        | Scala Steward version to use                                                                               |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases)          | no       | 0.9.1                        | Scala Steward version to use                                                                               |
 | `ignore-opts-files`     | true/false                                                                                  | no       | true                         | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not        |
 | `sign-commits`          | true/false                                                                                  | no       | false                        | Whether to sign commits or not                                                                             |
 | `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                              | no       | 2hours                       | TTL of cache for fetching dependency versions and metadata                                                 |
@@ -158,9 +158,11 @@ To update only one repository we can use the `github-repository` input. Just set
 
 ### Updating multiple repositories
 
-To update multiple repositories you would need to perform the following steps:
+To update multiple repositories you can either maintain a list in a markdown file or use a Github app that you can install in each repository you want to update.
 
-1. Create a markdown file containing the list of repositories in markdown format:
+#### Using a file
+
+1. Create a file containing the list of repositories in markdown format:
 
     ```markdown
     # repos.md
@@ -182,6 +184,23 @@ To update multiple repositories you would need to perform the following steps:
     ```
 
 > This input (if present) will always take precedence over `github-repository`.
+
+#### Using a Github App
+
+You can create a Github App and install it in the repositories you want to update from this action.
+
+The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766). Once you do that you will get an App ID and will be able to generate a private key file. Save the content of that file to a repository secret and pass it the action input:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-app-id: 123456
+    github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
+```
+
+Scala Steward will use Github API to list all app installations and run updates on those repositories.
 
 ### GPG
 

@@ -85,3 +85,33 @@ export function reposFile(): Buffer | undefined {
 
   throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`)
 }
+
+/**
+ * Checks that Github App ID and private key are set together, writes the key to a temporary file.
+ *
+ * Throws error if only one of the two inputs is set.
+ *
+ * @returns {{id: string, keyFile: string} | undefined} App ID and path to the private key file or
+ * undefined if both inputs are empty.
+ */
+export function githubAppInfo(): {id: string; keyFile: string} | undefined {
+  const id: string = core.getInput('github-app-id')
+  const key: string = core.getInput('github-app-key')
+
+  if (!id && !key) {
+    return undefined
+  }
+
+  if (id && key) {
+    const keyFile = `${fs.mkdtempSync('tmp-')}/github-app-private-key.pem`
+    fs.writeFileSync(keyFile, key)
+
+    core.info(`✓ Github App ID: ${id}`)
+    core.info(`✓ Github App private key is written to: ${keyFile}`)
+    return {id, keyFile}
+  }
+
+  throw new Error(
+    '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
+  )
+}
