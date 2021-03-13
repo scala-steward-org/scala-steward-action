@@ -12,21 +12,22 @@ A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 
 ---
 
-* [What does this action do?](#what-does-this-action-do)
-* [Usage](#usage)
-   * [How can I trigger a run?](#how-can-i-trigger-a-run)
-* [Configuration](#configuration)
-   * [Specify JVM version](#specify-jvm-version)
-   * [Github Token](#github-token)
-      * [Using the default Github Action Token](#using-the-default-github-action-token)
-      * [Using a Personal Access Token](#using-a-personal-access-token)
-         * [Note on Github User account](#note-on-github-user-account)
-   * [Updating one repository](#updating-one-repository)
-   * [Updating multiple repositories](#updating-multiple-repositories)
-   * [GPG](#gpg)
-   * [Ignoring OPTS files](#ignoring-opts-files)
-* [Credit](#credit)
-* [License](#license)
+- [What does this action do?](#what-does-this-action-do-)
+- [Usage](#usage)
+  * [How can I trigger a run?](#how-can-i-trigger-a-run-)
+- [Configuration](#configuration)
+  * [Specify JVM version](#specify-jvm-version)
+  * [Github Token](#github-token)
+    + [Using the default Github Action Token](#using-the-default-github-action-token)
+    + [Using a Personal Access Token](#using-a-personal-access-token)
+      - [Note on Github User account](#note-on-github-user-account)
+  * [Updating one repository](#updating-one-repository)
+  * [Updating multiple repositories](#updating-multiple-repositories)
+    + [Using a file](#using-a-file)
+    + [Using a Github App](#using-a-github-app)
+  * [GPG](#gpg)
+  * [Ignoring OPTS files](#ignoring-opts-files)
+- [License](#license)
 
 ## What does this action do?
 
