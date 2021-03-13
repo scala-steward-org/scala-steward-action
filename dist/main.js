@@ -5374,11 +5374,15 @@ async function run() {
         await check.mavenCentral();
         await coursier.selfInstall();
         const token = check.githubToken();
-        const repo = check.reposFile() || check.githubRepository();
         const user = await github.getAuthUser(token);
         const authorEmail = core.getInput('author-email') || user.email();
         const authorName = core.getInput('author-name') || user.name();
-        const workspaceDir = await workspace.prepare(repo, token);
+        const githubAppInfo = check.githubAppInfo();
+        // content of the repos.md file either comes from the input file
+        // or is empty (replaced by the Github App info) or is a single repo
+        const reposList = check.reposFile() ||
+            (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`));
+        const workspaceDir = await workspace.prepare(reposList, token);
         await workspace.restoreWorkspaceCache(workspaceDir);
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
@@ -5390,6 +5394,9 @@ async function run() {
             : [];
         const artifactMigrations = core.getInput('artifact-migrations')
             ? ['--artifact-migrations', core.getInput('artifact-migrations')]
+            : [];
+        const githubAppArgs = githubAppInfo
+            ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
             : [];
         await coursier.install('scalafmt');
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
@@ -5408,7 +5415,8 @@ async function run() {
             scalafixMigrations,
             artifactMigrations,
             '--do-not-fork',
-            '--disable-sandbox'
+            '--disable-sandbox',
+            githubAppArgs
         ]);
         await workspace.saveWorkspaceCache(workspaceDir);
     }
@@ -45004,7 +45012,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
+exports.githubAppInfo = exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
 const node_fetch_1 = __importDefault(__webpack_require__(454));
 const core = __importStar(__webpack_require__(470));
 const fs_1 = __importDefault(__webpack_require__(747));
@@ -45077,6 +45085,30 @@ function reposFile() {
     throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`);
 }
 exports.reposFile = reposFile;
+/**
+ * Checks that Github App ID and private key are set together, writes the key to a temporary file.
+ *
+ * Throws error if only one of the two inputs is set.
+ *
+ * @returns {{id: string, keyFile: string} | undefined} App ID and path to the private key file or
+ * undefined if both inputs are empty.
+ */
+function githubAppInfo() {
+    const id = core.getInput('github-app-id');
+    const key = core.getInput('github-app-key');
+    if (!id && !key) {
+        return undefined;
+    }
+    if (id && key) {
+        const keyFile = `${fs_1.default.mkdtempSync('tmp-')}/github-app-private-key.pem`;
+        fs_1.default.writeFileSync(keyFile, key);
+        core.info(`✓ Github App ID: ${id}`);
+        core.info(`✓ Github App private key is written to: ${keyFile}`);
+        return { id, keyFile };
+    }
+    throw new Error('`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing');
+}
+exports.githubAppInfo = githubAppInfo;
 
 
 /***/ }),
@@ -55007,21 +55039,15 @@ exports.saveWorkspaceCache = saveWorkspaceCache;
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {string | Buffer} repository - The repository to update or a file containing a list of
- *                                       repositories in Markdown format.
+ * @param {Buffer} reposList - The Markdown list of repositories to write to the `repos.md` file.
  * @param {string} token - The Github Token used to authenticate into Github.
  * @returns {string} The workspace directory path
  */
-async function prepare(repository, token) {
+async function prepare(reposList, token) {
     try {
         const stewarddir = `${os_1.default.homedir()}/scala-steward`;
         await io.mkdirP(stewarddir);
-        if (typeof repository === 'string') {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, `- ${repository}`);
-        }
-        else {
-            fs_1.default.writeFileSync(`${stewarddir}/repos.md`, repository);
-        }
+        fs_1.default.writeFileSync(`${stewarddir}/repos.md`, reposList);
         fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
         await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
         core.info('✓ Scala Steward workspace created');
