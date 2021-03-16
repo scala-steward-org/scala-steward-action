@@ -31,13 +31,15 @@ async function run(): Promise<void> {
       (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`))
 
     const workspaceDir = await workspace.prepare(reposList, token)
-    await workspace.restoreWorkspaceCache(workspaceDir)
+
+    const cacheTTL = core.getInput('cache-ttl')
+
+    if (cacheTTL !== '0') await workspace.restoreWorkspaceCache(workspaceDir)
 
     const version = core.getInput('scala-steward-version')
 
     const signCommits = /true/i.test(core.getInput('sign-commits'))
     const ignoreOptsFiles = /true/i.test(core.getInput('ignore-opts-files'))
-    const cacheTTL = core.getInput('cache-ttl')
     const githubApiUrl = core.getInput('github-api-url')
     const scalafixMigrations = core.getInput('scalafix-migrations')
       ? ['--scalafix-migrations', core.getInput('scalafix-migrations')]
@@ -72,7 +74,7 @@ async function run(): Promise<void> {
       githubAppArgs
     ])
 
-    await workspace.saveWorkspaceCache(workspaceDir)
+    if (cacheTTL !== '0') await workspace.saveWorkspaceCache(workspaceDir)
   } catch (error) {
     core.setFailed(` ✕ ${error.message}`)
   }
