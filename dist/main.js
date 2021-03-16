@@ -5381,7 +5381,7 @@ async function run() {
         // content of the repos.md file either comes from the input file
         // or is empty (replaced by the Github App info) or is a single repo
         const reposList = check.reposFile() ||
-            (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`));
+            (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository()}`));
         const workspaceDir = await workspace.prepare(reposList, token);
         const cacheTTL = core.getInput('cache-ttl');
         if (cacheTTL !== '0')
