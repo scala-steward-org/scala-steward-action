@@ -28,7 +28,7 @@ async function run(): Promise<void> {
     // or is empty (replaced by the Github App info) or is a single repo
     const reposList =
       check.reposFile() ||
-      (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository}`))
+      (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository()}`))
 
     const workspaceDir = await workspace.prepare(reposList, token)
 
