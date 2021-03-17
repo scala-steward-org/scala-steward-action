@@ -12,19 +12,21 @@ A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 
 ---
 
-- [What does this action do?](#what-does-this-action-do-)
+- [What does this action do?](#what-does-this-action-do)
 - [Usage](#usage)
-  * [How can I trigger a run?](#how-can-i-trigger-a-run-)
+  * [How can I trigger a run?](#how-can-i-trigger-a-run)
 - [Configuration](#configuration)
   * [Specify JVM version](#specify-jvm-version)
   * [Github Token](#github-token)
     + [Using the default Github Action Token](#using-the-default-github-action-token)
     + [Using a Personal Access Token](#using-a-personal-access-token)
       - [Note on Github User account](#note-on-github-user-account)
+    + [Using a Github App installation tokens](#using-a-github-app-installation-tokens)
   * [Updating one repository](#updating-one-repository)
   * [Updating multiple repositories](#updating-multiple-repositories)
-    + [Using a file](#using-a-file)
-    + [Using a Github App](#using-a-github-app)
+    + [Using a file to list repositories](#using-a-file-to-list-repositories)
+    + [Using a Github App to list repositories](#using-a-github-app-to-list-repositories)
+      - [Using a Github App to author pull requests](#using-a-github-app-to-author-pull-requests)
   * [GPG](#gpg)
   * [Ignoring OPTS files](#ignoring-opts-files)
 - [License](#license)
@@ -53,7 +55,7 @@ jobs:
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:
-          github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 ```
 
 ### How can I trigger a run?
@@ -103,32 +105,32 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
 
 ### Github Token
 
-There are two options for the Github Token:
+There are several options for the Github Token:
 
 #### Using the default Github Action Token
 
-Just provide to the action using `github-token` input:
+Just provide it to the action using `github-token` input:
 
 ```yaml
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.GITHUB_TOKEN }}
+    github-token: ${{ github.token }}
 ```
 
 > Beware that if you use the default github-token [no workflows will run](https://docs.github.com/en/free-pro-team@latest/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow) on Scala Steward PRs.
 
 #### Using a Personal Access Token
 
-1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens) with permissions for reading/writing in the repository/repositories you wish to update.
-2. Add it as a secret repository.
+1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens) with `repo` permissions for reading/writing in the repository/repositories you wish to update.
+2. Add it as a repository secret.
 3. Provide it to the action using `github-token` input:
 
 ```yaml
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 ```
 
 ##### Note on Github User account
@@ -142,10 +144,13 @@ If the account has [personal email address protection](https://help.github.com/e
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
     author-email: 12345+octocat@users.noreply.github.com
 ```
 
+#### Using a Github App installation tokens
+
+You can create a Github App with write access, install it in the repositories you want to update and use it to generate installation access tokens. See detailed instructions [below](#using-a-github-app-to-author-pull-requests).
 
 ### Updating one repository
 
@@ -155,7 +160,7 @@ To update only one repository we can use the `github-repository` input. Just set
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
     github-repository: owner/repository
 ```
 
@@ -163,9 +168,9 @@ To update only one repository we can use the `github-repository` input. Just set
 
 ### Updating multiple repositories
 
-To update multiple repositories you can either maintain a list in a markdown file or use a Github app that you can install in each repository you want to update.
+To update multiple repositories you can either maintain the list in a markdown file or use a Github app that you can install in each repository you want to update.
 
-#### Using a file
+#### Using a file to list repositories
 
 1. Create a file containing the list of repositories in markdown format:
 
@@ -184,28 +189,67 @@ To update multiple repositories you can either maintain a list in a markdown fil
     - name: Launch Scala Steward
       uses: scala-steward-org/scala-steward-action@v2
       with:
-        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
         repos-file: 'repos.md'
     ```
 
 > This input (if present) will always take precedence over `github-repository`.
 
-#### Using a Github App
+#### Using a Github App to list repositories
 
-You can create a Github App and install it in the repositories you want to update from this action.
+You can create your own Scala Steward GitHub App and use this action as a backend for it:
 
-The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766). Once you do that you will get an App ID and will be able to generate a private key file. Save the content of that file to a repository secret and pass it the action input:
+1. [Create a new Github App](https://docs.github.com/en/developers/apps/creating-a-github-app)
+2. The only permission you need for this app is `Metadata: read-only`. See more detailed setup instructions [here](https://github.com/scala-steward-org/scala-steward/pull/1766).
+3. Once you do that you will get an App ID and will be able to generate a private key file.
+4. Save the content of that private key file to a repository secret.
+5. Add your App ID and your secret to the scala-steward-action:
 
 ```yaml
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
     github-app-id: 123456
     github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
 ```
 
-Scala Steward will use Github API to list all app installations and run updates on those repositories.
+Now Scala Steward will use Github API to list all app installations and run updates on those repositories.
+
+##### Using a Github App to author pull requests
+
+You can also use a Github App to author update pull requests. It can be the same app as above or a different one.
+To be able to create branches and pull requests it needs these permissions:
+
+- `Contents: read & write`
+- `Pull requests: read & write`
+
+Then you can use an action like [tibdex/github-app-token](https://github.com/tibdex/github-app-token) to generate an [installation access token](https://docs.github.com/en/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation) and pass it to the scala-steward-action:
+
+```yaml
+- name: Generate token
+  id: generate-token
+  uses: tibdex/github-app-token@v1
+  with:
+    app_id: 123456
+    private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    # used for authoring updates:
+    github-token: ${{ steps.generate-token.outputs.token }}
+    author-email: 123456+app-name[bot]@users.noreply.github.com
+    author-name: app-name[bot]
+    # used for listing repositories (optional, can be a different app):
+    github-app-id: 123456
+    github-app-key: ${{ secrets.APP_PRIVATE_KEY }}
+```
+
+- `author-*` inputs are optional here: if you don't add them, pull requests will be authored by your app, but commits will be authored by the `@github-actions[bot]` account.
+    App email is constructed from the app ID, app name and the `[bot]` suffix ([details](https://github.community/t/logging-into-git-as-a-github-app/115916/2)).
+- `github-app-*` inputs are also optional. If you have an app with write access to many repositories, but want to enable Scala Steward only in some of them, then you can use `repos-file` or another app with minimal permissions just to mark reposities for updates.
+- The app used to author updates has to be also installed in the repository where the action is running from, otherwise the first step won't be able to generate tokens.
 
 ### GPG
 
@@ -249,7 +293,7 @@ If you want commits created by Scala Steward to be automatically signed with a G
     - name: Launch Scala Steward
       uses: scala-steward-org/scala-steward-action@v2
       with:
-        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
         sign-commits: true
     ```
 
@@ -259,7 +303,7 @@ If you want commits created by Scala Steward to be automatically signed with a G
     - name: Launch Scala Steward
       uses: scala-steward-org/scala-steward-action@v2
       with:
-        github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+        github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
         sign-commits: true
         author-email: ${{ steps.import_gpg.outputs.email }}
         author-name: ${{ steps.import_gpg.outputs.name }}
@@ -273,7 +317,7 @@ By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbto
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
-    github-token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+    github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
     ignore-opts-files: false
 ```
 
