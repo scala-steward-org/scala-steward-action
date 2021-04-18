@@ -34,7 +34,7 @@ async function run(): Promise<void> {
 
     const cacheTTL = core.getInput('cache-ttl')
 
-    if (cacheTTL !== '0') await workspace.restoreWorkspaceCache(workspaceDir)
+    if (cacheTTL !== '0s') await workspace.restoreWorkspaceCache(workspaceDir)
 
     const version = core.getInput('scala-steward-version')
 
