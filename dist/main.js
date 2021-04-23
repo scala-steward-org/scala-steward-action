@@ -5384,7 +5384,7 @@ async function run() {
             (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository()}`));
         const workspaceDir = await workspace.prepare(reposList, token);
         const cacheTTL = core.getInput('cache-ttl');
-        if (cacheTTL !== '0')
+        if (cacheTTL !== '0s')
             await workspace.restoreWorkspaceCache(workspaceDir);
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
