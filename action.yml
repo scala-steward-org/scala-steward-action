@@ -34,7 +34,7 @@ inputs:
     default: 'false'
     required: false
   cache-ttl:
-    description: 'TTL of cache for fetching dependency versions and metadata, set it to 0 to disable it'
+    description: 'TTL of cache for fetching dependency versions and metadata, set it to 0s to disable it'
     default: '2hours'
     required: false
   github-api-url:
