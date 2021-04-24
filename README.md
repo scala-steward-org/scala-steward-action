@@ -36,7 +36,7 @@ jobs:
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 ```
 
 ### How can I trigger a run?
