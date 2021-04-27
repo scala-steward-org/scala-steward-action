@@ -26,6 +26,8 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+name: Launch Scala Steward
+
 jobs:
   scala-steward:
     runs-on: ubuntu-latest
