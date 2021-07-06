@@ -16,8 +16,6 @@ jobs:
           node-version: "16"
       - name: Install
         run: npm install
-      - name: Format
-        run: npm run format
       - name: Build
         run: npm run build
       - name: Push changes
