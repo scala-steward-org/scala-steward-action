@@ -20,13 +20,13 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
   const github = getOctokit(token)
 
   try {
-    const {login, email, name} = (await github.users.getAuthenticated()).data
+    const {login, email, name} = (await github.rest.users.getAuthenticated()).data
 
     core.info('✓ User information retrieved from Github')
 
     core.debug(`- Login: ${login}`)
-    core.debug(`- Email: ${email}`)
-    core.debug(`- Name: ${name}`)
+    core.debug(`- Email: ${email ?? 'no email found'}`)
+    core.debug(`- Name: ${name ?? 'no name found'}`)
 
     return {
       login: () => {
