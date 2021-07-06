@@ -12,20 +12,20 @@ import * as os from 'os'
  */
 export async function selfInstall(): Promise<void> {
   try {
-    const temp = await tc.downloadTool('https://git.io/coursier-cli-linux')
+    const temporary = await tc.downloadTool('https://git.io/coursier-cli-linux')
 
-    await exec.exec('chmod', ['+x', temp], {silent: true, ignoreReturnCode: true})
+    await exec.exec('chmod', ['+x', temporary], {silent: true, ignoreReturnCode: true})
 
     const homedir = os.homedir()
     const binPath = path.join(homedir, 'bin')
 
     await io.mkdirP(binPath)
-    await io.cp(temp, path.join(binPath, 'cs'))
-    await io.rmRF(temp)
+    await io.cp(temporary, path.join(binPath, 'cs'))
+    await io.rmRF(temporary)
 
     core.addPath(binPath)
-  } catch (error) {
-    core.debug(error.message)
+  } catch (error: unknown) {
+    core.debug((error as Error).message)
     throw new Error('Unable to install coursier')
   }
 
@@ -34,7 +34,9 @@ export async function selfInstall(): Promise<void> {
   const code = await exec.exec('cs', ['--version'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdout: data => (version += data.toString()), errline: core.error}
+    listeners: {stdout: data => {
+      (version += data.toString())
+    }, errline: core.error}
   })
 
   if (code !== 0) {
@@ -70,7 +72,9 @@ export async function install(app: string): Promise<void> {
   code = await exec.exec(app, ['--version'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdout: data => (version += data.toString()), errline: core.error}
+    listeners: {stdout: data => {
+      (version += data.toString())
+    }, errline: core.error}
   })
 
   if (code !== 0) {
@@ -94,7 +98,7 @@ export async function launch(
   org: string,
   app: string,
   version: string,
-  args: (string | string[])[] = []
+  args: Array<string | string[]> = []
 ): Promise<void> {
   const name = `${org}:${app}:${version}`
 

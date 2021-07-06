@@ -8,12 +8,12 @@ import * as coursier from './coursier'
 async function post(): Promise<void> {
   try {
     await workspace.remove()
-    core.info("🗑 Scala Steward's workspace removed")
+    core.info('🗑 Scala Steward\'s workspace removed')
     await coursier.remove()
     core.info('🗑 Coursier binary removed')
-  } catch (error) {
-    core.warning(error.message)
+  } catch (error: unknown) {
+    core.warning((error as Error).message)
   }
 }
 
-post()
+void post()
