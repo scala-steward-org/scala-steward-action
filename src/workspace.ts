@@ -37,12 +37,15 @@ export async function restoreWorkspaceCache(workspace: string): Promise<void> {
       [`scala-steward-${hash}`, 'scala-steward-']
     )
 
-    if (cacheHit) core.info('Scala Steward workspace contents restored from cache')
-    else core.info("Scala Steward workspace contents weren't found on cache")
+    if (cacheHit) {
+      core.info('Scala Steward workspace contents restored from cache')
+    } else {
+      core.info('Scala Steward workspace contents weren\'t found on cache')
+    }
 
     core.endGroup()
-  } catch (error) {
-    core.debug(error.message)
+  } catch (error: unknown) {
+    core.debug((error as Error).message)
     core.warning('Unable to restore workspace from cache')
     core.endGroup()
   }
@@ -57,7 +60,7 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
   try {
     core.startGroup('Saving workspace to cache...')
 
-    //We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
+    // We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
     await io.rmRF(path.join(workspace, 'workspace', 'store', 'refresh_error'))
     await io.rmRF(path.join(workspace, 'workspace', 'repos'))
 
@@ -70,8 +73,8 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
 
     core.info('Scala Steward workspace contents saved to cache')
     core.endGroup()
-  } catch (error) {
-    core.debug(error.message)
+  } catch (error: unknown) {
+    core.debug((error as Error).message)
     core.warning('Unable to save workspace to cache')
     core.endGroup()
   }
@@ -103,8 +106,8 @@ export async function prepare(reposList: Buffer, token: string): Promise<string>
     core.info('✓ Scala Steward workspace created')
 
     return stewarddir
-  } catch (error) {
-    core.debug(error.message)
+  } catch (error: unknown) {
+    core.debug((error as Error).message)
     throw new Error('Unable to create Scala Steward workspace')
   }
 }
