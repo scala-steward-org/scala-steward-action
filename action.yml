@@ -1,19 +1,19 @@
-name: 'Scala Steward Github Action'
+name: "Scala Steward Github Action"
 author: alejandrohdezma
-description: '🤖 A bot that helps you keeping your Scala projects up-to-date '
+description: "🤖 A bot that helps you keeping your Scala projects up-to-date "
 branding:
-  icon:  arrow-up-circle
+  icon: arrow-up-circle
   color: red
 
 inputs:
   repos-file:
-    description: 'Path to a file containing the list of repositories to update in markdown format (- owner/repo)'
+    description: "Path to a file containing the list of repositories to update in markdown format (- owner/repo)"
     required: false
   github-repository:
-    description: 'Repository to update. The current repository will be used by default'
+    description: "Repository to update. The current repository will be used by default"
     required: false
   github-token:
-    description: 'Github Personal Access Token with permission to create branches on repo'
+    description: "Github Personal Access Token with permission to create branches on repo"
     required: true
   author-email:
     description: Author email address to use in commits
@@ -22,39 +22,39 @@ inputs:
     description: Author name to use in commits
     required: false
   scala-steward-version:
-    description: 'Scala Steward version to use'
-    default: '0.10.0'
+    description: "Scala Steward version to use"
+    default: "0.10.0"
     required: false
   ignore-opts-files:
     description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'
-    default: 'true'
+    default: "true"
     required: false
   sign-commits:
-    description: 'Whether to sign commits or not'
-    default: 'false'
+    description: "Whether to sign commits or not"
+    default: "false"
     required: false
   cache-ttl:
-    description: 'TTL of cache for fetching dependency versions and metadata, set it to 0s to disable it'
-    default: '2hours'
+    description: "TTL of cache for fetching dependency versions and metadata, set it to 0s to disable it"
+    default: "2hours"
     required: false
   github-api-url:
-    description: 'The URL of the Github API, only use this input if you are using Github Enterprise'
-    default: 'https://api.github.com'
+    description: "The URL of the Github API, only use this input if you are using Github Enterprise"
+    default: "https://api.github.com"
     required: false
   scalafix-migrations:
-    description: 'https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/scalafix-migrations.md'
+    description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/scalafix-migrations.md"
     required: false
   artifact-migrations:
-    description: 'https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md'
+    description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md"
     required: false
   github-app-id:
-    description: 'Github application ID'
+    description: "Github application ID"
     required: false
   github-app-key:
-    description: 'Github application private key'
+    description: "Github application private key"
     required: false
 
 runs:
-  using: 'node12'
-  main: 'dist/main.js'
-  post: 'dist/post.js'
+  using: "node12"
+  main: "dist/main.js"
+  post: "dist/post.js"
