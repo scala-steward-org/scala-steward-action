@@ -23,7 +23,7 @@ inputs:
     required: false
   scala-steward-version:
     description: 'Scala Steward version to use'
-    default: '0.10.0'
+    default: '0.11.0'
     required: false
   ignore-opts-files:
     description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'
