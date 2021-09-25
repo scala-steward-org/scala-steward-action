@@ -6102,7 +6102,7 @@ const nameErrorMessage = 'Unable to find author\'s name. Either ensure that the 
  * @returns {Promise<AuthUser>} The login, email and name of token's user.
  */
 async function getAuthUser(token) {
-    const github = github_1.getOctokit(token);
+    const github = (0, github_1.getOctokit)(token);
     try {
         const { login, email, name } = (await github.rest.users.getAuthenticated()).data;
         core.info('✓ User information retrieved from Github');
@@ -44804,7 +44804,7 @@ const fs_1 = __importDefault(__webpack_require__(747));
  * Checks connection with Maven Central, throws error if unable to connect.
  */
 async function mavenCentral() {
-    const response = await node_fetch_1.default('https://repo1.maven.org/maven2/');
+    const response = await (0, node_fetch_1.default)('https://repo1.maven.org/maven2/');
     if (!response.ok) {
         throw new Error('Unable to connect to Maven Central');
     }
