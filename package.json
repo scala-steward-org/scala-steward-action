@@ -33,7 +33,7 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@ava/typescript": "^1.1.1",
+    "@ava/typescript": "^2.0.0",
     "@types/node": "^16.4.10",
     "@zeit/ncc": "^0.22.3",
     "ava": "^3.15.0",
