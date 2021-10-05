@@ -4767,6 +4767,9 @@ async function run() {
         const signCommits = /true/i.test(core.getInput('sign-commits'));
         const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         const githubApiUrl = core.getInput('github-api-url');
+        const defaultBranch = core.getInput('branch') ?
+            ['--default-branch', core.getInput('branch')] :
+            [];
         const scalafixMigrations = core.getInput('scalafix-migrations') ?
             ['--scalafix-migrations', core.getInput('scalafix-migrations')] :
             [];
@@ -4792,6 +4795,7 @@ async function run() {
             ['--cache-ttl', cacheTTL],
             scalafixMigrations,
             artifactMigrations,
+            defaultBranch,
             '--do-not-fork',
             '--disable-sandbox',
             githubAppArgs
