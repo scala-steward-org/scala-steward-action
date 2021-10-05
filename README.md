@@ -272,7 +272,7 @@ jobs:
 
 ### GPG
 
-If you want commits created by Scala Steward to be automatically signed with a GPG key, follow thess steps:
+If you want commits created by Scala Steward to be automatically signed with a GPG key, follow these steps:
 
 1. Generate a new GPG key following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key).
 2. Add your new GPG key to your [user's Github account](https://github.com/settings/keys) following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account).
