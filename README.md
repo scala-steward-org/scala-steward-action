@@ -64,15 +64,16 @@ The following inputs are available:
 | `github-token`          | Valid [Github Token](https://github.com/settings/tokens) (or `${{ secrets.GITHUB_TOKEN }}`)                                                   | yes                                 | ''                           | Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`)                                                                            |
 | `author-email`          | Email address                                                                                                                                 | no                                  | Github user's *Public email* | Author email address to use in commits                                                                                                                                                |
 | `author-name`           | String                                                                                                                                        | no                                  | Github user's *Name*         | Author name to use in commits                                                                                                                                                         |
-| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases)                                                  | no                                  | 0.10.0                        | Scala Steward version to use                                                                                                                                                          |
+| `scala-steward-version` | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases)                                                  | no                                  | 0.11.0                       | Scala Steward version to use                                                                                                                                                          |
 | `ignore-opts-files`     | true/false                                                                                                                                    | no                                  | true                         | Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not                                                                                   |
 | `sign-commits`          | true/false                                                                                                                                    | no                                  | false                        | Whether to sign commits or not                                                                                                                                                        |
-| `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                                                                                | no                                  | 2hours                       | TTL of cache for fetching dependency versions and metadata. Set it to `0s` to disable cache completely.                                                                                                                           |
+| `cache-ttl`             | like 24hours, 5min, 10s, or 0s                                                                                                                | no                                  | 2hours                       | TTL of cache for fetching dependency versions and metadata. Set it to `0s` to disable cache completely.                                                                               |
 | `github-api-url`        | https://git.yourcompany.com/api/v3                                                                                                            | no                                  | https://api.github.com       | The URL of the Github API, only use this input if you are using Github Enterprise                                                                                                     |
 | `scalafix-migrations`   | Path to HOCON file or remote URL with [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) | no                                  | ''                           | Scalafix migrations to run when updating dependencies. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) for more information. |
 | `artifact-migrations`   | Path to HOCON file with  [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md)              | no                                  | ''                           | Artifact migrations to find newer dependency updates. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) for more information.  |
 | `github-app-id`         | A valid GitHub App id                                                                                                                         | only if `github-app-key` is present | ''                           | This input in combination with `github-app-key` allows you to use this action as a "backend" for your own Scala Steward GitHub App.                                                   |
 | `github-app-key`        | The private key for the previous GitHub App id. This value should be extracted from a secret.                                                 | only if `github-app-id` is present  | ''                           | This input in combination with `GitHub-app-id` allows you to use this action as a "backend" for your own Scala Steward GitHub App.                                                    |
+| `branch`                | A custom branch to update instead of the default branch on each repository. See ["Updating a custom branch"](#updating-a-custom-branch).      | no                                  | ''                           |                                                                                                                                                                                       |
 
 ### Specify JVM version
 
@@ -232,9 +233,46 @@ Then you can use an action like [tibdex/github-app-token](https://github.com/tib
 - `github-app-*` inputs are also optional. If you have an app with write access to many repositories, but want to enable Scala Steward only in some of them, then you can use `repos-file` or another app with minimal permissions just to mark reposities for updates.
 - The app used to author updates has to be also installed in the repository where the action is running from, otherwise the first step won't be able to generate tokens.
 
+### Updating a custom branch
+
+By default Scala Steward uses the repository's default branch to make the updates. If you want to customize that behaviour you can use the `branch` input:
+
+```yml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  with:
+    github-token: ${{ github.token }}
+    branch: develop
+```
+
+This input is specially useful when you want to update multiple branches. For this you can take advantage of [GitHub Action's `matrix`](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix).
+
+```yml
+# This workflow will launch at 00:00 every Sunday
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+name: Launch Scala Steward on `main`, `1.x` and `2.x`
+
+jobs:
+  scala-steward:
+    runs-on: ubuntu-latest
+    name: Launch Scala Steward
+    strategy:
+      matrix:
+        branch: ['main', '1.x', '2.x']
+    steps:
+      - name: Launch Scala Steward
+        uses: scala-steward-org/scala-steward-action@v2
+        with:
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ matrix.branch }}
+```
+
 ### GPG
 
-If you want commits created by Scala Steward to be automatically signed with a GPG key, follow this steps:
+If you want commits created by Scala Steward to be automatically signed with a GPG key, follow these steps:
 
 1. Generate a new GPG key following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key).
 2. Add your new GPG key to your [user's Github account](https://github.com/settings/keys) following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account).
