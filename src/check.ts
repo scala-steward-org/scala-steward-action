@@ -56,17 +56,25 @@ export function githubRepository(): string {
     )
   }
 
-  const branch = core.getInput('branch')
+  const branches = core.getInput('branches').split(',').filter(string => string)
 
-  if (branch !== '') {
+  if (branches.length === 1) {
+    const branch = branches[0]
+
     core.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`)
 
-    return `${repo}:${branch}`
+    return `- ${repo}:${branch}`
+  }
+
+  if (branches.length > 1) {
+    core.info(`✓ Github Repository set to: ${repo}. Will update ${branches.join(', ')} branches.`)
+
+    return branches.map((branch: string) => `- ${repo}:${branch}`).join('\n')
   }
 
   core.info(`✓ Github Repository set to: ${repo}.`)
 
-  return repo
+  return `- ${repo}`
 }
 
 /**

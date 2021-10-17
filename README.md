@@ -73,7 +73,7 @@ The following inputs are available:
 | `artifact-migrations` | Path to HOCON file with  [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) | no | '' | Artifact migrations to find newer dependency updates. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) for more information. |
 | `github-app-id` | A valid GitHub App id | only if `github-app-key` is present | '' | This input in combination with `github-app-key` allows you to use this action as a "backend" for your own Scala Steward GitHub App. |
 | `github-app-key` | The private key for the previous GitHub App id. This value should be extracted from a secret. | only if `github-app-id` is present | '' | This input in combination with `GitHub-app-id` allows you to use this action as a "backend" for your own Scala Steward GitHub App. |
-| `branch` | A custom branch's name | no | '' | A custom branch to update instead of the default branch on each repository. See ["Updating a custom branch"](#updating-a-custom-branch). This input only takes effect if updating the current repo or using the `github-repository` input. |
+| `branches` | A list of branches to update | no | '' | A comma-separated list of branches to update (if not provided, the repository's default branch will be updated instead). This option only has effect if updating the current repository or using the `github-repository` input. See ["Updating a custom branch"](#updating-a-custom-branch) |
 
 ### Specify JVM version
 
@@ -235,39 +235,24 @@ Then you can use an action like [tibdex/github-app-token](https://github.com/tib
 
 ### Updating a custom branch
 
-By default Scala Steward uses the repository's default branch to make the updates. If you want to customize that behaviour you can use the `branch` input:
+By default, Scala Steward uses the repository's default branch to make the updates. If you want to customize that behavior, you can use the `branches` input:
 
 ```yml
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
   with:
     github-token: ${{ github.token }}
-    branch: 0.1.x
+    branches: main,0.1.x,0.2.x
 ```
 
-This input is specially useful when you want to update multiple branches. For this you can take advantage of [GitHub Action's `matrix`](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix).
+Take into account that this input is only used if updating the repository where the action is
+being run or using the `github-repository` input. For cases where the `repos-file` input is used, you
+should follow the instructions [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/faq.md#can-scala-steward-update-multiple-branches-in-a-repository) and add multiple lines in the markdown file like:
 
-```yml
-# This workflow will launch at 00:00 every Sunday
-on:
-  schedule:
-    - cron: '0 0 * * 0'
-
-name: Launch Scala Steward on `main`, `1.x` and `2.x`
-
-jobs:
-  scala-steward:
-    runs-on: ubuntu-latest
-    name: Launch Scala Steward
-    strategy:
-      matrix:
-        branch: ['main', '1.x', '2.x']
-    steps:
-      - name: Launch Scala Steward
-        uses: scala-steward-org/scala-steward-action@v2
-        with:
-          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
-          branch: ${{ matrix.branch }}
+```md
+- repo/owner # updates default branch
+- repo/owner:0.1.x # updates 0.1.x branch
+- repo/owner:0.2.x # updates 0.2.x branch
 ```
 
 ### GPG
