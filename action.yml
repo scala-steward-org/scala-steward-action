@@ -30,7 +30,7 @@ inputs:
     default: "true"
     required: false
   branch:
-    description: The branch that should be updated (instead of the repository's default branch)
+    description: The branch that should be updated (if not provided, the repository's default branch will be updated instead)
     required: false
   sign-commits:
     description: "Whether to sign commits or not"

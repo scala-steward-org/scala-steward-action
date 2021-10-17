@@ -39,6 +39,9 @@ export function githubToken(): string {
  *
  * Throws error if the fallback fails or returns the repository in case it doesn't.
  *
+ * If the `branch` input is set, the selected branch will be added for update instead
+ * of the default one.
+ *
  * @returns {string} The Github repository read from the `github-repository` input
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
@@ -53,7 +56,15 @@ export function githubRepository(): string {
     )
   }
 
-  core.info(`✓ Github Repository set to: ${repo}`)
+  const branch = core.getInput('branch')
+
+  if (branch !== '') {
+    core.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`)
+
+    return `${repo}:${branch}`
+  }
+
+  core.info(`✓ Github Repository set to: ${repo}.`)
 
   return repo
 }
