@@ -22,15 +22,16 @@ inputs:
     description: Author name to use in commits
     required: false
   scala-steward-version:
-    description: 'Scala Steward version to use'
-    default: '0.11.0'
+    description: "Scala Steward version to use"
+    default: "0.12.0"
     required: false
   ignore-opts-files:
     description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'
     default: "true"
     required: false
-  branch:
-    description: The branch that should be updated (instead of the repository's default branch)
+  branches:
+    description: A comma-separated list of branches to update (if not provided, the repository's default branch will be 
+      updated instead). This option only has effect if updating the current repository or using the `github-repository` input.
     required: false
   sign-commits:
     description: "Whether to sign commits or not"
@@ -55,6 +56,10 @@ inputs:
     required: false
   github-app-key:
     description: "Github application private key"
+    required: false
+  default-repo-conf:
+    description: "Location of a `.scala-steward.conf` file with default values"
+    default: ".github/.scala-steward.conf"
     required: false
 
 runs:

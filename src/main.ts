@@ -25,11 +25,13 @@ async function run(): Promise<void> {
 
     const githubAppInfo = check.githubAppInfo()
 
+    const defaultRepoConfPath = check.defaultRepoConf()
+
     // Content of the repos.md file either comes from the input file
     // or is empty (replaced by the Github App info) or is a single repo
     const reposList =
       check.reposFile() ??
-      (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository()}`))
+      (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()))
 
     const workspaceDir = await workspace.prepare(reposList, token)
 
@@ -44,15 +46,13 @@ async function run(): Promise<void> {
     const signCommits = /true/i.test(core.getInput('sign-commits'))
     const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'))
     const githubApiUrl = core.getInput('github-api-url')
-    const defaultBranch = core.getInput('branch') ?
-      ['--default-branch', core.getInput('branch')] :
-      []
     const scalafixMigrations = core.getInput('scalafix-migrations') ?
       ['--scalafix-migrations', core.getInput('scalafix-migrations')] :
       []
     const artifactMigrations = core.getInput('artifact-migrations') ?
       ['--artifact-migrations', core.getInput('artifact-migrations')] :
       []
+    const defaultRepoConf = defaultRepoConfPath ? ['--default-repo-conf', defaultRepoConfPath] : []
 
     const githubAppArgs = githubAppInfo ?
       ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile] :
@@ -75,7 +75,7 @@ async function run(): Promise<void> {
       ['--cache-ttl', cacheTTL],
       scalafixMigrations,
       artifactMigrations,
-      defaultBranch,
+      defaultRepoConf,
       '--do-not-fork',
       '--disable-sandbox',
       githubAppArgs
