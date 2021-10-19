@@ -14,7 +14,8 @@ inputs:
     required: false
   github-token:
     description: "Github Personal Access Token with permission to create branches on repo"
-    required: true
+    required: false
+    default: ${{ github.token }}
   author-email:
     description: Author email address to use in commits
     required: false
@@ -30,7 +31,8 @@ inputs:
     default: "true"
     required: false
   branches:
-    description: A comma-separated list of branches to update (if not provided, the repository's default branch will be 
+    description:
+      A comma-separated list of branches to update (if not provided, the repository's default branch will be
       updated instead). This option only has effect if updating the current repository or using the `github-repository` input.
     required: false
   sign-commits:
