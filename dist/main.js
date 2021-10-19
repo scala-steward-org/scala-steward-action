@@ -4755,9 +4755,10 @@ async function run() {
         const authorEmail = core.getInput('author-email') || user.email();
         const authorName = core.getInput('author-name') || user.name();
         const githubAppInfo = check.githubAppInfo();
+        const defaultRepoConfPath = check.defaultRepoConf();
         // Content of the repos.md file either comes from the input file
         // or is empty (replaced by the Github App info) or is a single repo
-        const reposList = (_a = check.reposFile()) !== null && _a !== void 0 ? _a : (githubAppInfo ? Buffer.from('') : Buffer.from(`- ${check.githubRepository()}`));
+        const reposList = (_a = check.reposFile()) !== null && _a !== void 0 ? _a : (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()));
         const workspaceDir = await workspace.prepare(reposList, token);
         const cacheTTL = core.getInput('cache-ttl');
         if (cacheTTL !== '0s') {
@@ -4767,15 +4768,13 @@ async function run() {
         const signCommits = /true/i.test(core.getInput('sign-commits'));
         const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         const githubApiUrl = core.getInput('github-api-url');
-        const defaultBranch = core.getInput('branch') ?
-            ['--default-branch', core.getInput('branch')] :
-            [];
         const scalafixMigrations = core.getInput('scalafix-migrations') ?
             ['--scalafix-migrations', core.getInput('scalafix-migrations')] :
             [];
         const artifactMigrations = core.getInput('artifact-migrations') ?
             ['--artifact-migrations', core.getInput('artifact-migrations')] :
             [];
+        const defaultRepoConf = defaultRepoConfPath ? ['--default-repo-conf', defaultRepoConfPath] : [];
         const githubAppArgs = githubAppInfo ?
             ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile] :
             [];
@@ -4795,7 +4794,7 @@ async function run() {
             ['--cache-ttl', cacheTTL],
             scalafixMigrations,
             artifactMigrations,
-            defaultBranch,
+            defaultRepoConf,
             '--do-not-fork',
             '--disable-sandbox',
             githubAppArgs
@@ -44623,7 +44622,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.githubAppInfo = exports.reposFile = exports.githubRepository = exports.githubToken = exports.mavenCentral = void 0;
+exports.githubAppInfo = exports.reposFile = exports.githubRepository = exports.defaultRepoConf = exports.githubToken = exports.mavenCentral = void 0;
 const node_fetch_1 = __importDefault(__webpack_require__(454));
 const core = __importStar(__webpack_require__(470));
 const fs_1 = __importDefault(__webpack_require__(747));
@@ -44653,11 +44652,37 @@ function githubToken() {
     return token;
 }
 exports.githubToken = githubToken;
+const DEFAULT_REPO_CONF_LOCATION = '.github/.scala-steward.conf';
+/**
+ * Reads the path of the file containing the default Scala Steward configuration.
+ *
+ * If the provided file does not exist and is not the default one it will throw an error.
+ * On the other hand, if it exists it will be returned, otherwise; it will return `undefined`.
+ *
+ * @returns {string | undefined} The path indicated in the `default-repo-conf` input, if it
+ *                               exists; otherwise, `undefined`.
+ */
+function defaultRepoConf() {
+    const path = core.getInput('default-repo-conf');
+    const fileExists = fs_1.default.existsSync(path);
+    if (!fileExists && path !== DEFAULT_REPO_CONF_LOCATION) {
+        throw new Error(`Provided default repo conf file (${path}) does not exist`);
+    }
+    if (fileExists) {
+        core.info(`✓ Default Scala Steward configuration set to: ${path}`);
+        return path;
+    }
+    return undefined;
+}
+exports.defaultRepoConf = defaultRepoConf;
 /**
  * Reads a Github repository from the `github-repository` input. Fallback to the
  * `GITHUB_REPOSITORY` environment variable.
  *
  * Throws error if the fallback fails or returns the repository in case it doesn't.
+ *
+ * If the `branch` input is set, the selected branch will be added for update instead
+ * of the default one.
  *
  * @returns {string} The Github repository read from the `github-repository` input
  *                   or the `GITHUB_REPOSITORY` environment variable.
@@ -44668,8 +44693,18 @@ function githubRepository() {
         throw new Error('Unable to read Github repository from `github-repository` ' +
             'input or `GITHUB_REPOSITORY` environment variable');
     }
-    core.info(`✓ Github Repository set to: ${repo}`);
-    return repo;
+    const branches = core.getInput('branches').split(',').filter(string => string);
+    if (branches.length === 1) {
+        const branch = branches[0];
+        core.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`);
+        return `- ${repo}:${branch}`;
+    }
+    if (branches.length > 1) {
+        core.info(`✓ Github Repository set to: ${repo}. Will update ${branches.join(', ')} branches.`);
+        return branches.map((branch) => `- ${repo}:${branch}`).join('\n');
+    }
+    core.info(`✓ Github Repository set to: ${repo}.`);
+    return `- ${repo}`;
 }
 exports.githubRepository = githubRepository;
 /**
