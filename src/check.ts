@@ -33,6 +33,35 @@ export function githubToken(): string {
   return token
 }
 
+const DEFAULT_REPO_CONF_LOCATION = '.github/.scala-steward.conf'
+
+/**
+ * Reads the path of the file containing the default Scala Steward configuration.
+ *
+ * If the provided file does not exist and is not the default one it will throw an error.
+ * On the other hand, if it exists it will be returned, otherwise; it will return `undefined`.
+ *
+ * @returns {string | undefined} The path indicated in the `default-repo-conf` input, if it
+ *                               exists; otherwise, `undefined`.
+ */
+export function defaultRepoConf(): string | undefined {
+  const path = core.getInput('default-repo-conf')
+
+  const fileExists = fs.existsSync(path)
+
+  if (!fileExists && path !== DEFAULT_REPO_CONF_LOCATION) {
+    throw new Error(`Provided default repo conf file (${path}) does not exist`)
+  }
+
+  if (fileExists) {
+    core.info(`✓ Default Scala Steward configuration set to: ${path}`)
+
+    return path
+  }
+
+  return undefined
+}
+
 /**
  * Reads a Github repository from the `github-repository` input. Fallback to the
  * `GITHUB_REPOSITORY` environment variable.
