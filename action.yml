@@ -57,6 +57,10 @@ inputs:
   github-app-key:
     description: "Github application private key"
     required: false
+  default-repo-conf:
+    description: "Location of a `.scala-steward.conf` file with default values"
+    default: ".github/.scala-steward.conf"
+    required: false
 
 runs:
   using: "node12"

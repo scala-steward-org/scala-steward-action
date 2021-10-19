@@ -1,11 +1,13 @@
 import * as check from '../src/check'
 import test from 'ava'
+import fs from 'fs'
 
 test.beforeEach(() => {
   process.env['INPUT_REPOS-FILE'] = ''
   process.env.GITHUB_REPOSITORY = ''
   process.env.INPUT_BRANCHES = ''
   process.env['INPUT_GITHUB-REPOSITORY'] = ''
+  process.env['INPUT_DEFAULT-REPO-CONF'] = ''
 })
 
 test.serial('`check.reposFile()` should return undefined on missing input', t => {
@@ -100,4 +102,45 @@ test.serial('`check.githubRepository()` should return repository from input with
   const expected = '- owner/repo:main\n- owner/repo:0.1.x\n- owner/repo:0.2.x'
 
   t.is(content, expected)
+})
+
+test.serial('`check.defaultRepoConf()` should return the path if it exists', t => {
+  process.env['INPUT_DEFAULT-REPO-CONF'] = 'tests/resources/.scala-steward.conf'
+
+  const path = check.defaultRepoConf()
+
+  const expected = 'tests/resources/.scala-steward.conf'
+
+  t.is(path, expected)
+})
+
+test.serial('`check.defaultRepoConf()` should return the default path if it exists', t => {
+  fs.writeFileSync('.github/.scala-steward.conf', '')
+  process.env['INPUT_DEFAULT-REPO-CONF'] = '.github/.scala-steward.conf'
+
+  const path = check.defaultRepoConf()
+
+  const expected = '.github/.scala-steward.conf'
+
+  t.is(path, expected)
+
+  fs.rmSync('.github/.scala-steward.conf')
+})
+
+test.serial('`check.defaultRepoConf()` should return undefined if the default path do not exist', t => {
+  process.env['INPUT_DEFAULT-REPO-CONF'] = '.github/.scala-steward.conf'
+
+  const path = check.defaultRepoConf()
+
+  t.is(path, undefined)
+})
+
+test.serial('`check.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
+  process.env['INPUT_DEFAULT-REPO-CONF'] = 'tests/resources/.scala-steward-new.conf'
+
+  const expected = 'Provided default repo conf file (tests/resources/.scala-steward-new.conf) does not exist'
+
+  const error = t.throws(() => check.defaultRepoConf(), {instanceOf: Error})
+
+  t.is(error.message, expected)
 })
