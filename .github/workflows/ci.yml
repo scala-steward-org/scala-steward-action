@@ -17,6 +17,11 @@ jobs:
         uses: TimonVS/pr-labeler-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check PR labels
+        uses: danielchabr/pr-labels-checker@v3.1
+        with:
+          hasSome: ":beetle: bug,:blue_book: documentation,:chart_with_upwards_trend: dependency-update,:lipstick: style,:package: refactor,:rocket: feature,:test_tube: tests,:warning: breaking,:wrench: build,:broom: cleaning"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run checks
         if: ${{ always() }}
         run: npm run all
