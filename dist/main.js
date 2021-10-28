@@ -4764,6 +4764,7 @@ async function run() {
         if (cacheTTL !== '0s') {
             await workspace.restoreWorkspaceCache(workspaceDir);
         }
+        const timeout = core.getInput('timeout');
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
         const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'));
@@ -4787,7 +4788,7 @@ async function run() {
             ['--git-author-name', `${authorName}"`],
             ['--vcs-login', `${user.login()}"`],
             ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
-            ['--process-timeout', '20min'],
+            ['--process-timeout', timeout],
             ['--vcs-api-host', githubApiUrl],
             ignoreOptionsFiles ? '--ignore-opts-files' : [],
             signCommits ? '--sign-commits' : [],
