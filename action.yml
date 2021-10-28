@@ -39,6 +39,10 @@ inputs:
     description: "Whether to sign commits or not"
     default: "false"
     required: false
+  timeout:
+    description: "Timeout for external process invocations"
+    default: "20min"
+    required: false
   cache-ttl:
     description: "TTL of cache for fetching dependency versions and metadata, set it to 0s to disable it"
     default: "2hours"

@@ -41,6 +41,8 @@ async function run(): Promise<void> {
       await workspace.restoreWorkspaceCache(workspaceDir)
     }
 
+    const timeout = core.getInput('timeout')
+
     const version = core.getInput('scala-steward-version')
 
     const signCommits = /true/i.test(core.getInput('sign-commits'))
@@ -68,7 +70,7 @@ async function run(): Promise<void> {
       ['--git-author-name', `${authorName}"`],
       ['--vcs-login', `${user.login()}"`],
       ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
-      ['--process-timeout', '20min'],
+      ['--process-timeout', timeout],
       ['--vcs-api-host', githubApiUrl],
       ignoreOptionsFiles ? '--ignore-opts-files' : [],
       signCommits ? '--sign-commits' : [],
