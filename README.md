@@ -320,6 +320,12 @@ By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbto
     ignore-opts-files: false
 ```
 
+### Run Scala Steward in debug mode
+
+You just need to enable [GitHub Actions' "step debug logging"](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging#enabling-step-debug-logging) and Scala Steward will start automatically in debug mode too.
+
+For this you must set the following secret in the repository that contains the workflow: `ACTIONS_STEP_DEBUG` to `true` (as stated in GitHub's documentation).
+
 ## License
 
 Scala Steward Action is licensed under the Apache License, Version 2.0.
