@@ -39,6 +39,10 @@ inputs:
     description: "Whether to sign commits or not"
     default: "false"
     required: false
+  signing-key:
+    description: "Key ID of GPG key to use for signing commits."
+    default: ""
+    required: false
   timeout:
     description: "Timeout for external process invocations"
     default: "20min"
