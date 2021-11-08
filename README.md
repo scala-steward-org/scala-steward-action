@@ -67,6 +67,7 @@ The following inputs are available (all of them are optional):
 | <details><summary>`scala-steward-version`</summary><br/>Scala Steward version to use</details> | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases) | `0.13.0` |
 | <details><summary>`ignore-opts-files`</summary><br/>Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not</details> | true/false | `true` |
 | <details><summary>`sign-commits`</summary><br/>Whether to sign commits or not</details> | true/false | `false` |
+| <details><summary>`signing-key`</summary><br/>Key ID of signing key to use for signing commits. Analogous to git's `user.signingkey` configuration setting.</details> | Signing key ID | ' ' |
 | <details><summary>`cache-ttl`</summary><br/>TTL of cache for fetching dependency versions and metadata. Set it to `0s` to disable cache completely.</details> | like 24hours, 5min, 10s, or 0s | `2hours` |
 | <details><summary>`timeout`</summary><br/>Timeout for external process invocations.</details> | like 2hours, 5min, 10s, or 0s | `20min` |
 | <details><summary>`github-api-url`</summary><br/>The URL of the Github API, only use this input if you are using Github Enterprise</details> | https://git.yourcompany.com/api/v3 | `https://api.github.com` |
@@ -296,7 +297,35 @@ If you want commits created by Scala Steward to be automatically signed with a G
         sign-commits: true
     ```
 
-8. **Optional**. By default, Scala Steward will use the email/name of the user that created the token added in `github-token`, if you want to override that behavior, you can use `author-email`/`author-name` inputs, for example with the values extracted from the imported private key:
+8. Tell Scala Steward the key ID of the key to be used for signing commits using the `signing-key` input:
+
+   1. Obtain the key ID for the key that should be used. For instance, in the following example, the GPG key ID is
+      3AA5C34371567BD2:
+
+      ```
+      $ gpg --list-secret-keys --keyid-format=long
+      /Users/hubot/.gnupg/secring.gpg
+      ------------------------------------
+      sec   4096R/3AA5C34371567BD2 2016-03-10 [expires: 2017-03-10]
+      uid                          Hubot
+      ssb   4096R/42B317FD4BA89E7A 2016-03-10
+      ```
+
+   3. Copy the key ID and paste it as the content of a new repository secret, called for example `GPG_SIGNING_KEY_ID`.
+
+   4. Use the `signing-key` parameter to allow Scala Steward to use the correct key:
+
+      ```yaml
+      - name: Launch Scala Steward
+        uses: scala-steward-org/scala-steward-action@v2
+        with:
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          sign-commits: true
+          signing-key: ${{ secrets.GPG_SIGNING_KEY_ID }}
+      ```
+
+
+9. **Optional**. By default, Scala Steward will use the email/name of the user that created the token added in `github-token`, if you want to override that behavior, you can use `author-email`/`author-name` inputs, for example with the values extracted from the imported private key:
 
     ```yaml
     - name: Launch Scala Steward
