@@ -129,4 +129,5 @@ export async function launch(
 export async function remove(): Promise<void> {
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'))
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'))
+  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafix'))
 }
