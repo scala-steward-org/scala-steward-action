@@ -38416,6 +38416,7 @@ exports.launch = launch;
 async function remove() {
     await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'));
     await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'));
+    await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafix'));
 }
 exports.remove = remove;
 

@@ -4781,6 +4781,7 @@ async function run() {
             ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile] :
             [];
         await coursier.install('scalafmt');
+        await coursier.install('scalafix');
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
             ['--workspace', `${workspaceDir}/workspace`],
             ['--repos-file', `${workspaceDir}/repos.md`],
@@ -37759,6 +37760,7 @@ exports.launch = launch;
 async function remove() {
     await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'));
     await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'));
+    await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafix'));
 }
 exports.remove = remove;
 
