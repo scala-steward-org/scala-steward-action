@@ -4767,7 +4767,7 @@ async function run() {
         const timeout = core.getInput('timeout');
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
-        const signingKey = core.getInput("signing-key");
+        const signingKey = core.getInput('signing-key');
         const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'));
         const githubApiUrl = core.getInput('github-api-url');
         const scalafixMigrations = core.getInput('scalafix-migrations') ?
