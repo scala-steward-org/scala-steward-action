@@ -1,4 +1,4 @@
-name: Build, format and propagate changes
+name: Run `npm run build` and push changes to `master`
 
 on:
   push:
@@ -6,19 +6,28 @@ on:
       - "master"
 
 jobs:
-  ncc:
+  build-and-push:
+    name: Run `npm run build` and push changes to `master`
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - uses: actions/setup-node@04c56d2f954f1e4c69436aa54cfef261a018f458 # v2.5.0
         with:
           node-version: "16"
-      - name: Install
+
+      - name: Run `npm install`
         run: npm install
-      - name: Build
+
+      - name: Run `npm run build`
         run: npm run build
+
       - name: Push changes
-        uses: stefanzweifel/git-auto-commit-action@v4.2.0
+        uses: alejandrohdezma/actions/commit-and-push@v1
         with:
-          commit_message: Format & Build
+          message: Format & build [skip ci]
+          branch: master

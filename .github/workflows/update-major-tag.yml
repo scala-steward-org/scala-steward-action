@@ -1,4 +1,4 @@
-name: Update Major Tag
+name: Update Major Version Tag
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - "v*"
 
 jobs:
-  update-major-tag:
+  update-major-version-tag:
     name: Update Major Version Tag
     runs-on: ubuntu-latest
     steps:
-      - uses: nowactions/update-majorver@v1
+      - uses: nowactions/update-majorver@be25c5301723e95e520a4ee375d399d6a30fe6e7 # v1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

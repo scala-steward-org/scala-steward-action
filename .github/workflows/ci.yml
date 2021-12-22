@@ -7,21 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+
+      - uses: actions/setup-node@04c56d2f954f1e4c69436aa54cfef261a018f458 # v2.5.0
         with:
           node-version: "16"
-      - name: Install NPM
+
+      - name: Run `npm install`
         run: npm install
-      - name: Label PR
-        uses: TimonVS/pr-labeler-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check PR labels
-        uses: danielchabr/pr-labels-checker@v3.1
-        with:
-          hasSome: ":beetle: bug,:blue_book: documentation,:chart_with_upwards_trend: dependency-update,:lipstick: style,:package: refactor,:rocket: feature,:test_tube: tests,:warning: breaking,:wrench: build,:broom: cleaning"
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run checks
-        if: ${{ always() }}
+
+      - name: Run `npm run all`
         run: npm run all
