@@ -6,6 +6,9 @@
     "build": "npm run build-main && npm run build-post",
     "build-main": "ncc build src/main.ts && mv dist/index.js dist/main.js",
     "build-post": "ncc build src/post.ts && mv dist/index.js dist/post.js",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
+    "contributors:check": "all-contributors check",
     "test": "xo && ava",
     "all": "npm run build && npm test"
   },
@@ -36,6 +39,7 @@
     "@ava/typescript": "^2.0.0",
     "@types/node": "^16.10.2",
     "@zeit/ncc": "^0.22.3",
+    "all-contributors-cli": "^6.20.0",
     "ava": "^3.15.0",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3",
