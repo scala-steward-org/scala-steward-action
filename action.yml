@@ -26,6 +26,10 @@ inputs:
     description: "Scala Steward version to use"
     default: "0.13.0"
     required: false
+  coursier-cli-url:
+    description: "Url to download the coursier linux CLI from"
+    default: "https://git.io/coursier-cli-linux"
+    required: false
   ignore-opts-files:
     description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'
     default: "true"

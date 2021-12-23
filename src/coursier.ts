@@ -12,7 +12,9 @@ import * as os from 'os'
  */
 export async function selfInstall(): Promise<void> {
   try {
-    const temporary = await tc.downloadTool('https://git.io/coursier-cli-linux')
+    let coursierUrl = core.getInput('coursier-cli-url')
+    core.info(`Installing coursier from ${coursierUrl}`)
+    const temporary = await tc.downloadTool(coursierUrl)
 
     await exec.exec('chmod', ['+x', temporary], {silent: true, ignoreReturnCode: true})
 
