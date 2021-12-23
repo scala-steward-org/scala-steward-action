@@ -9,6 +9,7 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "none",
+  "contributorsSortAlphabetically": "true",
   "contributors": [
     {
       "login": "alejandrohdezma",
@@ -116,6 +117,15 @@
       "profile": "https://www.tovbin.com/",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "michele-pinto-kensu",
+      "name": "Michele Pinto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69146696?v=4",
+      "profile": "https://github.com/michele-pinto-kensu",
+      "contributions": [
+        "ideas"
       ]
     }
   ],
