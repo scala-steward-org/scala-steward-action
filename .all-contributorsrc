@@ -145,6 +145,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "marcelocarlos",
+      "name": "Marcelo Carlos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16080771?v=4",
+      "profile": "https://github.com/marcelocarlos",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
