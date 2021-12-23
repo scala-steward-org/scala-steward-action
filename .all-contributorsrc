@@ -1,0 +1,24 @@
+{
+  "projectName": "scala-steward-action",
+  "projectOwner": "scala-steward-org",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "alejandrohdezma",
+      "name": "Alejandro Hernández",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9027541?v=4",
+      "profile": "https://alejandrohdezma.com/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
