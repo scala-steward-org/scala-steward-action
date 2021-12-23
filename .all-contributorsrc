@@ -136,6 +136,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "jshiell",
+      "name": "Jamie Shiell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1030482?v=4",
+      "profile": "https://infernus.org/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
