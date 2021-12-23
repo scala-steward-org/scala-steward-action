@@ -72,6 +72,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "MPV",
+      "name": "Victor Sollerhed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62675?v=4",
+      "profile": "http://victor.sollerhed.se/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
