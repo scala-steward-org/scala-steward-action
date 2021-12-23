@@ -81,6 +81,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "NomadBlacky",
+      "name": "Takumi Kadowaki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3215961?v=4",
+      "profile": "https://www.nomadblacky.dev/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
