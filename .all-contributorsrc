@@ -99,6 +99,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bpg",
+      "name": "Pavel Boldyrev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/627562?v=4",
+      "profile": "http://ca.linkedin.com/in/pboldyrev/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
