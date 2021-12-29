@@ -37742,7 +37742,15 @@ async function launch(org, app, version, args = []) {
     const name = `${org}:${app}:${version}`;
     const debug = 'ACTIONS_STEP_DEBUG' in process.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
     core.startGroup(`Launching ${name}`);
-    const launchArgs = ['launch', '-r', 'sonatype:snapshots'].concat(debug).concat([name, '--']).concat(args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg)));
+    const launchArgs = [
+        'launch',
+        '-r',
+        'sonatype:snapshots',
+        ...debug,
+        name,
+        '--',
+        ...args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg))
+    ];
     const code = await exec.exec('cs', launchArgs, {
         silent: true,
         ignoreReturnCode: true,
