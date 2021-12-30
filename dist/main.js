@@ -61496,7 +61496,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.githubAppInfo = exports.reposFile = exports.githubRepository = exports.defaultRepoConf = exports.githubToken = exports.mavenCentral = void 0;
-const node_fs_1 = __importDefault(__nccwpck_require__(7561));
+const fs_1 = __importDefault(__nccwpck_require__(7147));
 const node_fetch_1 = __importDefault(__nccwpck_require__(467));
 const core = __importStar(__nccwpck_require__(2186));
 /**
@@ -61537,7 +61537,7 @@ const defaultRepoConfLocation = '.github/.scala-steward.conf';
  */
 function defaultRepoConf() {
     const path = core.getInput('default-repo-conf');
-    const fileExists = node_fs_1.default.existsSync(path);
+    const fileExists = fs_1.default.existsSync(path);
     if (!fileExists && path !== defaultRepoConfLocation) {
         throw new Error(`Provided default repo conf file (${path}) does not exist`);
     }
@@ -61597,9 +61597,9 @@ function reposFile() {
     if (!file) {
         return undefined;
     }
-    if (node_fs_1.default.existsSync(file)) {
+    if (fs_1.default.existsSync(file)) {
         core.info(`✓ Using multiple repos file: ${file}`);
-        return node_fs_1.default.readFileSync(file);
+        return fs_1.default.readFileSync(file);
     }
     throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`);
 }
@@ -61619,8 +61619,8 @@ function githubAppInfo() {
         return undefined;
     }
     if (id && key) {
-        const keyFile = `${node_fs_1.default.mkdtempSync('tmp-')}/github-app-private-key.pem`;
-        node_fs_1.default.writeFileSync(keyFile, key);
+        const keyFile = `${fs_1.default.mkdtempSync('tmp-')}/github-app-private-key.pem`;
+        fs_1.default.writeFileSync(keyFile, key);
         core.info(`✓ Github App ID: ${id}`);
         core.info(`✓ Github App private key is written to: ${keyFile}`);
         return { id, keyFile };
@@ -61658,8 +61658,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.remove = exports.launch = exports.install = exports.selfInstall = void 0;
-const path = __importStar(__nccwpck_require__(9411));
-const os = __importStar(__nccwpck_require__(612));
+const path = __importStar(__nccwpck_require__(1017));
+const os = __importStar(__nccwpck_require__(2037));
 const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
 const io = __importStar(__nccwpck_require__(7436));
@@ -62003,9 +62003,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.remove = exports.prepare = exports.saveWorkspaceCache = exports.restoreWorkspaceCache = exports.hashFile = void 0;
-const node_fs_1 = __importDefault(__nccwpck_require__(7561));
-const node_os_1 = __importDefault(__nccwpck_require__(612));
-const node_path_1 = __importDefault(__nccwpck_require__(9411));
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const os_1 = __importDefault(__nccwpck_require__(2037));
+const path_1 = __importDefault(__nccwpck_require__(1017));
 const cache = __importStar(__nccwpck_require__(7799));
 const core = __importStar(__nccwpck_require__(2186));
 const io = __importStar(__nccwpck_require__(7436));
@@ -62020,7 +62020,7 @@ const sha256_1 = __importDefault(__nccwpck_require__(5655));
  */
 function hashFile(file) {
     const sha = new sha256_1.default('SHA-256', 'TEXT', { encoding: 'UTF8' });
-    sha.update(node_fs_1.default.readFileSync(file).toString());
+    sha.update(fs_1.default.readFileSync(file).toString());
     return sha.getHash('HEX').slice(0, 8);
 }
 exports.hashFile = hashFile;
@@ -62032,8 +62032,8 @@ exports.hashFile = hashFile;
 async function restoreWorkspaceCache(workspace) {
     try {
         core.startGroup('Trying to restore workspace contents from cache...');
-        const hash = hashFile(node_path_1.default.join(workspace, 'repos.md'));
-        const paths = [node_path_1.default.join(workspace, 'workspace')];
+        const hash = hashFile(path_1.default.join(workspace, 'repos.md'));
+        const paths = [path_1.default.join(workspace, 'workspace')];
         const cacheHit = await cache.restoreCache(paths, `scala-steward-${hash}-${Date.now().toString()}`, [`scala-steward-${hash}`, 'scala-steward-']);
         if (cacheHit) {
             core.info('Scala Steward workspace contents restored from cache');
@@ -62059,10 +62059,10 @@ async function saveWorkspaceCache(workspace) {
     try {
         core.startGroup('Saving workspace to cache...');
         // We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
-        await io.rmRF(node_path_1.default.join(workspace, 'workspace', 'store', 'refresh_error'));
-        await io.rmRF(node_path_1.default.join(workspace, 'workspace', 'repos'));
-        const hash = hashFile(node_path_1.default.join(workspace, 'repos.md'));
-        await cache.saveCache([node_path_1.default.join(workspace, 'workspace')], `scala-steward-${hash}-${Date.now().toString()}`);
+        await io.rmRF(path_1.default.join(workspace, 'workspace', 'store', 'refresh_error'));
+        await io.rmRF(path_1.default.join(workspace, 'workspace', 'repos'));
+        const hash = hashFile(path_1.default.join(workspace, 'repos.md'));
+        await cache.saveCache([path_1.default.join(workspace, 'workspace')], `scala-steward-${hash}-${Date.now().toString()}`);
         core.info('Scala Steward workspace contents saved to cache');
         core.endGroup();
     }
@@ -62088,10 +62088,10 @@ exports.saveWorkspaceCache = saveWorkspaceCache;
  */
 async function prepare(reposList, token) {
     try {
-        const stewarddir = `${node_os_1.default.homedir()}/scala-steward`;
+        const stewarddir = `${os_1.default.homedir()}/scala-steward`;
         await io.mkdirP(stewarddir);
-        node_fs_1.default.writeFileSync(`${stewarddir}/repos.md`, reposList);
-        node_fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
+        fs_1.default.writeFileSync(`${stewarddir}/repos.md`, reposList);
+        fs_1.default.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`);
         await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], { silent: true });
         core.info('✓ Scala Steward workspace created');
         return stewarddir;
@@ -62106,7 +62106,7 @@ exports.prepare = prepare;
  * Removes the Scala Steward's workspace.
  */
 async function remove() {
-    await io.rmRF(`${node_os_1.default.homedir()}/scala-steward`);
+    await io.rmRF(`${os_1.default.homedir()}/scala-steward`);
 }
 exports.remove = remove;
 
@@ -62190,30 +62190,6 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
-
-/***/ }),
-
-/***/ 7561:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:fs");
-
-/***/ }),
-
-/***/ 612:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:os");
-
-/***/ }),
-
-/***/ 9411:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:path");
 
 /***/ }),
 
