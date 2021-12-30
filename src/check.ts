@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+import fs from 'fs'
 import fetch from 'node-fetch'
 import * as core from '@actions/core'
 

@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+import fs from 'fs'
 import test from 'ava'
 import * as check from '../src/check'
 
