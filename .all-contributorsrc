@@ -154,6 +154,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "jeffboutotte",
+      "name": "Jeff Boutotte",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6991403?v=4",
+      "profile": "https://github.com/jeffboutotte",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
