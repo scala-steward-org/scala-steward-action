@@ -71,6 +71,7 @@ The following inputs are available (all of them are optional):
 | <details><summary>`cache-ttl`</summary><br/>TTL of cache for fetching dependency versions and metadata. Set it to `0s` to disable cache completely.</details> | like 24hours, 5min, 10s, or 0s | `2hours` |
 | <details><summary>`timeout`</summary><br/>Timeout for external process invocations.</details> | like 2hours, 5min, 10s, or 0s | `20min` |
 | <details><summary>`github-api-url`</summary><br/>The URL of the Github API, only use this input if you are using Github Enterprise</details> | https://git.yourcompany.com/api/v3 | `https://api.github.com` |
+| <details><summary>`coursier-cli-url`</summary><br/>The Url to download the coursier CLI from.</details> | Valid Url to install coursier CLI from | `https://git.io/coursier-cli-linux` |
 | <details><summary>`scalafix-migrations`</summary><br/>Scalafix migrations to run when updating dependencies. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) for more information.</details> | Path to HOCON file<br/>or remote URL<br/>with [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) | `''` |
 | <details><summary>`artifact-migrations`</summary><br/>Artifact migrations to find newer dependency updates. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) for more information.</details> | Path to HOCON file<br/>with [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) | `''` |
 | <details><summary>`github-app-id`</summary><br/>This input in combination with `github-app-key` allows you to use this action as a "backend" for your own Scala Steward GitHub App.</details> | A valid GitHub App ID | `''` |
@@ -115,7 +116,7 @@ By default, the action will use the default GitHub Token if none is provided via
 
 The [Github Personal Access Token](https://github.com/settings/tokens) can be created under your own Github user account, or under a separate account that has [Collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) permission in the repository/repositories you wish to update.
 
-Make sure the account you choose has *Name* and *Public email* fields defined in [Public Profile](https://github.com/settings/profile) -- they will be using by Scala Steward to make commits.
+Make sure the account you choose has *Name* and *Public email* fields defined in [Public Profile](https://github.com/settings/profile) -- they will be used by Scala Steward to make commits.
 If the account has [personal email address protection](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/blocking-command-line-pushes-that-expose-your-personal-email-address) enabled, then you will need to explicitly specify a email to use in commits:
 
 ```yaml
