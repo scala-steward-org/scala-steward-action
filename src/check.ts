@@ -1,6 +1,6 @@
+import fs from 'node:fs'
 import fetch from 'node-fetch'
 import * as core from '@actions/core'
-import fs from 'fs'
 
 /**
  * Checks connection with Maven Central, throws error if unable to connect.
@@ -33,7 +33,7 @@ export function githubToken(): string {
   return token
 }
 
-const DEFAULT_REPO_CONF_LOCATION = '.github/.scala-steward.conf'
+const defaultRepoConfLocation = '.github/.scala-steward.conf'
 
 /**
  * Reads the path of the file containing the default Scala Steward configuration.
@@ -49,7 +49,7 @@ export function defaultRepoConf(): string | undefined {
 
   const fileExists = fs.existsSync(path)
 
-  if (!fileExists && path !== DEFAULT_REPO_CONF_LOCATION) {
+  if (!fileExists && path !== defaultRepoConfLocation) {
     throw new Error(`Provided default repo conf file (${path}) does not exist`)
   }
 
@@ -75,13 +75,13 @@ export function defaultRepoConf(): string | undefined {
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
 export function githubRepository(): string {
-  const repo: string | undefined =
-    core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
+  const repo: string | undefined
+    = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY
 
   if (repo === undefined) {
     throw new Error(
-      'Unable to read Github repository from `github-repository` ' +
-        'input or `GITHUB_REPOSITORY` environment variable'
+      'Unable to read Github repository from `github-repository` '
+        + 'input or `GITHUB_REPOSITORY` environment variable',
     )
   }
 
@@ -160,6 +160,6 @@ export function githubAppInfo(): {id: string; keyFile: string} | undefined {
   }
 
   throw new Error(
-    '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
+    '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing',
   )
 }

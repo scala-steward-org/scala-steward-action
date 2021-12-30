@@ -1,10 +1,10 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
-import fs from 'fs'
 import * as exec from '@actions/exec'
-import os from 'os'
-import path from 'path'
 import jsSHA from 'jssha/dist/sha256'
 
 /**
@@ -34,7 +34,7 @@ export async function restoreWorkspaceCache(workspace: string): Promise<void> {
     const cacheHit = await cache.restoreCache(
       paths,
       `scala-steward-${hash}-${Date.now().toString()}`,
-      [`scala-steward-${hash}`, 'scala-steward-']
+      [`scala-steward-${hash}`, 'scala-steward-'],
     )
 
     if (cacheHit) {
@@ -68,7 +68,7 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
 
     await cache.saveCache(
       [path.join(workspace, 'workspace')],
-      `scala-steward-${hash}-${Date.now().toString()}`
+      `scala-steward-${hash}-${Date.now().toString()}`,
     )
 
     core.info('Scala Steward workspace contents saved to cache')

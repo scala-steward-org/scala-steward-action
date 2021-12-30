@@ -1,6 +1,6 @@
-import * as check from '../src/check'
+import fs from 'node:fs'
 import test from 'ava'
-import fs from 'fs'
+import * as check from '../src/check'
 
 test.beforeEach(() => {
   process.env['INPUT_REPOS-FILE'] = ''

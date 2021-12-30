@@ -1,9 +1,9 @@
+import * as path from 'node:path'
+import * as os from 'node:os'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
-import * as path from 'path'
-import * as os from 'os'
 
 /**
  * Install `coursier` and add its executable to the `PATH`.
@@ -40,7 +40,7 @@ export async function selfInstall(): Promise<void> {
     ignoreReturnCode: true,
     listeners: {stdout: data => {
       (version += data.toString())
-    }, errline: core.error}
+    }, errline: core.error},
   })
 
   if (code !== 0) {
@@ -64,7 +64,7 @@ export async function install(app: string): Promise<void> {
   let code = await exec.exec('cs', ['install', app, '--install-dir', binPath], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.debug}
+    listeners: {stdline: core.info, errline: core.debug},
   })
 
   if (code !== 0) {
@@ -78,7 +78,7 @@ export async function install(app: string): Promise<void> {
     ignoreReturnCode: true,
     listeners: {stdout: data => {
       (version += data.toString())
-    }, errline: core.error}
+    }, errline: core.error},
   })
 
   if (code !== 0) {
@@ -102,7 +102,7 @@ export async function launch(
   org: string,
   app: string,
   version: string,
-  args: Array<string | string[]> = []
+  args: Array<string | string[]> = [],
 ): Promise<void> {
   const name = `${org}:${app}:${version}`
 
@@ -117,13 +117,13 @@ export async function launch(
     ...debug,
     name,
     '--',
-    ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg))
+    ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg)),
   ]
 
   const code = await exec.exec('cs', launchArgs, {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.error}
+    listeners: {stdline: core.info, errline: core.error},
   })
 
   core.endGroup()

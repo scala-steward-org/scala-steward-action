@@ -29,15 +29,15 @@ async function run(): Promise<void> {
 
     // Content of the repos.md file either comes from the input file
     // or is empty (replaced by the Github App info) or is a single repo
-    const reposList =
-      check.reposFile() ??
-      (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()))
+    const reposList
+      = check.reposFile()
+      ?? (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()))
 
     const workspaceDir = await workspace.prepare(reposList, token)
 
-    const cacheTTL = core.getInput('cache-ttl')
+    const cacheTtl = core.getInput('cache-ttl')
 
-    if (cacheTTL !== '0s') {
+    if (cacheTtl !== '0s') {
       await workspace.restoreWorkspaceCache(workspaceDir)
     }
 
@@ -49,17 +49,17 @@ async function run(): Promise<void> {
     const signingKey = core.getInput('signing-key')
     const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'))
     const githubApiUrl = core.getInput('github-api-url')
-    const scalafixMigrations = core.getInput('scalafix-migrations') ?
-      ['--scalafix-migrations', core.getInput('scalafix-migrations')] :
-      []
-    const artifactMigrations = core.getInput('artifact-migrations') ?
-      ['--artifact-migrations', core.getInput('artifact-migrations')] :
-      []
+    const scalafixMigrations = core.getInput('scalafix-migrations')
+      ? ['--scalafix-migrations', core.getInput('scalafix-migrations')]
+      : []
+    const artifactMigrations = core.getInput('artifact-migrations')
+      ? ['--artifact-migrations', core.getInput('artifact-migrations')]
+      : []
     const defaultRepoConf = defaultRepoConfPath ? ['--default-repo-conf', defaultRepoConfPath] : []
 
-    const githubAppArgs = githubAppInfo ?
-      ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile] :
-      []
+    const githubAppArgs = githubAppInfo
+      ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
+      : []
 
     await coursier.install('scalafmt')
     await coursier.install('scalafix')
@@ -77,16 +77,16 @@ async function run(): Promise<void> {
       ignoreOptionsFiles ? '--ignore-opts-files' : [],
       signCommits ? '--sign-commits' : [],
       signingKey ? ['--git-author-signing-key', signingKey] : [],
-      ['--cache-ttl', cacheTTL],
+      ['--cache-ttl', cacheTtl],
       scalafixMigrations,
       artifactMigrations,
       defaultRepoConf,
       '--do-not-fork',
       '--disable-sandbox',
-      githubAppArgs
+      githubAppArgs,
     ])
 
-    if (cacheTTL !== '0') {
+    if (cacheTtl !== '0') {
       await workspace.saveWorkspaceCache(workspaceDir)
     }
   } catch (error: unknown) {
