@@ -1215,10 +1215,10 @@ function createTempDirectory() {
     });
 }
 exports.createTempDirectory = createTempDirectory;
-function getArchiveFileSizeIsBytes(filePath) {
+function getArchiveFileSizeInBytes(filePath) {
     return fs.statSync(filePath).size;
 }
-exports.getArchiveFileSizeIsBytes = getArchiveFileSizeIsBytes;
+exports.getArchiveFileSizeInBytes = getArchiveFileSizeInBytes;
 function resolvePaths(patterns) {
     var e_1, _a;
     var _b;
@@ -4491,7 +4491,7 @@ function uploadChunk(httpClient, resourceUrl, openStream, start, end) {
 function uploadFile(httpClient, cacheId, archivePath, options) {
     return __awaiter(this, void 0, void 0, function* () {
         // Upload Chunks
-        const fileSize = fs.statSync(archivePath).size;
+        const fileSize = utils.getArchiveFileSizeInBytes(archivePath);
         const resourceUrl = getCacheApiUrl(`caches/${cacheId.toString()}`);
         const fd = fs.openSync(archivePath, 'r');
         const uploadOptions = options_1.getUploadOptions(options);
@@ -4541,7 +4541,7 @@ function saveCache(cacheId, archivePath, options) {
         yield uploadFile(httpClient, cacheId, archivePath, options);
         // Commit Cache
         core.debug('Commiting cache');
-        const cacheSize = utils.getArchiveFileSizeIsBytes(archivePath);
+        const cacheSize = utils.getArchiveFileSizeInBytes(archivePath);
         core.info(`Cache Size: ~${Math.round(cacheSize / (1024 * 1024))} MB (${cacheSize} B)`);
         const commitCacheResponse = yield commitCache(httpClient, cacheId, cacheSize);
         if (!requestUtils_1.isSuccessStatusCode(commitCacheResponse.statusCode)) {
@@ -7544,7 +7544,7 @@ function downloadCacheHttpClient(archiveLocation, archivePath) {
         const contentLengthHeader = downloadResponse.message.headers['content-length'];
         if (contentLengthHeader) {
             const expectedLength = parseInt(contentLengthHeader);
-            const actualLength = utils.getArchiveFileSizeIsBytes(archivePath);
+            const actualLength = utils.getArchiveFileSizeInBytes(archivePath);
             if (actualLength !== expectedLength) {
                 throw new Error(`Incomplete download. Expected file size: ${expectedLength}, actual file size: ${actualLength}`);
             }
@@ -37742,7 +37742,15 @@ async function launch(org, app, version, args = []) {
     const name = `${org}:${app}:${version}`;
     const debug = 'ACTIONS_STEP_DEBUG' in process.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
     core.startGroup(`Launching ${name}`);
-    const launchArgs = ['launch', '-r', 'sonatype:snapshots'].concat(debug).concat([name, '--']).concat(args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg)));
+    const launchArgs = [
+        'launch',
+        '-r',
+        'sonatype:snapshots',
+        ...debug,
+        name,
+        '--',
+        ...args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg))
+    ];
     const code = await exec.exec('cs', launchArgs, {
         silent: true,
         ignoreReturnCode: true,
@@ -40114,7 +40122,7 @@ Object.defineProperty(Response.prototype, Symbol.toStringTag, {
 });
 
 const INTERNALS$2 = Symbol('Request internals');
-const URL = whatwgUrl.URL;
+const URL = Url.URL || whatwgUrl.URL;
 
 // fix an issue where "format", "parse" aren't a named export for node <10
 const parse_url = Url.parse;
@@ -46322,7 +46330,7 @@ function restoreCache(paths, primaryKey, restoreKeys, options) {
             if (core.isDebug()) {
                 yield tar_1.listTar(archivePath, compressionMethod);
             }
-            const archiveFileSize = utils.getArchiveFileSizeIsBytes(archivePath);
+            const archiveFileSize = utils.getArchiveFileSizeInBytes(archivePath);
             core.info(`Cache Size: ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B)`);
             yield tar_1.extractTar(archivePath, compressionMethod);
             core.info('Cache restored successfully');
@@ -46367,18 +46375,29 @@ function saveCache(paths, key, options) {
         const archiveFolder = yield utils.createTempDirectory();
         const archivePath = path.join(archiveFolder, utils.getCacheFileName(compressionMethod));
         core.debug(`Archive Path: ${archivePath}`);
-        yield tar_1.createTar(archiveFolder, cachePaths, compressionMethod);
-        if (core.isDebug()) {
-            yield tar_1.listTar(archivePath, compressionMethod);
+        try {
+            yield tar_1.createTar(archiveFolder, cachePaths, compressionMethod);
+            if (core.isDebug()) {
+                yield tar_1.listTar(archivePath, compressionMethod);
+            }
+            const fileSizeLimit = 10 * 1024 * 1024 * 1024; // 10GB per repo limit
+            const archiveFileSize = utils.getArchiveFileSizeInBytes(archivePath);
+            core.debug(`File Size: ${archiveFileSize}`);
+            if (archiveFileSize > fileSizeLimit) {
+                throw new Error(`Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the 10GB limit, not saving cache.`);
+            }
+            core.debug(`Saving Cache (ID: ${cacheId})`);
+            yield cacheHttpClient.saveCache(cacheId, archivePath, options);
         }
-        const fileSizeLimit = 5 * 1024 * 1024 * 1024; // 5GB per repo limit
-        const archiveFileSize = utils.getArchiveFileSizeIsBytes(archivePath);
-        core.debug(`File Size: ${archiveFileSize}`);
-        if (archiveFileSize > fileSizeLimit) {
-            throw new Error(`Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the 5GB limit, not saving cache.`);
+        finally {
+            // Try to delete the archive to save space
+            try {
+                yield utils.unlinkFile(archivePath);
+            }
+            catch (error) {
+                core.debug(`Failed to delete archive: ${error}`);
+            }
         }
-        core.debug(`Saving Cache (ID: ${cacheId})`);
-        yield cacheHttpClient.saveCache(cacheId, archivePath, options);
         return cacheId;
     });
 }

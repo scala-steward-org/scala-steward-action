@@ -356,6 +356,45 @@ You just need to enable [GitHub Actions' "step debug logging"](https://docs.gith
 
 For this you must set the following secret in the repository that contains the workflow: `ACTIONS_STEP_DEBUG` to `true` (as stated in GitHub's documentation).
 
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://alejandrohdezma.com/"><img src="https://avatars.githubusercontent.com/u/9027541?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alejandro Hernández</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=alejandrohdezma" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/laughedelic"><img src="https://avatars.githubusercontent.com/u/766656?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alexey Alekhin</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=laughedelic" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/arashi01"><img src="https://avatars.githubusercontent.com/u/1921493?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ali Salim Rashid</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=arashi01" title="Code">💻</a></td>
+    <td align="center"><a href="https://toniogela.dev/"><img src="https://avatars.githubusercontent.com/u/41690956?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Antonio Gelameris</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=TonioGela" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/EwoutH"><img src="https://avatars.githubusercontent.com/u/15776622?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ewout ter Hoeven</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=EwoutH" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/fthomas"><img src="https://avatars.githubusercontent.com/u/141252?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Frank Thomas</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=fthomas" title="Code">💻</a></td>
+    <td align="center"><a href="https://infernus.org/"><img src="https://avatars.githubusercontent.com/u/1030482?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jamie Shiell</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/issues?q=author%3Ajshiell" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/marcelocarlos"><img src="https://avatars.githubusercontent.com/u/16080771?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marcelo Carlos</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/issues?q=author%3Amarcelocarlos" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.tovbin.com/"><img src="https://avatars.githubusercontent.com/u/629845?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matthew Tovbin</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=tovbinm" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/michele-pinto-kensu"><img src="https://avatars.githubusercontent.com/u/69146696?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michele Pinto</b></sub></a><br /><a href="#ideas-michele-pinto-kensu" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://ca.linkedin.com/in/pboldyrev/"><img src="https://avatars.githubusercontent.com/u/627562?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pavel Boldyrev</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=bpg" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/spliakos"><img src="https://avatars.githubusercontent.com/u/15560159?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stefanos Pliakos</b></sub></a><br /><a href="#ideas-spliakos" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://www.nomadblacky.dev/"><img src="https://avatars.githubusercontent.com/u/3215961?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Takumi Kadowaki</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=NomadBlacky" title="Code">💻</a></td>
+    <td align="center"><a href="http://victor.sollerhed.se/"><img src="https://avatars.githubusercontent.com/u/62675?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Victor Sollerhed</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=MPV" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://twitter.com/xuwei_k"><img src="https://avatars.githubusercontent.com/u/389787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kenji yoshida</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=xuwei-k" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
 ## License
 
 Scala Steward Action is licensed under the Apache License, Version 2.0.

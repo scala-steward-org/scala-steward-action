@@ -1,0 +1,160 @@
+{
+  "projectName": "scala-steward-action",
+  "projectOwner": "scala-steward-org",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributorsSortAlphabetically": "true",
+  "contributors": [
+    {
+      "login": "alejandrohdezma",
+      "name": "Alejandro Hernández",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9027541?v=4",
+      "profile": "https://alejandrohdezma.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "laughedelic",
+      "name": "Alexey Alekhin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/766656?v=4",
+      "profile": "https://github.com/laughedelic",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "fthomas",
+      "name": "Frank Thomas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/141252?v=4",
+      "profile": "https://github.com/fthomas",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ryota0624",
+      "name": "ryota0624",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11390724?v=4",
+      "profile": "https://github.com/ryota0624",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "arashi01",
+      "name": "Ali Salim Rashid",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1921493?v=4",
+      "profile": "https://github.com/arashi01",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "xuwei-k",
+      "name": "kenji yoshida",
+      "avatar_url": "https://avatars.githubusercontent.com/u/389787?v=4",
+      "profile": "https://twitter.com/xuwei_k",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "EwoutH",
+      "name": "Ewout ter Hoeven",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15776622?v=4",
+      "profile": "https://github.com/EwoutH",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "MPV",
+      "name": "Victor Sollerhed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62675?v=4",
+      "profile": "http://victor.sollerhed.se/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "NomadBlacky",
+      "name": "Takumi Kadowaki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3215961?v=4",
+      "profile": "https://www.nomadblacky.dev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "TonioGela",
+      "name": "Antonio Gelameris",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41690956?v=4",
+      "profile": "https://toniogela.dev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "bpg",
+      "name": "Pavel Boldyrev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/627562?v=4",
+      "profile": "http://ca.linkedin.com/in/pboldyrev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tovbinm",
+      "name": "Matthew Tovbin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/629845?v=4",
+      "profile": "https://www.tovbin.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "michele-pinto-kensu",
+      "name": "Michele Pinto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69146696?v=4",
+      "profile": "https://github.com/michele-pinto-kensu",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "spliakos",
+      "name": "Stefanos Pliakos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15560159?v=4",
+      "profile": "https://github.com/spliakos",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "jshiell",
+      "name": "Jamie Shiell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1030482?v=4",
+      "profile": "https://infernus.org/",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "marcelocarlos",
+      "name": "Marcelo Carlos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16080771?v=4",
+      "profile": "https://github.com/marcelocarlos",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

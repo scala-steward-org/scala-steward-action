@@ -108,9 +108,15 @@ export async function launch(
 
   core.startGroup(`Launching ${name}`)
 
-  const launchArgs = ['launch', '-r', 'sonatype:snapshots'].concat(debug).concat([name, '--']).concat(
-    args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg))
-  )
+  const launchArgs = [
+    'launch',
+    '-r',
+    'sonatype:snapshots',
+    ...debug,
+    name,
+    '--',
+    ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg))
+  ]
 
   const code = await exec.exec('cs', launchArgs, {
     silent: true,
