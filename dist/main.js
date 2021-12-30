@@ -37669,7 +37669,9 @@ const os = __importStar(__webpack_require__(87));
  */
 async function selfInstall() {
     try {
-        const temporary = await tc.downloadTool('https://git.io/coursier-cli-linux');
+        const coursierUrl = core.getInput('coursier-cli-url');
+        core.debug(`Installing coursier from ${coursierUrl}`);
+        const temporary = await tc.downloadTool(coursierUrl);
         await exec.exec('chmod', ['+x', temporary], { silent: true, ignoreReturnCode: true });
         const homedir = os.homedir();
         const binPath = path.join(homedir, 'bin');
