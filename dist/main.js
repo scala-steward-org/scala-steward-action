@@ -61919,9 +61919,7 @@ async function run() {
         const reposList = (_a = check.reposFile()) !== null && _a !== void 0 ? _a : (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()));
         const workspaceDir = await workspace.prepare(reposList, token);
         const cacheTtl = core.getInput('cache-ttl');
-        if (cacheTtl !== '0s') {
-            await workspace.restoreWorkspaceCache(workspaceDir);
-        }
+        await workspace.restoreWorkspaceCache(workspaceDir);
         const timeout = core.getInput('timeout');
         const version = core.getInput('scala-steward-version');
         const signCommits = /true/i.test(core.getInput('sign-commits'));
@@ -61961,9 +61959,7 @@ async function run() {
             '--disable-sandbox',
             githubAppArgs,
         ]);
-        if (cacheTtl !== '0') {
-            await workspace.saveWorkspaceCache(workspaceDir);
-        }
+        await workspace.saveWorkspaceCache(workspaceDir);
     }
     catch (error) {
         core.setFailed(` ✕ ${error.message}`);
