@@ -86,7 +86,7 @@ async function run(): Promise<void> {
       githubAppArgs,
     ])
 
-    if (cacheTtl !== '0') {
+    if (cacheTtl !== '0s') {
       await workspace.saveWorkspaceCache(workspaceDir)
     }
   } catch (error: unknown) {

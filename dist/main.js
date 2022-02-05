@@ -61961,7 +61961,7 @@ async function run() {
             '--disable-sandbox',
             githubAppArgs,
         ]);
-        if (cacheTtl !== '0') {
+        if (cacheTtl !== '0s') {
             await workspace.saveWorkspaceCache(workspaceDir);
         }
     }
