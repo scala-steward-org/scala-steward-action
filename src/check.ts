@@ -41,11 +41,11 @@ const defaultRepoConfLocation = '.github/.scala-steward.conf'
  * If the provided file does not exist and is not the default one it will throw an error.
  * On the other hand, if it exists it will be returned, otherwise; it will return `undefined`.
  *
- * @returns {string | undefined} The path indicated in the `default-repo-conf` input, if it
+ * @returns {string | undefined} The path indicated in the `repo-config` input, if it
  *                               exists; otherwise, `undefined`.
  */
 export function defaultRepoConf(): string | undefined {
-  const path = core.getInput('default-repo-conf')
+  const path = core.getInput('repo-config')
 
   const fileExists = fs.existsSync(path)
 
