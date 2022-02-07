@@ -37,7 +37,7 @@ test.serial('`check.reposFile()` should throw error if file doesn\'t exists', t 
 
   const error = t.throws(() => check.reposFile(), {instanceOf: Error})
 
-  t.is(error.message, expected)
+  t.is(error?.message, expected)
 })
 
 test.serial('`check.githubRepository()` should return current repository if input not present', t => {
@@ -142,5 +142,5 @@ test.serial('`check.defaultRepoConf()` throws error if provided non-default file
 
   const error = t.throws(() => check.defaultRepoConf(), {instanceOf: Error})
 
-  t.is(error.message, expected)
+  t.is(error?.message, expected)
 })
