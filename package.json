@@ -32,7 +32,7 @@
     "@actions/tool-cache": "^1.7.1",
     "@types/node-fetch": "^2.5.12",
     "jssha": "^3.2.0",
-    "node-fetch": "^2.6.6"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "@ava/typescript": "^3.0.1",
