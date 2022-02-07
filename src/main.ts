@@ -53,7 +53,7 @@ async function run(): Promise<void> {
     const artifactMigrations = core.getInput('artifact-migrations')
       ? ['--artifact-migrations', core.getInput('artifact-migrations')]
       : []
-    const defaultRepoConf = defaultRepoConfPath ? ['--default-repo-conf', defaultRepoConfPath] : []
+    const defaultRepoConf = defaultRepoConfPath ? ['--repo-config', defaultRepoConfPath] : []
 
     const githubAppArgs = githubAppInfo
       ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]

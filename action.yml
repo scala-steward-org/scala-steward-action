@@ -71,7 +71,7 @@ inputs:
   github-app-key:
     description: "Github application private key"
     required: false
-  default-repo-conf:
+  repo-config:
     description: "Location of a `.scala-steward.conf` file with default values"
     default: ".github/.scala-steward.conf"
     required: false

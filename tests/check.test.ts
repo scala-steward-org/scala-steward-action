@@ -7,7 +7,7 @@ test.beforeEach(() => {
   process.env.GITHUB_REPOSITORY = ''
   process.env.INPUT_BRANCHES = ''
   process.env['INPUT_GITHUB-REPOSITORY'] = ''
-  process.env['INPUT_DEFAULT-REPO-CONF'] = ''
+  process.env['INPUT_REPO-CONFIG'] = ''
 })
 
 test.serial('`check.reposFile()` should return undefined on missing input', t => {
@@ -105,7 +105,7 @@ test.serial('`check.githubRepository()` should return repository from input with
 })
 
 test.serial('`check.defaultRepoConf()` should return the path if it exists', t => {
-  process.env['INPUT_DEFAULT-REPO-CONF'] = 'tests/resources/.scala-steward.conf'
+  process.env['INPUT_REPO-CONFIG'] = 'tests/resources/.scala-steward.conf'
 
   const path = check.defaultRepoConf()
 
@@ -116,7 +116,7 @@ test.serial('`check.defaultRepoConf()` should return the path if it exists', t =
 
 test.serial('`check.defaultRepoConf()` should return the default path if it exists', t => {
   fs.writeFileSync('.github/.scala-steward.conf', '')
-  process.env['INPUT_DEFAULT-REPO-CONF'] = '.github/.scala-steward.conf'
+  process.env['INPUT_REPO-CONFIG'] = '.github/.scala-steward.conf'
 
   const path = check.defaultRepoConf()
 
@@ -128,7 +128,7 @@ test.serial('`check.defaultRepoConf()` should return the default path if it exis
 })
 
 test.serial('`check.defaultRepoConf()` should return undefined if the default path do not exist', t => {
-  process.env['INPUT_DEFAULT-REPO-CONF'] = '.github/.scala-steward.conf'
+  process.env['INPUT_REPO-CONFIG'] = '.github/.scala-steward.conf'
 
   const path = check.defaultRepoConf()
 
@@ -136,7 +136,7 @@ test.serial('`check.defaultRepoConf()` should return undefined if the default pa
 })
 
 test.serial('`check.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
-  process.env['INPUT_DEFAULT-REPO-CONF'] = 'tests/resources/.scala-steward-new.conf'
+  process.env['INPUT_REPO-CONFIG'] = 'tests/resources/.scala-steward-new.conf'
 
   const expected = 'Provided default repo conf file (tests/resources/.scala-steward-new.conf) does not exist'
 

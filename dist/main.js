@@ -61558,11 +61558,11 @@ const defaultRepoConfLocation = '.github/.scala-steward.conf';
  * If the provided file does not exist and is not the default one it will throw an error.
  * On the other hand, if it exists it will be returned, otherwise; it will return `undefined`.
  *
- * @returns {string | undefined} The path indicated in the `default-repo-conf` input, if it
+ * @returns {string | undefined} The path indicated in the `repo-config` input, if it
  *                               exists; otherwise, `undefined`.
  */
 function defaultRepoConf() {
-    const path = core.getInput('default-repo-conf');
+    const path = core.getInput('repo-config');
     const fileExists = fs_1.default.existsSync(path);
     if (!fileExists && path !== defaultRepoConfLocation) {
         throw new Error(`Provided default repo conf file (${path}) does not exist`);
@@ -61958,7 +61958,7 @@ async function run() {
         const artifactMigrations = core.getInput('artifact-migrations')
             ? ['--artifact-migrations', core.getInput('artifact-migrations')]
             : [];
-        const defaultRepoConf = defaultRepoConfPath ? ['--default-repo-conf', defaultRepoConfPath] : [];
+        const defaultRepoConf = defaultRepoConfPath ? ['--repo-config', defaultRepoConfPath] : [];
         const githubAppArgs = githubAppInfo
             ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
             : [];
