@@ -10,9 +10,9 @@ A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/s
   </a>
 </p>
 
-- [What does this action do?](#what-does-this-action-do-)
+- [What does this action do?](#what-does-this-action-do)
 - [Usage](#usage)
-  * [How can I trigger a run?](#how-can-i-trigger-a-run-)
+  * [How can I trigger a run?](#how-can-i-trigger-a-run)
 - [Configuration](#configuration)
   * [Specify JVM version](#specify-jvm-version)
   * [Github Token](#github-token)
