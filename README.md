@@ -276,6 +276,8 @@ should follow the instructions [here](https://github.com/scala-steward-org/scala
 - repo/owner:0.2.x # updates 0.2.x branch
 ```
 
+> To know more about updating multiple repositories using Scala Steward and custom branches, check [this blog post](https://alejandrohdezma.com/blog/updating-multiple-repositories-with-scala-steward-and-github-actions).
+
 ### GPG
 
 If you want commits created by Scala Steward to be automatically signed with a GPG key, follow these steps:
