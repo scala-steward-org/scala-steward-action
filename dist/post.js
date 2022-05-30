@@ -58991,7 +58991,7 @@ async function selfInstall() {
     const code = await exec.exec('cs', ['--version'], {
         silent: true,
         ignoreReturnCode: true,
-        listeners: { stdout: data => {
+        listeners: { stdout(data) {
                 (version += data.toString());
             }, errline: core.error },
     });
@@ -59023,7 +59023,7 @@ async function install(app) {
     code = await exec.exec(app, ['--version'], {
         silent: true,
         ignoreReturnCode: true,
-        listeners: { stdout: data => {
+        listeners: { stdout(data) {
                 (version += data.toString());
             }, errline: core.error },
     });

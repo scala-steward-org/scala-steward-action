@@ -30,21 +30,21 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     core.debug(`- Name: ${name ?? 'no name found'}`)
 
     return {
-      login: () => {
+      login() {
         if (!login) {
           throw new Error('Unable to retrieve user information from Github')
         }
 
         return login
       },
-      email: () => {
+      email() {
         if (!email) {
           throw new Error(emailErrorMessage)
         }
 
         return email
       },
-      name: () => {
+      name() {
         if (!name) {
           throw new Error(nameErrorMessage)
         }

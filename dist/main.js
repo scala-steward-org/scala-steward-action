@@ -62037,7 +62037,7 @@ async function selfInstall() {
     const code = await exec.exec('cs', ['--version'], {
         silent: true,
         ignoreReturnCode: true,
-        listeners: { stdout: data => {
+        listeners: { stdout(data) {
                 (version += data.toString());
             }, errline: core.error },
     });
@@ -62069,7 +62069,7 @@ async function install(app) {
     code = await exec.exec(app, ['--version'], {
         silent: true,
         ignoreReturnCode: true,
-        listeners: { stdout: data => {
+        listeners: { stdout(data) {
                 (version += data.toString());
             }, errline: core.error },
     });
@@ -62179,19 +62179,19 @@ async function getAuthUser(token) {
         core.debug(`- Email: ${email !== null && email !== void 0 ? email : 'no email found'}`);
         core.debug(`- Name: ${name !== null && name !== void 0 ? name : 'no name found'}`);
         return {
-            login: () => {
+            login() {
                 if (!login) {
                     throw new Error('Unable to retrieve user information from Github');
                 }
                 return login;
             },
-            email: () => {
+            email() {
                 if (!email) {
                     throw new Error(emailErrorMessage);
                 }
                 return email;
             },
-            name: () => {
+            name() {
                 if (!name) {
                     throw new Error(nameErrorMessage);
                 }
