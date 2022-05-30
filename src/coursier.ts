@@ -38,7 +38,7 @@ export async function selfInstall(): Promise<void> {
   const code = await exec.exec('cs', ['--version'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdout: data => {
+    listeners: {stdout(data) {
       (version += data.toString())
     }, errline: core.error},
   })
@@ -76,7 +76,7 @@ export async function install(app: string): Promise<void> {
   code = await exec.exec(app, ['--version'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdout: data => {
+    listeners: {stdout(data) {
       (version += data.toString())
     }, errline: core.error},
   })
