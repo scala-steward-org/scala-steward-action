@@ -60756,6 +60756,7 @@ const sha256_1 = __importDefault(__nccwpck_require__(5655));
  * @returns {string} the file content's hash
  */
 function hashFile(file) {
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
     const sha = new sha256_1.default('SHA-256', 'TEXT', { encoding: 'UTF8' });
     sha.update(fs_1.default.readFileSync(file).toString());
     return sha.getHash('HEX').slice(0, 8);

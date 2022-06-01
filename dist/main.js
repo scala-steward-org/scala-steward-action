@@ -64165,7 +64165,7 @@ function githubRepository() {
         throw new Error('Unable to read Github repository from `github-repository` '
             + 'input or `GITHUB_REPOSITORY` environment variable');
     }
-    const branches = core.getInput('branches').split(',').filter(string => string);
+    const branches = core.getInput('branches').split(',').filter(Boolean);
     if (branches.length === 1) {
         const branch = branches[0];
         core.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`);
@@ -64630,6 +64630,7 @@ const sha256_1 = __importDefault(__nccwpck_require__(5655));
  * @returns {string} the file content's hash
  */
 function hashFile(file) {
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
     const sha = new sha256_1.default('SHA-256', 'TEXT', { encoding: 'UTF8' });
     sha.update(fs_1.default.readFileSync(file).toString());
     return sha.getHash('HEX').slice(0, 8);
