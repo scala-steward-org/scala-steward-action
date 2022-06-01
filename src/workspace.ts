@@ -15,6 +15,7 @@ import jsSHA from 'jssha/dist/sha256'
  * @returns {string} the file content's hash
  */
 export function hashFile(file: string): string {
+  // eslint-disable-next-line unicorn/text-encoding-identifier-case
   const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
   sha.update(fs.readFileSync(file).toString())
   return sha.getHash('HEX').slice(0, 8)

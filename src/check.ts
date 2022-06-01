@@ -85,7 +85,7 @@ export function githubRepository(): string {
     )
   }
 
-  const branches = core.getInput('branches').split(',').filter(string => string)
+  const branches = core.getInput('branches').split(',').filter(Boolean)
 
   if (branches.length === 1) {
     const branch = branches[0]
