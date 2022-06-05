@@ -190,6 +190,16 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "armanbilge",
+      "name": "Arman Bilge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3119428?v=4",
+      "profile": "https://github.com/armanbilge",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
