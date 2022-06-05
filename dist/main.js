@@ -64569,8 +64569,11 @@ async function run() {
             '--do-not-fork',
             '--disable-sandbox',
             githubAppArgs,
-        ]);
-        await workspace.saveWorkspaceCache(workspaceDir);
+        ]).finally(() => {
+            workspace.saveWorkspaceCache(workspaceDir).catch((error) => {
+                core.setFailed(` ✕ ${error.message}`);
+            });
+        });
     }
     catch (error) {
         core.setFailed(` ✕ ${error.message}`);
