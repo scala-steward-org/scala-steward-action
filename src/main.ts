@@ -82,7 +82,11 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--disable-sandbox',
       githubAppArgs,
-    ]).finally(() => workspace.saveWorkspaceCache(workspaceDir))
+    ]).finally(() => {
+      workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
+        core.setFailed(` ✕ ${(error as Error).message}`)
+      })
+    })
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
