@@ -108,9 +108,10 @@ The following inputs are available (all of them are optional):
 If you would like to specify a specific Java version (e.g Java 11) please add the following step before `Launch Scala Steward`:
 ```
 - name: Set up JDK 11
-  uses: actions/setup-java@v1.3.0
+  uses: actions/setup-java@v3
   with:
-    java-version: 1.11
+    java-version: 11
+    distribution: temurin
 ```
 
 ### Github Token
