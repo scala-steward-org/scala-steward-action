@@ -1,15 +1,14 @@
 name: Update Major Version Tag
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
 
 jobs:
   update-major-version-tag:
     name: Update Major Version Tag
     runs-on: ubuntu-latest
     steps:
-      - uses: nowactions/update-majorver@be25c5301723e95e520a4ee375d399d6a30fe6e7 # v1.0.0
+      - uses: nowactions/update-majorver@f2014bbbba95b635e990ce512c5653bd0f4753fb # v1.1.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
