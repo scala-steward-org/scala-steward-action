@@ -102,6 +102,7 @@ The following inputs are available (all of them are optional):
 | <details><summary>`github-app-key`</summary><br/>The private key for the GitHub App set with `github-app-id`. This value should be extracted from a secret. This input in combination with `github-app-id` allows you to use this action as a "backend" for your own Scala Steward GitHub App.</details> | A private key | `''` |
 | <details><summary>`branches`</summary><br/>A comma-separated list of branches to update (if not provided, the repository's default branch will be updated instead). This option only has effect if updating the current repository or using the `github-repository` input. See ["Updating a custom branch"](#updating-a-custom-branch).</details>| A list of branches to update | `''` |
 | <details><summary>`repo-config`</summary><br/>The path to a [`.scala-steward.conf`](https://github.com/scala-steward-org/scala-steward/blob/master/docs/repo-specific-configuration.md) file with default values for all repos updated with this action.</details> | Path to a<br/>[`.scala-steward.conf`](https://github.com/scala-steward-org/scala-steward/blob/master/docs/repo-specific-configuration.md)<br/>default file | `.github/.scala-steward.conf` |
+| <details><summary>`other-args`</summary><br/>Other arguments to launch Scala Steward with</details> | String | `''` |
 
 ### Specify JVM version
 
@@ -415,7 +416,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.exoego.net/"><img src="https://avatars.githubusercontent.com/u/127635?v=4?s=100" width="100px;" alt=""/><br /><sub><b>TATSUNO Yasuhiro</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=exoego" title="Code">💻</a></td>
     <td align="center"><a href="https://www.nomadblacky.dev/"><img src="https://avatars.githubusercontent.com/u/3215961?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Takumi Kadowaki</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=NomadBlacky" title="Code">💻</a></td>
     <td align="center"><a href="http://victor.sollerhed.se/"><img src="https://avatars.githubusercontent.com/u/62675?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Victor Sollerhed</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=MPV" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ybasket"><img src="https://avatars.githubusercontent.com/u/2632023?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yannick Heiber</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ybasket" title="Code">💻</a></td>
     <td align="center"><a href="https://twitter.com/xuwei_k"><img src="https://avatars.githubusercontent.com/u/389787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kenji yoshida</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=xuwei-k" title="Code">💻</a></td>
+  </tr>
+  <tr>
     <td align="center"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
   </tr>
 </table>
