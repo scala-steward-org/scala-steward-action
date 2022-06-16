@@ -60,8 +60,8 @@ async function run(): Promise<void> {
       : []
 
     const otherArgs = core.getInput('other-args')
-        ? core.getInput('other-args').split(' ')
-        : []
+      ? core.getInput('other-args').split(' ')
+      : []
 
     await coursier.install('scalafmt')
     await coursier.install('scalafix')
