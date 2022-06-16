@@ -64547,6 +64547,9 @@ async function run() {
         const githubAppArgs = githubAppInfo
             ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
             : [];
+        const otherArgs = core.getInput('other-args')
+            ? core.getInput('other-args').split(' ')
+            : [];
         await coursier.install('scalafmt');
         await coursier.install('scalafix');
         await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
@@ -64569,6 +64572,7 @@ async function run() {
             '--do-not-fork',
             '--disable-sandbox',
             githubAppArgs,
+            otherArgs,
         ]).finally(() => {
             workspace.saveWorkspaceCache(workspaceDir).catch((error) => {
                 core.setFailed(` ✕ ${error.message}`);
