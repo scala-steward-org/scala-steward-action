@@ -209,6 +209,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "wunderk1nd-e",
+      "name": "Elias Court",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36158087?v=4",
+      "profile": "https://k1nd.ltd/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
