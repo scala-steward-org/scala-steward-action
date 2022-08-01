@@ -1,3 +1,4 @@
+import process from 'process'
 import * as path from 'path'
 import * as os from 'os'
 import * as core from '@actions/core'
