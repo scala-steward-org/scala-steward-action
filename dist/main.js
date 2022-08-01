@@ -64194,6 +64194,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.githubAppInfo = exports.reposFile = exports.githubRepository = exports.defaultRepoConf = exports.githubToken = exports.mavenCentral = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(7147));
+const process_1 = __importDefault(__nccwpck_require__(7282));
 const node_fetch_1 = __importDefault(__nccwpck_require__(467));
 const core = __importStar(__nccwpck_require__(2186));
 /**
@@ -64258,7 +64259,7 @@ exports.defaultRepoConf = defaultRepoConf;
  *                   or the `GITHUB_REPOSITORY` environment variable.
  */
 function githubRepository() {
-    const repo = core.getInput('github-repository') || process.env.GITHUB_REPOSITORY;
+    const repo = core.getInput('github-repository') || process_1.default.env.GITHUB_REPOSITORY;
     if (repo === undefined) {
         throw new Error('Unable to read Github repository from `github-repository` '
             + 'input or `GITHUB_REPOSITORY` environment variable');
@@ -64357,8 +64358,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.remove = exports.launch = exports.install = exports.selfInstall = void 0;
+const process_1 = __importDefault(__nccwpck_require__(7282));
 const path = __importStar(__nccwpck_require__(1017));
 const os = __importStar(__nccwpck_require__(2037));
 const core = __importStar(__nccwpck_require__(2186));
@@ -64445,7 +64450,7 @@ exports.install = install;
  */
 async function launch(org, app, version, args = []) {
     const name = `${org}:${app}:${version}`;
-    const debug = 'ACTIONS_STEP_DEBUG' in process.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
+    const debug = 'ACTIONS_STEP_DEBUG' in process_1.default.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
     core.startGroup(`Launching ${name}`);
     const launchArgs = [
         'launch',
@@ -64598,6 +64603,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const buffer_1 = __nccwpck_require__(4300);
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(978));
 const check = __importStar(__nccwpck_require__(6409));
@@ -64625,7 +64631,7 @@ async function run() {
         const defaultRepoConfPath = check.defaultRepoConf();
         // Content of the repos.md file either comes from the input file
         // or is empty (replaced by the Github App info) or is a single repo
-        const reposList = (_a = check.reposFile()) !== null && _a !== void 0 ? _a : (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()));
+        const reposList = (_a = check.reposFile()) !== null && _a !== void 0 ? _a : (githubAppInfo ? buffer_1.Buffer.from('') : buffer_1.Buffer.from(check.githubRepository()));
         const workspaceDir = await workspace.prepare(reposList, token);
         const cacheTtl = core.getInput('cache-ttl');
         await workspace.restoreWorkspaceCache(workspaceDir);
@@ -64923,6 +64929,14 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 7282:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");
 
 /***/ }),
 

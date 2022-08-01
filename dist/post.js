@@ -60631,8 +60631,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.remove = exports.launch = exports.install = exports.selfInstall = void 0;
+const process_1 = __importDefault(__nccwpck_require__(7282));
 const path = __importStar(__nccwpck_require__(1017));
 const os = __importStar(__nccwpck_require__(2037));
 const core = __importStar(__nccwpck_require__(2186));
@@ -60719,7 +60723,7 @@ exports.install = install;
  */
 async function launch(org, app, version, args = []) {
     const name = `${org}:${app}:${version}`;
-    const debug = 'ACTIONS_STEP_DEBUG' in process.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
+    const debug = 'ACTIONS_STEP_DEBUG' in process_1.default.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
     core.startGroup(`Launching ${name}`);
     const launchArgs = [
         'launch',
@@ -61042,6 +61046,14 @@ module.exports = require("os");
 
 "use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 7282:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");
 
 /***/ }),
 
