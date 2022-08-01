@@ -1,4 +1,5 @@
 import fs from 'fs'
+import process from 'process'
 import test from 'ava'
 import * as check from '../src/check'
 

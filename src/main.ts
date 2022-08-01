@@ -1,3 +1,4 @@
+import {Buffer} from 'buffer'
 import * as core from '@actions/core'
 import * as github from './github'
 import * as check from './check'

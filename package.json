@@ -50,6 +50,7 @@
     "rules": {
       "new-cap": 0,
       "ava/no-ignored-test-files": 0,
+      "n/file-extension-in-import": 0,
       "node/prefer-global/process": 0,
       "node/prefer-global/buffer": 0,
       "import/extensions": 0,

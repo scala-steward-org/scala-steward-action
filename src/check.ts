@@ -1,4 +1,6 @@
+import {Buffer} from 'buffer'
 import fs from 'fs'
+import process from 'process'
 import fetch from 'node-fetch'
 import * as core from '@actions/core'
 
