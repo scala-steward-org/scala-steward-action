@@ -35,8 +35,7 @@ inputs:
     default: "true"
     required: false
   branches:
-    description:
-      A comma-separated list of branches to update (if not provided, the repository's default branch will be
+    description: A comma-separated list of branches to update (if not provided, the repository's default branch will be
       updated instead). This option only has effect if updating the current repository or using the `github-repository` input.
     required: false
   sign-commits:
@@ -74,6 +73,9 @@ inputs:
   repo-config:
     description: "Location of a `.scala-steward.conf` file with default values"
     default: ".github/.scala-steward.conf"
+    required: false
+  other-args:
+    description: "Other Scala Steward arguments not yet supported by this action as a separate argument"
     required: false
 
 runs:
