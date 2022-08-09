@@ -218,6 +218,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "leobenkel",
+      "name": "Leo Benkel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4960573?v=4",
+      "profile": "https://leobenkel.com/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
