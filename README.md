@@ -42,7 +42,32 @@ When added, this action will launch [Scala Steward](https://github.com/scala-ste
 
 ## Usage
 
-Create a new `.github/workflows/scala-steward.yml` file:
+To use the Action in your repo, you need to create a GitHub App. Then you need to create a new GitHub Actions workflow file to run this Action. Here is a step-by-step tutorial on how to do it:
+
+1. **Create a new GitHub App**. To do so, follow the GitHub's [Creating a GitHub App](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app) Guide.
+    1. If you're setting up this Action for an organisation-owned repo, note that the step (1) of the "Creating a GitHub App" Guide tells you how to create an organization-level App.
+    2. Step (7) of the Guide tells you to specify the homepage – you can write a random URL there.
+    3. Step (15) of the Guide asks you which permissions you want your app to have. Specify the following:
+        - Metadata: Read-only
+        - Pull requests: Read and write
+        - Contents: Read and write
+    4. Optional: Upload a profile picture for the newly created App.
+        1. Locate the newly created App's Settings. To do so, go to the settings of either your personal profile or of that of your organisation (depending on where you created the App), select "Developer Settings" from the side bar, then click "GitHub Apps". Find your app, and click "Edit" next to it.
+            - To access your personal settings, click on your profile icon at the top-right corner of the GitHub interface, click "Settings".
+            - To access the settings of an organisation, click on your profile icon at the top-right, select "Your organizations", find the organisation for which you created an App and click "Settings" for that organisation.
+        2. In the settings, locate the "Display information" section and press the "Upload a logo" button.
+2. **Install the App** for the repo in which you're setting up this Action.
+    1. At the App Settings (see step 1.iv.a of this tutorial on how to access it), at the sidebar, click the "Public page" button, there, click the green "Install" button.
+    2. Select whether you'd like to install it account-wide or only for selected repos. If you install it for your entire account (personal or organisation), you'll be able to use this App to power this Action with any repo which that account owns.
+    3. Click "Install".
+3. **Copy the App id and the App private key** into a text file for usage in the next step of this tutorial. Both of them can be accessed from your App's Settings (see step 1.iv.a of this tutorial).
+    1. App id is available in the "About" section of the Settings.
+    2. The private key needs to be generated from the "Private keys" section. Clicking the "Generate private key" button will download a `*.pem` file on your computer. Open that file with a text editor, and copy the contents. Make sure to copy everything, including the first line `-----BEGIN RSA PRIVATE KEY-----` and the last line `-----END RSA PRIVATE KEY-----`.
+4. **Create repo secrets** for the private key and the app id in the repository where you're installing this Action.
+    1. To do so, from the repo's page, click the "Settings" tab. There, select "Secrets" at the sidebar, and click "Actions" at the dropdown menu. Click "New repository secret".
+    2. At the "Name" field, enter `APP_PRIVATE_KEY`. At the "Value" text area, paste the private key you copied at step (3.b) of this tutorial. Click "Add Secret".
+    3. Repeat the previous steps (4.i-4.ii) to add a secret for the app id. Specify `APP_ID` as the name. For the value, paste the app id you copied at the step (3.a) of this tutorial.
+5. **Create a new GitHub Actions Workflow** file in the repo where you're installing this Action. Paste the following content into that file:
 
 ```yaml
 # This workflow will launch at 00:00 every Sunday
@@ -57,10 +82,17 @@ jobs:
     runs-on: ubuntu-latest
     name: Launch Scala Steward
     steps:
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:
-          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github-token: ${{ steps.generate-token.outputs.token }}
 ```
 
 ### How can I trigger a run?
