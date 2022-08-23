@@ -61,9 +61,9 @@ To use the Action in your repo, you need to create a GitHub App. Then you need t
     2. The private key needs to be generated from the "Private keys" section. Clicking the "Generate private key" button will download a `*.pem` file on your computer. Open that file with a text editor, and copy the contents. Make sure to copy everything, including the first line `-----BEGIN RSA PRIVATE KEY-----` and the last line `-----END RSA PRIVATE KEY-----`.
 4. **Create repo secrets** for the private key and the app id in the repository where you're installing this Action.
     1. To do so, from the repo's page, click the "Settings" tab. There, select "Secrets" at the sidebar, and click "Actions" at the dropdown menu. Click "New repository secret".
-    2. At the "Name" field, enter `APP_PRIVATE_KEY`. At the "Value" text area, paste the private key you copied at step (3.b) of this tutorial. Click "Add Secret".
-    3. Repeat the previous steps (4.i-4.ii) to add a secret for the app id. Specify `APP_ID` as the name. For the value, paste the app id you copied at the step (3.a) of this tutorial.
-5. **Create a new GitHub Actions Workflow** file in the repo where you're installing this Action. Paste the following content into that file:
+    2. At the "Name" field, enter `APP_PRIVATE_KEY`. At the "Value" text area, paste the private key you copied at step (3.ii) of this tutorial. Click "Add Secret".
+    3. Repeat the previous steps (4.i-4.ii) to add a secret for the app id. Specify `APP_ID` as the name. For the value, paste the app id you copied at the step (3.i) of this tutorial.
+5. **Create a new GitHub Actions Workflow** file, e.g. `.github/workflows/scala-steward.yml`, in the repo where you're installing this Action. Paste the following content into that file:
 
 ```yaml
 # This workflow will launch at 00:00 every Sunday
