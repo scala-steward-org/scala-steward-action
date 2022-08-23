@@ -15,11 +15,9 @@ A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/s
   * [How can I trigger a run?](#how-can-i-trigger-a-run)
 - [Configuration](#configuration)
   * [Specify JVM version](#specify-jvm-version)
-  * [Github Token](#github-token)
+  * [Alternative Options for the GitHub Token](#alternative-options-for-the-github-token)
     + [Using the default Github Action Token](#using-the-default-github-action-token)
     + [Using a Personal Access Token](#using-a-personal-access-token)
-      - [Note on Github User account](#note-on-github-user-account)
-    + [Using a Github App installation tokens](#using-a-github-app-installation-tokens)
   * [Updating one repository](#updating-one-repository)
   * [Updating multiple repositories](#updating-multiple-repositories)
     + [Using a file to list repositories](#using-a-file-to-list-repositories)
@@ -147,9 +145,9 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
     distribution: temurin
 ```
 
-### Github Token
+### Alternative Options for the GitHub Token
 
-There are several options for the Github Token:
+If for some reason the token provided by the GitHub App (as described in the [Usage](#usage) section) doesn't work for you, you can use a default GitHub Action token or a personal one.
 
 #### Using the default Github Action Token
 
@@ -170,9 +168,7 @@ By default, the action will use the default GitHub Token if none is provided via
     github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 ```
 
-##### Note on Github User account
-
-The [Github Personal Access Token](https://github.com/settings/tokens) can be created under your own Github user account, or under a separate account that has [Collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) permission in the repository/repositories you wish to update.
+Beware that using the Personal Access Token will make it look like it's you who submitted all the PRs. The workaround for this is to create a separate GitHub account for the Action and give it the [Collaborator](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository) permission in the repository/repositories you wish to update.
 
 Make sure the account you choose has *Name* and *Public email* fields defined in [Public Profile](https://github.com/settings/profile) -- they will be used by Scala Steward to make commits.
 If the account has [personal email address protection](https://help.github.com/en/github/setting-up-and-managing-your-github-user-account/blocking-command-line-pushes-that-expose-your-personal-email-address) enabled, then you will need to explicitly specify a email to use in commits:
@@ -184,10 +180,6 @@ If the account has [personal email address protection](https://help.github.com/e
     github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
     author-email: 12345+octocat@users.noreply.github.com
 ```
-
-#### Using a Github App installation tokens
-
-You can create a Github App with write access, install it in the repositories you want to update and use it to generate installation access tokens. See detailed instructions [below](#using-a-github-app-to-author-pull-requests).
 
 ### Updating one repository
 
