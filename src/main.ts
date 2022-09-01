@@ -1,4 +1,5 @@
 import {Buffer} from 'buffer'
+import process from 'process'
 import * as core from '@actions/core'
 import * as github from './github'
 import * as check from './check'
@@ -59,6 +60,12 @@ async function run(): Promise<void> {
     const githubAppArgs = githubAppInfo
       ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
       : []
+
+    if (process.env.RUNNER_DEBUG) {
+      core.debug('Debug mode activated for Scala Steward')
+      core.exportVariable('LOG_LEVEL', 'TRACE')
+      core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
+    }
 
     const otherArgs = core.getInput('other-args')
       ? core.getInput('other-args').split(' ')

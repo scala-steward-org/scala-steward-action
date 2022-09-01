@@ -107,15 +107,12 @@ export async function launch(
 ): Promise<void> {
   const name = `${org}:${app}:${version}`
 
-  const debug = 'ACTIONS_STEP_DEBUG' in process.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : []
-
   core.startGroup(`Launching ${name}`)
 
   const launchArgs = [
     'launch',
     '-r',
     'sonatype:snapshots',
-    ...debug,
     name,
     '--',
     ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg)),

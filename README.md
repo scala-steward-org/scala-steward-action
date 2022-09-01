@@ -348,6 +348,12 @@ By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbto
 
 You just need to enable [GitHub Actions' "step debug logging"](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging#enabling-step-debug-logging) and Scala Steward will start automatically in debug mode too.
 
+> Alternatively, if you are re-running a failed job and want to re-run it in debug
+> mode, follow this tutorial and check `Enable debug logging` before clicking on
+> `Re-run jobs`.
+>
+> ![](https://docs.github.com/assets/cb-11530/images/help/repository/enable-debug-logging.png)
+
 For this you must set the following secret in the repository that contains the workflow: `ACTIONS_STEP_DEBUG` to `true` (as stated in GitHub's documentation).
 
 ## Contributors
