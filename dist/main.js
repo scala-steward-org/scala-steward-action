@@ -65012,12 +65012,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.remove = exports.launch = exports.install = exports.selfInstall = void 0;
-const process_1 = __importDefault(__nccwpck_require__(7282));
 const path = __importStar(__nccwpck_require__(1017));
 const os = __importStar(__nccwpck_require__(2037));
 const core = __importStar(__nccwpck_require__(2186));
@@ -65104,13 +65100,11 @@ exports.install = install;
  */
 async function launch(org, app, version, args = []) {
     const name = `${org}:${app}:${version}`;
-    const debug = 'ACTIONS_STEP_DEBUG' in process_1.default.env ? ['--java-opt', '-DLOG_LEVEL=TRACE', '-DROOT_LOG_LEVEL=TRACE'] : [];
     core.startGroup(`Launching ${name}`);
     const launchArgs = [
         'launch',
         '-r',
         'sonatype:snapshots',
-        ...debug,
         name,
         '--',
         ...args.flatMap((arg) => (typeof arg === 'string' ? [arg] : arg)),
@@ -65256,8 +65250,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const buffer_1 = __nccwpck_require__(4300);
+const process_1 = __importDefault(__nccwpck_require__(7282));
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(978));
 const check = __importStar(__nccwpck_require__(6409));
@@ -65305,6 +65303,11 @@ async function run() {
         const githubAppArgs = githubAppInfo
             ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
             : [];
+        if (process_1.default.env.RUNNER_DEBUG) {
+            core.debug('Debug mode activated for Scala Steward');
+            core.exportVariable('LOG_LEVEL', 'TRACE');
+            core.exportVariable('ROOT_LOG_LEVEL', 'TRACE');
+        }
         const otherArgs = core.getInput('other-args')
             ? core.getInput('other-args').split(' ')
             : [];
