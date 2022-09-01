@@ -236,6 +236,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jyrkih",
+      "name": "Jyrki Hokkanen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2580851?v=4",
+      "profile": "https://github.com/jyrkih",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7
