@@ -103,3 +103,6 @@ lib/**/*
 
 # Ignore Visual Studio Code files
 .vscode
+
+# Ignore `dist` folder, it is generated only inside tag's commits
+dist
