@@ -65241,7 +65241,7 @@ async function getAuthUser(token) {
         };
     }
     catch (error) {
-        core.debug(`- User information retrieve Error: ${error.message}`);
+        core.debug(`- User information retrieve failed. Error: ${error.message}`);
         // https://github.community/t/github-actions-bot-email-address/17204/6
         // https://api.github.com/users/github-actions%5Bbot%5D
         return {
