@@ -53,7 +53,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
       },
     }
   } catch (error: unknown) {
-    core.debug(`- User information retrieve Error: ${(error as Error).message}`)
+    core.debug(`- User information retrieve failed. Error: ${(error as Error).message}`)
 
     // https://github.community/t/github-actions-bot-email-address/17204/6
     // https://api.github.com/users/github-actions%5Bbot%5D
@@ -65,7 +65,7 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
   }
 }
 
-interface AuthUser {
+type AuthUser = {
   email: () => string;
   login: () => string;
   name: () => string;

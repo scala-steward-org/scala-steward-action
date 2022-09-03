@@ -1,4 +1,4 @@
-import {Buffer} from 'buffer'
+import type Buffer from 'buffer'
 import fs from 'fs'
 import process from 'process'
 import fetch from 'node-fetch'
