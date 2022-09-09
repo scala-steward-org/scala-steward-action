@@ -398,6 +398,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/ybasket"><img src="https://avatars.githubusercontent.com/u/2632023?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yannick Heiber</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ybasket" title="Code">💻</a></td>
     <td align="center"><a href="https://twitter.com/xuwei_k"><img src="https://avatars.githubusercontent.com/u/389787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kenji yoshida</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=xuwei-k" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
+    <td align="center"><a href="https://qiita.com/yokra9"><img src="https://avatars.githubusercontent.com/u/53964890?v=4?s=100" width="100px;" alt=""/><br /><sub><b>yokra</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=yokra9" title="Documentation">📖</a></td>
   </tr>
 </table>
 
