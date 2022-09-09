@@ -43,11 +43,12 @@ To use the Action in your repo, you need to create a GitHub App. Then you need t
 1. **Create a new GitHub App**. To do so, follow the GitHub's [Creating a GitHub App](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app) Guide.
     1. If you're setting up this Action for an organisation-owned repo, note that the step (1) of the "Creating a GitHub App" Guide tells you how to create an organization-level App.
     2. Step (7) of the Guide tells you to specify the homepage – you can write a random URL there.
-    3. Step (15) of the Guide asks you which permissions you want your app to have. Specify the following:
+    3. Step (13) of the Guide tells you to specify the Webhook URL - you don't need it. Uncheck the box.
+    4. Step (15) of the Guide asks you which permissions you want your app to have. Specify the following:
         - Metadata: Read-only
         - Pull requests: Read and write
         - Contents: Read and write
-    4. Optional: Upload a profile picture for the newly created App.
+    5. Optional: Upload a profile picture for the newly created App.
         1. Locate the newly created App's Settings. To do so, go to the settings of either your personal profile or of that of your organisation (depending on where you created the App), select "Developer Settings" from the side bar, then click "GitHub Apps". Find your app, and click "Edit" next to it.
             - To access your personal settings, click on your profile icon at the top-right corner of the GitHub interface, click "Settings".
             - To access the settings of an organisation, click on your profile icon at the top-right, select "Your organizations", find the organisation for which you created an App and click "Settings" for that organisation.
@@ -397,6 +398,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/ybasket"><img src="https://avatars.githubusercontent.com/u/2632023?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yannick Heiber</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ybasket" title="Code">💻</a></td>
     <td align="center"><a href="https://twitter.com/xuwei_k"><img src="https://avatars.githubusercontent.com/u/389787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kenji yoshida</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=xuwei-k" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
+    <td align="center"><a href="https://qiita.com/yokra9"><img src="https://avatars.githubusercontent.com/u/53964890?v=4?s=100" width="100px;" alt=""/><br /><sub><b>yokra</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=yokra9" title="Documentation">📖</a></td>
   </tr>
 </table>
 

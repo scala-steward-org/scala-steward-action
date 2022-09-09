@@ -245,6 +245,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "yokra9",
+      "name": "yokra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53964890?v=4",
+      "profile": "https://qiita.com/yokra9",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
