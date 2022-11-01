@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@ava/typescript": "^3.0.1",
-    "@types/node": "^18.7.23",
+    "@types/node": "^18.11.8",
     "@vercel/ncc": "^0.34.0",
     "all-contributors-cli": "^6.22.0",
     "ava": "^4.3.3",
