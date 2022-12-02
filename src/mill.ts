@@ -26,7 +26,13 @@ export async function install(): Promise<string> {
 
       const millBin = path.join(binPath, 'mill')
 
-      await io.mv(millDownload, millBin)
+      // We first copy and then remove here to avoid this
+      // https://stackoverflow.com/questions/44146393/error-exdev-cross-device-link-not-permitted-rename-nodejs
+      // This idea is taken from https://github.com/shelljs/shelljs/pull/187
+      // It didn't get merged there, but for our usecase just mimicking this
+      // should hopefully work fine.
+      await io.cp(millDownload, millBin)
+      await io.rmRF(millDownload)
 
       await tc.cacheFile(millBin, 'mill', 'mill', millVersion)
     }
