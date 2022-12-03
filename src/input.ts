@@ -5,11 +5,30 @@ import {type Logger} from './logger'
  * Retrieves (and sanitize) inputs.
  */
 export class Input {
+  /**
+   * Creates a new instance of this class
+   */
   static from(inputs: {getInput: (name: string) => string}, logger: Logger) {
     return new Input(inputs, logger)
   }
 
   constructor(private readonly inputs: {getInput: (name: string) => string}, private readonly logger: Logger) {}
+
+  /**
+   * Returns every input for this action.
+   */
+  all() {
+    return {
+      github: {
+        token: this.githubToken(),
+        app: this.githubAppInfo(),
+      },
+      steward: {
+        defaultConfiguration: this.defaultRepoConf(),
+        repos: this.reposFile() ?? this.githubAppInfo() ? '' : this.githubRepository(),
+      },
+    }
+  }
 
   /**
    * Reads the Github Token from the `github-token` input. Throws error if the

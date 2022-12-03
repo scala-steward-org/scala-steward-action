@@ -23,27 +23,19 @@ async function run(): Promise<void> {
   try {
     const logger: Logger = core
     const httpClient: HttpClient = {run: async url => fetch(url)}
-    const input: Input = Input.from(core, logger)
+    const inputs = Input.from(core, logger).all()
     const healthCheck: HealthCheck = HealthCheck.from(logger, httpClient)
 
     await healthCheck.mavenCentral()
+
     await coursier.selfInstall()
 
-    const token = input.githubToken()
-    const user = await github.getAuthUser(token)
+    const user = await github.getAuthUser(inputs.github.token)
 
     const authorEmail = core.getInput('author-email') || user.email()
     const authorName = core.getInput('author-name') || user.name()
 
-    const githubAppInfo = input.githubAppInfo()
-
-    const defaultRepoConfPath = input.defaultRepoConf()
-
-    // Content of the repos.md file either comes from the input file
-    // or is empty (replaced by the Github App info) or is a single repo
-    const reposList = input.reposFile() ?? (githubAppInfo ? '' : input.githubRepository())
-
-    const workspaceDir = await workspace.prepare(reposList, token)
+    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token)
 
     const cacheTtl = core.getInput('cache-ttl')
 
@@ -62,11 +54,6 @@ async function run(): Promise<void> {
       : []
     const artifactMigrations = core.getInput('artifact-migrations')
       ? ['--artifact-migrations', core.getInput('artifact-migrations')]
-      : []
-    const defaultRepoConf = defaultRepoConfPath ? ['--repo-config', defaultRepoConfPath] : []
-
-    const githubAppArgs = githubAppInfo
-      ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
       : []
 
     if (process.env.RUNNER_DEBUG) {
@@ -99,10 +86,10 @@ async function run(): Promise<void> {
       ['--cache-ttl', cacheTtl],
       scalafixMigrations,
       artifactMigrations,
-      defaultRepoConf,
+      inputs.steward.defaultConfiguration ? ['--repo-config', inputs.steward.defaultConfiguration] : [],
       '--do-not-fork',
       '--disable-sandbox',
-      githubAppArgs,
+      inputs.github.app ? ['--github-app-id', inputs.github.app.id, '--github-app-key-file', inputs.github.app.keyFile] : [],
       otherArgs,
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
