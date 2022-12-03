@@ -1,12 +1,14 @@
 import {Buffer} from 'buffer'
 import process from 'process'
 import * as core from '@actions/core'
+import fetch from 'node-fetch'
 import * as github from './github'
 import {Check} from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
 import {type Logger} from './logger'
 import {Input} from './input'
+import {type HttpClient} from './http'
 import * as mill from './mill'
 
 /**
@@ -21,6 +23,7 @@ import * as mill from './mill'
 async function run(): Promise<void> {
   try {
     const logger: Logger = core
+    const httpClient: HttpClient = {run: async url => fetch(url)}
     const input: Input = Input.from(core, logger)
     const check: Check = Check.from(logger)
     await check.mavenCentral()
