@@ -29,6 +29,9 @@ async function run(): Promise<void> {
     await healthCheck.mavenCentral()
 
     await coursier.selfInstall()
+    await coursier.install('scalafmt')
+    await coursier.install('scalafix')
+    await mill.install()
 
     const user = await github.getAuthUser(inputs.github.token)
 
@@ -41,10 +44,6 @@ async function run(): Promise<void> {
       core.exportVariable('LOG_LEVEL', 'TRACE')
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
-
-    await coursier.install('scalafmt')
-    await coursier.install('scalafix')
-    await mill.install()
 
     await coursier.launch('scala-steward', inputs.steward.version, [
       ['--workspace', `${workspaceDir}/workspace`],
