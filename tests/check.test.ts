@@ -4,14 +4,14 @@ import {match} from 'ts-pattern'
 import {Input} from '../src/input'
 import {Logger} from '../src/logger'
 
-test.serial('`Input.reposFile()` should return undefined on missing input', t => {
+test('`Input.reposFile()` should return undefined on missing input', t => {
   const input = Input.from({getInput: () => ''}, Logger.noOp)
 
   const file = input.reposFile()
   t.is(file, undefined)
 })
 
-test.serial('`Input.reposFile()` should return contents if file exists', t => {
+test('`Input.reposFile()` should return contents if file exists', t => {
   const inputs = (name: string) => match(name)
     .with('repos-file', () => 'tests/resources/repos.test.md')
     .otherwise(() => '')
@@ -25,7 +25,7 @@ test.serial('`Input.reposFile()` should return contents if file exists', t => {
   t.is(file.toString(), expected)
 })
 
-test.serial('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
+test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
   const inputs = (name: string) => match(name)
     .with('repos-file', () => 'this/does/not/exist.md')
     .otherwise(() => '')
@@ -39,7 +39,7 @@ test.serial('`Input.reposFile()` should throw error if file doesn\'t exists', t 
   t.is(error?.message, expected)
 })
 
-test.serial('`Input.githubRepository()` should return repository from input', t => {
+test('`Input.githubRepository()` should return repository from input', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .otherwise(() => '')
@@ -53,7 +53,7 @@ test.serial('`Input.githubRepository()` should return repository from input', t 
   t.is(content, expected)
 })
 
-test.serial('`Input.githubRepository()` should return repository from input with custom branch', t => {
+test('`Input.githubRepository()` should return repository from input with custom branch', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .with('branches', () => '0.1.x')
@@ -68,7 +68,7 @@ test.serial('`Input.githubRepository()` should return repository from input with
   t.is(content, expected)
 })
 
-test.serial('`Input.githubRepository()` should return repository from input with multiple custom branches', t => {
+test('`Input.githubRepository()` should return repository from input with multiple custom branches', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .with('branches', () => 'main,0.1.x,0.2.x')
@@ -83,7 +83,7 @@ test.serial('`Input.githubRepository()` should return repository from input with
   t.is(content, expected)
 })
 
-test.serial('`Input.defaultRepoConf()` should return the path if it exists', t => {
+test('`Input.defaultRepoConf()` should return the path if it exists', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => 'tests/resources/.scala-steward.conf')
     .otherwise(() => '')
@@ -97,7 +97,7 @@ test.serial('`Input.defaultRepoConf()` should return the path if it exists', t =
   t.is(path, expected)
 })
 
-test.serial('`Input.defaultRepoConf()` should return the default path if it exists', t => {
+test('`Input.defaultRepoConf()` should return the default path if it exists', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
@@ -115,7 +115,7 @@ test.serial('`Input.defaultRepoConf()` should return the default path if it exis
   fs.rmSync('.github/.scala-steward.conf')
 })
 
-test.serial('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {
+test('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
@@ -127,7 +127,7 @@ test.serial('`Input.defaultRepoConf()` should return undefined if the default pa
   t.is(path, undefined)
 })
 
-test.serial('`Input.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
+test('`Input.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => 'tests/resources/.scala-steward-new.conf')
     .otherwise(() => '')
