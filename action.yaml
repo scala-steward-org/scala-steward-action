@@ -12,6 +12,7 @@ inputs:
   github-repository:
     description: "Repository to update. The current repository will be used by default"
     required: false
+    default: ${{ github.repository }}
   github-token:
     description: "Github Personal Access Token with permission to create branches on repo"
     required: false

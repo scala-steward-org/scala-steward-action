@@ -1,6 +1,5 @@
 import fs from 'fs'
 import {type Buffer} from 'buffer'
-import process from 'process'
 import {type Logger} from './logger'
 
 /**
@@ -59,26 +58,21 @@ export class Input {
   }
 
   /**
-   * Reads a Github repository from the `github-repository` input. Fallback to the
-   * `GITHUB_REPOSITORY` environment variable.
+   * Returns the GitHub repository set to update.
    *
-   * Throws error if the fallback fails or returns the repository in case it doesn't.
+   * It reads it from the `github-repository` input.
    *
-   * If the `branch` input is set, the selected branch will be added for update instead
-   * of the default one.
+   * Throws error if input is empty or missing.
    *
-   * @returns {string} The Github repository read from the `github-repository` input
-   *                   or the `GITHUB_REPOSITORY` environment variable.
+   * If the `branches` input is set, the selected branches will be added.
+   *
+   * @returns {string} The Github repository read from the `github-repository` input.
    */
   githubRepository(): string {
-    const repo: string | undefined
-    = this.inputs.getInput('github-repository') || process.env.GITHUB_REPOSITORY
+    const repo = this.inputs.getInput('github-repository')
 
-    if (repo === undefined) {
-      throw new Error(
-        'Unable to read Github repository from `github-repository` '
-        + 'input or `GITHUB_REPOSITORY` environment variable',
-      )
+    if (!repo) {
+      throw new Error('Unable to read Github repository from `github-repository` input')
     }
 
     const branches = this.inputs.getInput('branches').split(',').filter(Boolean)

@@ -1,13 +1,8 @@
 import fs from 'fs'
-import process from 'process'
 import test from 'ava'
 import {match} from 'ts-pattern'
-import {Logger} from '../src/logger'
 import {Input} from '../src/input'
-
-test.beforeEach(() => {
-  process.env.GITHUB_REPOSITORY = ''
-})
+import {Logger} from '../src/logger'
 
 test.serial('`Input.reposFile()` should return undefined on missing input', t => {
   const input = Input.from({getInput: () => ''}, Logger.noOp)
@@ -42,50 +37,6 @@ test.serial('`Input.reposFile()` should throw error if file doesn\'t exists', t 
   const error = t.throws(() => input.reposFile(), {instanceOf: Error})
 
   t.is(error?.message, expected)
-})
-
-test.serial('`Input.githubRepository()` should return current repository if input not present', t => {
-  const input = Input.from({getInput: () => ''}, Logger.noOp)
-
-  process.env.GITHUB_REPOSITORY = 'owner/repo'
-
-  const content = input.githubRepository()
-
-  const expected = '- owner/repo'
-
-  t.is(content, expected)
-})
-
-test.serial('`Input.githubRepository()` should return current repository if input not present with custom branch', t => {
-  const inputs = (name: string) => match(name)
-    .with('branches', () => '0.1.x')
-    .otherwise(() => '')
-
-  const input = Input.from({getInput: inputs}, Logger.noOp)
-
-  process.env.GITHUB_REPOSITORY = 'owner/repo'
-
-  const content = input.githubRepository()
-
-  const expected = '- owner/repo:0.1.x'
-
-  t.is(content, expected)
-})
-
-test.serial('`Input.githubRepository()` should return current repository if input not present with multiple custom branches', t => {
-  const inputs = (name: string) => match(name)
-    .with('branches', () => 'main,0.1.x,0.2.x')
-    .otherwise(() => '')
-
-  const input = Input.from({getInput: inputs}, Logger.noOp)
-
-  process.env.GITHUB_REPOSITORY = 'owner/repo'
-
-  const content = input.githubRepository()
-
-  const expected = '- owner/repo:main\n- owner/repo:0.1.x\n- owner/repo:0.2.x'
-
-  t.is(content, expected)
 })
 
 test.serial('`Input.githubRepository()` should return repository from input', t => {
