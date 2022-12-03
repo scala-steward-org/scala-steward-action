@@ -16,4 +16,5 @@ async function post(): Promise<void> {
   }
 }
 
+// eslint-disable-next-line unicorn/prefer-top-level-await
 void post()
