@@ -18,6 +18,7 @@ import * as mill from './mill'
  */
 async function run(): Promise<void> {
   try {
+    const logger: Logger = core
     const check: Check = new Check()
     await check.mavenCentral()
     await coursier.selfInstall()
