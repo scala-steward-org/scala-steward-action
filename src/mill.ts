@@ -5,6 +5,11 @@ import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
 
+/**
+ * Installs `Mill` and add its executable to the `PATH`.
+ *
+ * Throws error if the installation fails.
+ */
 export async function install(): Promise<string> {
   try {
     const millVersion = core.getInput('mill-version') || '0.10.9'
@@ -59,4 +64,11 @@ export async function install(): Promise<string> {
 
   core.info(`✓ Mill installed, version: ${version.trim()}`)
   return version
+}
+
+/**
+ * Removes Mill binary
+ */
+export async function remove(): Promise<void> {
+  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'mill'))
 }
