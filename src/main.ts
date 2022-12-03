@@ -76,7 +76,7 @@ async function run(): Promise<void> {
     await coursier.install('scalafix')
     await mill.install()
 
-    await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
+    await coursier.launch('scala-steward', version, [
       ['--workspace', `${workspaceDir}/workspace`],
       ['--repos-file', `${workspaceDir}/repos.md`],
       ['--git-ask-pass', `${workspaceDir}/askpass.sh`],

@@ -117,7 +117,7 @@ The following inputs are available (all of them are optional):
 | <details><summary>`github-token`</summary><br/>Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`)</details> | Valid [Github Token](https://github.com/settings/tokens) | `''` |
 | <details><summary>`author-email`</summary><br/>Author email address to use in commits</details> | Email address | Github user's *Public email* |
 | <details><summary>`author-name`</summary><br/>Author name to use in commits</details> | String | Github user's *Name* |
-| <details><summary>`scala-steward-version`</summary><br/>Scala Steward version to use</details> | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases) | `0.16.1` |
+| <details><summary>`scala-steward-version`</summary><br/>Scala Steward version to use</details> | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases) | `''` |
 | <details><summary>`ignore-opts-files`</summary><br/>Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not</details> | true/false | `true` |
 | <details><summary>`sign-commits`</summary><br/>Whether to sign commits or not</details> | true/false | `false` |
 | <details><summary>`signing-key`</summary><br/>Key ID of signing key to use for signing commits. Analogous to git's `user.signingkey` configuration setting.</details> | Signing key ID | ' ' |

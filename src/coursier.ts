@@ -100,17 +100,17 @@ export async function install(app: string): Promise<void> {
  * @param {(string | string[])[]} args - The args to pass to the application launcher.
  */
 export async function launch(
-  org: string,
   app: string,
   version: string,
   args: Array<string | string[]> = [],
 ): Promise<void> {
-  const name = `${org}:${app}:${version}`
+  const name = version ? `${app}:${version}` : app
 
   core.startGroup(`Launching ${name}`)
 
   const launchArgs = [
     'launch',
+    '--contrib',
     '-r',
     'sonatype:snapshots',
     name,
