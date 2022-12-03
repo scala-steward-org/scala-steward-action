@@ -1,4 +1,3 @@
-import {Buffer} from 'buffer'
 import process from 'process'
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
@@ -42,9 +41,7 @@ async function run(): Promise<void> {
 
     // Content of the repos.md file either comes from the input file
     // or is empty (replaced by the Github App info) or is a single repo
-    const reposList
-      = input.reposFile()
-      ?? (githubAppInfo ? Buffer.from('') : Buffer.from(input.githubRepository()))
+    const reposList = input.reposFile() ?? (githubAppInfo ? '' : input.githubRepository())
 
     const workspaceDir = await workspace.prepare(reposList, token)
 

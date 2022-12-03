@@ -1,4 +1,3 @@
-import type Buffer from 'buffer'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -91,11 +90,11 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {Buffer} reposList - The Markdown list of repositories to write to the `repos.md` file.
+ * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file.
  * @param {string} token - The Github Token used to authenticate into Github.
  * @returns {string} The workspace directory path
  */
-export async function prepare(reposList: Buffer, token: string): Promise<string> {
+export async function prepare(reposList: string, token: string): Promise<string> {
   try {
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)

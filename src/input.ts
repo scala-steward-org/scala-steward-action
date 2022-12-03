@@ -1,5 +1,4 @@
 import fs from 'fs'
-import {type Buffer} from 'buffer'
 import {type Logger} from './logger'
 
 /**
@@ -108,7 +107,7 @@ export class Input {
    * @returns {string | undefined} The contents of the file indicated in `repos-file` input, if is
    *                               defined; otherwise, `undefined`.
    */
-  reposFile(): Buffer | undefined {
+  reposFile(): string | undefined {
     const file: string = this.inputs.getInput('repos-file')
 
     if (!file) {
@@ -118,7 +117,7 @@ export class Input {
     if (fs.existsSync(file)) {
       this.logger.info(`✓ Using multiple repos file: ${file}`)
 
-      return fs.readFileSync(file)
+      return fs.readFileSync(file, 'utf8')
     }
 
     throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`)
