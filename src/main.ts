@@ -6,6 +6,7 @@ import {Check} from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
 import {type Logger} from './logger'
+import {Input} from './input'
 import * as mill from './mill'
 
 /**
@@ -20,24 +21,25 @@ import * as mill from './mill'
 async function run(): Promise<void> {
   try {
     const logger: Logger = core
+    const input: Input = Input.from(core, logger)
     const check: Check = Check.from(logger)
     await check.mavenCentral()
     await coursier.selfInstall()
-    const token = check.githubToken()
+    const token = input.githubToken()
     const user = await github.getAuthUser(token)
 
     const authorEmail = core.getInput('author-email') || user.email()
     const authorName = core.getInput('author-name') || user.name()
 
-    const githubAppInfo = check.githubAppInfo()
+    const githubAppInfo = input.githubAppInfo()
 
-    const defaultRepoConfPath = check.defaultRepoConf()
+    const defaultRepoConfPath = input.defaultRepoConf()
 
     // Content of the repos.md file either comes from the input file
     // or is empty (replaced by the Github App info) or is a single repo
     const reposList
-      = check.reposFile()
-      ?? (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()))
+      = input.reposFile()
+      ?? (githubAppInfo ? Buffer.from('') : Buffer.from(input.githubRepository()))
 
     const workspaceDir = await workspace.prepare(reposList, token)
 

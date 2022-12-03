@@ -1,128 +1,161 @@
 import fs from 'fs'
 import process from 'process'
 import test from 'ava'
-import {Check} from '../src/check'
+import {match} from 'ts-pattern'
 import {Logger} from '../src/logger'
+import {Input} from '../src/input'
 
 test.beforeEach(() => {
-  process.env['INPUT_REPOS-FILE'] = ''
   process.env.GITHUB_REPOSITORY = ''
-  process.env.INPUT_BRANCHES = ''
-  process.env['INPUT_GITHUB-REPOSITORY'] = ''
-  process.env['INPUT_REPO-CONFIG'] = ''
 })
 
-const check = new Check(Logger.noOp)
+test.serial('`Input.reposFile()` should return undefined on missing input', t => {
+  const input = Input.from({getInput: () => ''}, Logger.noOp)
 
-test.serial('`check.reposFile()` should return undefined on missing input', t => {
-  const file = check.reposFile()
+  const file = input.reposFile()
   t.is(file, undefined)
 })
 
-test.serial('`check.reposFile()` should return undefined on empty input', t => {
-  process.env['INPUT_REPOS-FILE'] = ''
-  const file = check.reposFile()
-  t.is(file, undefined)
-})
+test.serial('`Input.reposFile()` should return contents if file exists', t => {
+  const inputs = (name: string) => match(name)
+    .with('repos-file', () => 'tests/resources/repos.test.md')
+    .otherwise(() => '')
 
-test.serial('`check.reposFile()` should return contents if file exists', t => {
-  process.env['INPUT_REPOS-FILE'] = 'tests/resources/repos.test.md'
-  const file = check.reposFile() ?? ''
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const file = input.reposFile() ?? ''
 
   const expected = '- owner1/repo1\n- owner1/repo2\n- owner2/repo'
 
   t.is(file.toString(), expected)
 })
 
-test.serial('`check.reposFile()` should throw error if file doesn\'t exists', t => {
-  process.env['INPUT_REPOS-FILE'] = 'this/does/not/exist.md'
+test.serial('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
+  const inputs = (name: string) => match(name)
+    .with('repos-file', () => 'this/does/not/exist.md')
+    .otherwise(() => '')
+
+  const input = Input.from({getInput: inputs}, Logger.noOp)
 
   const expected = 'The path indicated in `repos-file` (this/does/not/exist.md) does not exist'
 
-  const error = t.throws(() => check.reposFile(), {instanceOf: Error})
+  const error = t.throws(() => input.reposFile(), {instanceOf: Error})
 
   t.is(error?.message, expected)
 })
 
-test.serial('`check.githubRepository()` should return current repository if input not present', t => {
+test.serial('`Input.githubRepository()` should return current repository if input not present', t => {
+  const input = Input.from({getInput: () => ''}, Logger.noOp)
+
   process.env.GITHUB_REPOSITORY = 'owner/repo'
 
-  const content = check.githubRepository()
+  const content = input.githubRepository()
 
   const expected = '- owner/repo'
 
   t.is(content, expected)
 })
 
-test.serial('`check.githubRepository()` should return current repository if input not present with custom branch', t => {
-  process.env.GITHUB_REPOSITORY = 'owner/repo'
-  process.env.INPUT_BRANCHES = '0.1.x'
+test.serial('`Input.githubRepository()` should return current repository if input not present with custom branch', t => {
+  const inputs = (name: string) => match(name)
+    .with('branches', () => '0.1.x')
+    .otherwise(() => '')
 
-  const content = check.githubRepository()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  process.env.GITHUB_REPOSITORY = 'owner/repo'
+
+  const content = input.githubRepository()
 
   const expected = '- owner/repo:0.1.x'
 
   t.is(content, expected)
 })
 
-test.serial('`check.githubRepository()` should return current repository if input not present with multiple custom branches', t => {
-  process.env.GITHUB_REPOSITORY = 'owner/repo'
-  process.env.INPUT_BRANCHES = 'main,0.1.x,0.2.x'
+test.serial('`Input.githubRepository()` should return current repository if input not present with multiple custom branches', t => {
+  const inputs = (name: string) => match(name)
+    .with('branches', () => 'main,0.1.x,0.2.x')
+    .otherwise(() => '')
 
-  const content = check.githubRepository()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  process.env.GITHUB_REPOSITORY = 'owner/repo'
+
+  const content = input.githubRepository()
 
   const expected = '- owner/repo:main\n- owner/repo:0.1.x\n- owner/repo:0.2.x'
 
   t.is(content, expected)
 })
 
-test.serial('`check.githubRepository()` should return repository from input', t => {
-  process.env['INPUT_GITHUB-REPOSITORY'] = 'owner/repo'
+test.serial('`Input.githubRepository()` should return repository from input', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-repository', () => 'owner/repo')
+    .otherwise(() => '')
 
-  const content = check.githubRepository()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const content = input.githubRepository()
 
   const expected = '- owner/repo'
 
   t.is(content, expected)
 })
 
-test.serial('`check.githubRepository()` should return repository from input with custom branch', t => {
-  process.env['INPUT_GITHUB-REPOSITORY'] = 'owner/repo'
-  process.env.INPUT_BRANCHES = '0.1.x'
+test.serial('`Input.githubRepository()` should return repository from input with custom branch', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-repository', () => 'owner/repo')
+    .with('branches', () => '0.1.x')
+    .otherwise(() => '')
 
-  const content = check.githubRepository()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const content = input.githubRepository()
 
   const expected = '- owner/repo:0.1.x'
 
   t.is(content, expected)
 })
 
-test.serial('`check.githubRepository()` should return repository from input with multiple custom branches', t => {
-  process.env['INPUT_GITHUB-REPOSITORY'] = 'owner/repo'
-  process.env.INPUT_BRANCHES = 'main,0.1.x,0.2.x'
+test.serial('`Input.githubRepository()` should return repository from input with multiple custom branches', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-repository', () => 'owner/repo')
+    .with('branches', () => 'main,0.1.x,0.2.x')
+    .otherwise(() => '')
 
-  const content = check.githubRepository()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const content = input.githubRepository()
 
   const expected = '- owner/repo:main\n- owner/repo:0.1.x\n- owner/repo:0.2.x'
 
   t.is(content, expected)
 })
 
-test.serial('`check.defaultRepoConf()` should return the path if it exists', t => {
-  process.env['INPUT_REPO-CONFIG'] = 'tests/resources/.scala-steward.conf'
+test.serial('`Input.defaultRepoConf()` should return the path if it exists', t => {
+  const inputs = (name: string) => match(name)
+    .with('repo-config', () => 'tests/resources/.scala-steward.conf')
+    .otherwise(() => '')
 
-  const path = check.defaultRepoConf()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const path = input.defaultRepoConf()
 
   const expected = 'tests/resources/.scala-steward.conf'
 
   t.is(path, expected)
 })
 
-test.serial('`check.defaultRepoConf()` should return the default path if it exists', t => {
-  fs.writeFileSync('.github/.scala-steward.conf', '')
-  process.env['INPUT_REPO-CONFIG'] = '.github/.scala-steward.conf'
+test.serial('`Input.defaultRepoConf()` should return the default path if it exists', t => {
+  const inputs = (name: string) => match(name)
+    .with('repo-config', () => '.github/.scala-steward.conf')
+    .otherwise(() => '')
 
-  const path = check.defaultRepoConf()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  fs.writeFileSync('.github/.scala-steward.conf', '')
+
+  const path = input.defaultRepoConf()
 
   const expected = '.github/.scala-steward.conf'
 
@@ -131,20 +164,28 @@ test.serial('`check.defaultRepoConf()` should return the default path if it exis
   fs.rmSync('.github/.scala-steward.conf')
 })
 
-test.serial('`check.defaultRepoConf()` should return undefined if the default path do not exist', t => {
-  process.env['INPUT_REPO-CONFIG'] = '.github/.scala-steward.conf'
+test.serial('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {
+  const inputs = (name: string) => match(name)
+    .with('repo-config', () => '.github/.scala-steward.conf')
+    .otherwise(() => '')
 
-  const path = check.defaultRepoConf()
+  const input = Input.from({getInput: inputs}, Logger.noOp)
+
+  const path = input.defaultRepoConf()
 
   t.is(path, undefined)
 })
 
-test.serial('`check.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
-  process.env['INPUT_REPO-CONFIG'] = 'tests/resources/.scala-steward-new.conf'
+test.serial('`Input.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
+  const inputs = (name: string) => match(name)
+    .with('repo-config', () => 'tests/resources/.scala-steward-new.conf')
+    .otherwise(() => '')
+
+  const input = Input.from({getInput: inputs}, Logger.noOp)
 
   const expected = 'Provided default repo conf file (tests/resources/.scala-steward-new.conf) does not exist'
 
-  const error = t.throws(() => check.defaultRepoConf(), {instanceOf: Error})
+  const error = t.throws(() => input.defaultRepoConf(), {instanceOf: Error})
 
   t.is(error?.message, expected)
 })
