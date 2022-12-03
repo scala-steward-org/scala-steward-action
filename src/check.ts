@@ -3,8 +3,15 @@ import fs from 'fs'
 import process from 'process'
 import fetch from 'node-fetch'
 import * as core from '@actions/core'
+import {type Logger} from './logger'
 
 export class Check {
+  static from(logger: Logger) {
+    return new Check(logger)
+  }
+
+  constructor(private readonly logger: Logger) {}
+
   /**
    * Checks connection with Maven Central, throws error if unable to connect.
    */
@@ -15,7 +22,7 @@ export class Check {
       throw new Error('Unable to connect to Maven Central')
     }
 
-    core.info('✓ Connected to Maven Central')
+    this.logger.info('✓ Connected to Maven Central')
   }
 
   /**
@@ -31,7 +38,7 @@ export class Check {
       throw new Error('You need to provide a Github token in the `github-token` input')
     }
 
-    core.info('✓ Github Token provided as input')
+    this.logger.info('✓ Github Token provided as input')
 
     return token
   }
@@ -59,7 +66,7 @@ export class Check {
     }
 
     if (fileExists) {
-      core.info(`✓ Default Scala Steward configuration set to: ${path}`)
+      this.logger.info(`✓ Default Scala Steward configuration set to: ${path}`)
 
       return path
     }
@@ -95,18 +102,18 @@ export class Check {
     if (branches.length === 1) {
       const branch = branches[0]
 
-      core.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`)
+      this.logger.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`)
 
       return `- ${repo}:${branch}`
     }
 
     if (branches.length > 1) {
-      core.info(`✓ Github Repository set to: ${repo}. Will update ${branches.join(', ')} branches.`)
+      this.logger.info(`✓ Github Repository set to: ${repo}. Will update ${branches.join(', ')} branches.`)
 
       return branches.map((branch: string) => `- ${repo}:${branch}`).join('\n')
     }
 
-    core.info(`✓ Github Repository set to: ${repo}.`)
+    this.logger.info(`✓ Github Repository set to: ${repo}.`)
 
     return `- ${repo}`
   }
@@ -131,7 +138,7 @@ export class Check {
     }
 
     if (fs.existsSync(file)) {
-      core.info(`✓ Using multiple repos file: ${file}`)
+      this.logger.info(`✓ Using multiple repos file: ${file}`)
 
       return fs.readFileSync(file)
     }
@@ -159,8 +166,8 @@ export class Check {
       const keyFile = `${fs.mkdtempSync('tmp-')}/github-app-private-key.pem`
       fs.writeFileSync(keyFile, key)
 
-      core.info(`✓ Github App ID: ${id}`)
-      core.info(`✓ Github App private key is written to: ${keyFile}`)
+      this.logger.info(`✓ Github App ID: ${id}`)
+      this.logger.info(`✓ Github App private key is written to: ${keyFile}`)
       return {id, keyFile}
     }
 

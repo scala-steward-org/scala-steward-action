@@ -5,6 +5,7 @@ import * as github from './github'
 import {Check} from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
+import {type Logger} from './logger'
 import * as mill from './mill'
 
 /**
@@ -19,7 +20,7 @@ import * as mill from './mill'
 async function run(): Promise<void> {
   try {
     const logger: Logger = core
-    const check: Check = new Check()
+    const check: Check = Check.from(logger)
     await check.mavenCentral()
     await coursier.selfInstall()
     const token = check.githubToken()

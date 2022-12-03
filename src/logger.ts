@@ -1,7 +1,7 @@
 /**
  * Represents the logger used across the action.
  */
-type Logger = {
+export type Logger = {
   info(message: string): void;
 
   debug(message: string): void;
@@ -12,7 +12,7 @@ type Logger = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
-const Logger = {
+export const Logger = {
   noOp: {info() {}, debug() {}, error() {}, warning() {}}, // eslint-disable-line @typescript-eslint/no-empty-function
 
 }
