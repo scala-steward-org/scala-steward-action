@@ -1,7 +1,7 @@
 import fs from 'fs'
 import process from 'process'
 import test from 'ava'
-import * as check from '../src/check'
+import {Check} from '../src/check'
 
 test.beforeEach(() => {
   process.env['INPUT_REPOS-FILE'] = ''
@@ -10,6 +10,8 @@ test.beforeEach(() => {
   process.env['INPUT_GITHUB-REPOSITORY'] = ''
   process.env['INPUT_REPO-CONFIG'] = ''
 })
+
+const check = new Check()
 
 test.serial('`check.reposFile()` should return undefined on missing input', t => {
   const file = check.reposFile()

@@ -2,7 +2,7 @@ import {Buffer} from 'buffer'
 import process from 'process'
 import * as core from '@actions/core'
 import * as github from './github'
-import * as check from './check'
+import {Check} from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
 import * as mill from './mill'
@@ -18,6 +18,7 @@ import * as mill from './mill'
  */
 async function run(): Promise<void> {
   try {
+    const check: Check = new Check()
     await check.mavenCentral()
     await coursier.selfInstall()
     const token = check.githubToken()
