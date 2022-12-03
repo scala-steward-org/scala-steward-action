@@ -5,9 +5,6 @@ import {type Logger} from './logger'
  * Retrieves (and sanitize) inputs.
  */
 export class Input {
-  /**
-   * Creates a new instance of this class
-   */
   static from(inputs: {getInput: (name: string) => string}, logger: Logger) {
     return new Input(inputs, logger)
   }
@@ -22,10 +19,30 @@ export class Input {
       github: {
         token: this.githubToken(),
         app: this.githubAppInfo(),
+        apiUrl: this.inputs.getInput('github-api-url'),
       },
       steward: {
         defaultConfiguration: this.defaultRepoConf(),
         repos: this.reposFile() ?? this.githubAppInfo() ? '' : this.githubRepository(),
+        cacheTtl: this.inputs.getInput('cache-ttl'),
+        version: this.inputs.getInput('scala-steward-version'),
+        timeout: this.inputs.getInput('timeout'),
+        ignoreOptsFiles: /true/i.test(this.inputs.getInput('ignore-opts-files')),
+        extraArgs: this.inputs.getInput('other-args'),
+      },
+      migrations: {
+        scalafix: this.inputs.getInput('scalafix-migrations'),
+        artifacts: this.inputs.getInput('artifact-migrations'),
+      },
+      commits: {
+        sign: {
+          enabled: /true/i.test(this.inputs.getInput('sign-commits')),
+          key: this.inputs.getInput('signing-key'),
+        },
+        author: {
+          email: this.inputs.getInput('author-email'),
+          name: this.inputs.getInput('author-name'),
+        },
       },
     }
   }

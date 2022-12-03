@@ -32,29 +32,9 @@ async function run(): Promise<void> {
 
     const user = await github.getAuthUser(inputs.github.token)
 
-    const authorEmail = core.getInput('author-email') || user.email()
-    const authorName = core.getInput('author-name') || user.name()
-
     const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token)
 
-    const cacheTtl = core.getInput('cache-ttl')
-
     await workspace.restoreWorkspaceCache(workspaceDir)
-
-    const timeout = core.getInput('timeout')
-
-    const version = core.getInput('scala-steward-version')
-
-    const signCommits = /true/i.test(core.getInput('sign-commits'))
-    const signingKey = core.getInput('signing-key')
-    const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'))
-    const githubApiUrl = core.getInput('github-api-url')
-    const scalafixMigrations = core.getInput('scalafix-migrations')
-      ? ['--scalafix-migrations', core.getInput('scalafix-migrations')]
-      : []
-    const artifactMigrations = core.getInput('artifact-migrations')
-      ? ['--artifact-migrations', core.getInput('artifact-migrations')]
-      : []
 
     if (process.env.RUNNER_DEBUG) {
       core.debug('Debug mode activated for Scala Steward')
@@ -62,35 +42,31 @@ async function run(): Promise<void> {
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
 
-    const otherArgs = core.getInput('other-args')
-      ? core.getInput('other-args').split(' ')
-      : []
-
     await coursier.install('scalafmt')
     await coursier.install('scalafix')
     await mill.install()
 
-    await coursier.launch('scala-steward', version, [
+    await coursier.launch('scala-steward', inputs.steward.version, [
       ['--workspace', `${workspaceDir}/workspace`],
       ['--repos-file', `${workspaceDir}/repos.md`],
       ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
-      ['--git-author-email', `${authorEmail}"`],
-      ['--git-author-name', `${authorName}"`],
+      ['--git-author-email', inputs.commits.author.email || user.email()],
+      ['--git-author-name', inputs.commits.author.name || user.name()],
       ['--vcs-login', `${user.login()}"`],
       ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
-      ['--process-timeout', timeout],
-      ['--vcs-api-host', githubApiUrl],
-      ignoreOptionsFiles ? '--ignore-opts-files' : [],
-      signCommits ? '--sign-commits' : [],
-      signingKey ? ['--git-author-signing-key', signingKey] : [],
-      ['--cache-ttl', cacheTtl],
-      scalafixMigrations,
-      artifactMigrations,
+      ['--process-timeout', inputs.steward.timeout],
+      ['--vcs-api-host', inputs.github.apiUrl],
+      inputs.steward.ignoreOptsFiles ? '--ignore-opts-files' : [],
+      inputs.commits.sign.enabled ? '--sign-commits' : [],
+      inputs.commits.sign.key ? ['--git-author-signing-key', inputs.commits.sign.key] : [],
+      ['--cache-ttl', inputs.steward.cacheTtl],
+      inputs.migrations.scalafix ? ['--scalafix-migrations', inputs.migrations.scalafix] : [],
+      inputs.migrations.artifacts ? ['--artifact-migrations', inputs.migrations.artifacts] : [],
       inputs.steward.defaultConfiguration ? ['--repo-config', inputs.steward.defaultConfiguration] : [],
       '--do-not-fork',
       '--disable-sandbox',
       inputs.github.app ? ['--github-app-id', inputs.github.app.id, '--github-app-key-file', inputs.github.app.keyFile] : [],
-      otherArgs,
+      inputs.steward.extraArgs ? inputs.steward.extraArgs.split(' ') : [],
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
         core.setFailed(` ✕ ${(error as Error).message}`)
