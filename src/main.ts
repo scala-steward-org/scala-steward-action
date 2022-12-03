@@ -3,7 +3,7 @@ import process from 'process'
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
 import * as github from './github'
-import {Check} from './check'
+import {HealthCheck} from './healthcheck'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
 import {type Logger} from './logger'
@@ -25,9 +25,11 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const httpClient: HttpClient = {run: async url => fetch(url)}
     const input: Input = Input.from(core, logger)
-    const check: Check = Check.from(logger)
-    await check.mavenCentral()
+    const healthCheck: HealthCheck = HealthCheck.from(logger, httpClient)
+
+    await healthCheck.mavenCentral()
     await coursier.selfInstall()
+
     const token = input.githubToken()
     const user = await github.getAuthUser(token)
 
