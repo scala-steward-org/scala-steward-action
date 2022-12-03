@@ -5,6 +5,7 @@ import * as github from './github'
 import * as check from './check'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
+import * as mill from './mill'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -73,6 +74,7 @@ async function run(): Promise<void> {
 
     await coursier.install('scalafmt')
     await coursier.install('scalafix')
+    await mill.install()
 
     await coursier.launch('org.scala-steward', 'scala-steward-core_2.13', version, [
       ['--workspace', `${workspaceDir}/workspace`],
