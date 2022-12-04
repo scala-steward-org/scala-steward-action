@@ -160,14 +160,13 @@ export class Input {
   }
 
   /**
-   * Checks that Github App ID and private key are set together, writes the key to a temporary file.
+   * Checks that Github App ID and private key are set together.
    *
    * Throws error if only one of the two inputs is set.
    *
-   * @returns {{id: string, keyFile: string} | undefined} App ID and path to the private key file or
-   * undefined if both inputs are empty.
+   * @returns {{id: string, key: string} | undefined} App ID and key or undefined if both inputs are empty.
    */
-  githubAppInfo(): {id: string; keyFile: string} | undefined {
+  githubAppInfo(): {id: string; key: string} | undefined {
     const id: string = this.inputs.getInput('github-app-id')
     const key: string = this.inputs.getInput('github-app-key')
 
@@ -176,12 +175,9 @@ export class Input {
     }
 
     if (id && key) {
-      const keyFile = `${fs.mkdtempSync('tmp-')}/github-app-private-key.pem`
-      fs.writeFileSync(keyFile, key)
-
       this.logger.info(`✓ Github App ID: ${id}`)
-      this.logger.info(`✓ Github App private key is written to: ${keyFile}`)
-      return {id, keyFile}
+      this.logger.info('✓ Github App private key will be written to the Scala Steward workspace')
+      return {id, key}
     }
 
     throw new Error(

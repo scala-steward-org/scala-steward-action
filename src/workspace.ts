@@ -92,9 +92,10 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
  *
  * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file.
  * @param {string} token - The Github Token used to authenticate into Github.
+ * @param {string | undefined} gitHubAppKey - The Github App private key (optional).
  * @returns {string} The workspace directory path
  */
-export async function prepare(reposList: string, token: string): Promise<string> {
+export async function prepare(reposList: string, token: string, gitHubAppKey: string | undefined): Promise<string> {
   try {
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)
@@ -103,6 +104,10 @@ export async function prepare(reposList: string, token: string): Promise<string>
 
     fs.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`)
     await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], {silent: true})
+
+    if (gitHubAppKey !== undefined) {
+      fs.writeFileSync(`${stewarddir}/app.pem`, gitHubAppKey)
+    }
 
     core.info('✓ Scala Steward workspace created')
 

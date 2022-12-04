@@ -35,8 +35,7 @@ async function run(): Promise<void> {
 
     const user = await github.getAuthUser(inputs.github.token)
 
-    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token)
-
+    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
     await workspace.restoreWorkspaceCache(workspaceDir)
 
     if (process.env.RUNNER_DEBUG) {
@@ -64,7 +63,7 @@ async function run(): Promise<void> {
       inputs.steward.defaultConfiguration ? ['--repo-config', inputs.steward.defaultConfiguration] : [],
       '--do-not-fork',
       '--disable-sandbox',
-      inputs.github.app ? ['--github-app-id', inputs.github.app.id, '--github-app-key-file', inputs.github.app.keyFile] : [],
+      inputs.github.app ? ['--github-app-id', inputs.github.app.id, '--github-app-key-file', `${workspaceDir}/app.pem`] : [],
       inputs.steward.extraArgs ? inputs.steward.extraArgs.split(' ') : [],
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
