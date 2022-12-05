@@ -5,6 +5,67 @@ import {type Files} from '../src/files'
 import {Input} from '../src/input'
 import {Logger} from '../src/logger'
 
+test('`Input.all` should return all inputs', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-token', () => '123')
+    .with('repo-config', () => '.github/defaults/.scala-steward.conf')
+    .with('github-repository', () => 'owner/repo')
+    .with('branches', () => '1.0x,2.0x')
+    .with('author-email', () => 'alex@example.com')
+    .with('author-name', () => 'Alex')
+    .with('github-api-url', () => 'github.my-org.com')
+    .with('cache-ttl', () => '20m')
+    .with('timeout', () => '60s')
+    .with('scala-steward-version', () => '1.0')
+    .with('ignore-opts-files', () => 'true')
+    .with('artifact-migrations', () => '.github/artifact-migrations.conf')
+    .with('scalafix-migrations', () => '.github/scalafix-migrations.conf')
+    .with('other-args', () => '--help')
+    .with('sign-commits', () => 'true')
+    .with('signing-key', () => '42')
+    .otherwise(() => '')
+
+  const files: Files = {
+    existsSync: name => name === '.github/defaults/.scala-steward.conf',
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+
+  const expected = {
+    github: {
+      token: '123',
+      app: undefined,
+      apiUrl: 'github.my-org.com',
+    },
+    steward: {
+      defaultConfiguration: '.github/defaults/.scala-steward.conf',
+      repos: '- owner/repo:1.0x\n- owner/repo:2.0x',
+      cacheTtl: '20m',
+      version: '1.0',
+      timeout: '60s',
+      ignoreOptsFiles: true,
+      extraArgs: '--help',
+    },
+    migrations: {
+      scalafix: '.github/scalafix-migrations.conf',
+      artifacts: '.github/artifact-migrations.conf',
+    },
+    commits: {
+      sign: {
+        enabled: true,
+        key: '42',
+      },
+      author: {
+        email: 'alex@example.com',
+        name: 'Alex',
+      },
+    },
+  }
+
+  t.deepEqual(input.all(), expected)
+})
+
 test('`Input.githubAppInfo()` should return GitHub App info', t => {
   const inputs = (name: string) => match(name)
     .with('github-app-id', () => '123')
