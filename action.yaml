@@ -24,7 +24,6 @@ inputs:
     required: false
   scala-steward-version:
     description: "Scala Steward version to use"
-    default: "0.16.1"
     required: false
   coursier-cli-url:
     description: "Url to download the coursier linux CLI from"
