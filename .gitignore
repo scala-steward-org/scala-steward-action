@@ -105,7 +105,7 @@ lib/**/*
 .vscode
 
 # Ignore `dist` folder, it is generated only inside tag's commits
-dist
+
 
 # Ignore `tsconfig.json` file, it is generated with `npm run tsconfig`
 tsconfig.json
