@@ -1,11 +1,17 @@
-import fs from 'fs'
+import {fail} from 'assert'
 import test from 'ava'
 import {match} from 'ts-pattern'
+import {type Files} from '../src/files'
 import {Input} from '../src/input'
 import {Logger} from '../src/logger'
 
 test('`Input.reposFile()` should return undefined on missing input', t => {
-  const input = Input.from({getInput: () => ''}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: () => ''}, files, Logger.noOp)
 
   const file = input.reposFile()
   t.is(file, undefined)
@@ -13,16 +19,21 @@ test('`Input.reposFile()` should return undefined on missing input', t => {
 
 test('`Input.reposFile()` should return contents if file exists', t => {
   const inputs = (name: string) => match(name)
-    .with('repos-file', () => 'tests/resources/repos.test.md')
+    .with('repos-file', () => 'repos.md')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const contents = '- owner1/repo1\n- owner1/repo2\n- owner2/repo'
+
+  const files: Files = {
+    existsSync: name => match(name).with('repos.md', () => true).run(),
+    readFileSync: name => match(name).with('repos.md', () => contents).run(),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const file = input.reposFile() ?? ''
 
-  const expected = '- owner1/repo1\n- owner1/repo2\n- owner2/repo'
-
-  t.is(file.toString(), expected)
+  t.is(file.toString(), contents)
 })
 
 test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
@@ -30,7 +41,12 @@ test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
     .with('repos-file', () => 'this/does/not/exist.md')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const expected = 'The path indicated in `repos-file` (this/does/not/exist.md) does not exist'
 
@@ -44,7 +60,12 @@ test('`Input.githubRepository()` should return repository from input', t => {
     .with('github-repository', () => 'owner/repo')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -59,7 +80,12 @@ test('`Input.githubRepository()` should return repository from input with custom
     .with('branches', () => '0.1.x')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -74,7 +100,12 @@ test('`Input.githubRepository()` should return repository from input with multip
     .with('branches', () => 'main,0.1.x,0.2.x')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -85,14 +116,19 @@ test('`Input.githubRepository()` should return repository from input with multip
 
 test('`Input.defaultRepoConf()` should return the path if it exists', t => {
   const inputs = (name: string) => match(name)
-    .with('repo-config', () => 'tests/resources/.scala-steward.conf')
+    .with('repo-config', () => '.scala-steward.conf')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: name => match(name).with('.scala-steward.conf', () => true).run(),
+    readFileSync: () => fail('This should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
-  const expected = 'tests/resources/.scala-steward.conf'
+  const expected = '.scala-steward.conf'
 
   t.is(path, expected)
 })
@@ -102,17 +138,18 @@ test('`Input.defaultRepoConf()` should return the default path if it exists', t 
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: name => match(name).with('.github/.scala-steward.conf', () => true).run(),
+    readFileSync: () => fail('This should not be called'),
+  }
 
-  fs.writeFileSync('.github/.scala-steward.conf', '')
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
   const expected = '.github/.scala-steward.conf'
 
   t.is(path, expected)
-
-  fs.rmSync('.github/.scala-steward.conf')
 })
 
 test('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {
@@ -120,7 +157,12 @@ test('`Input.defaultRepoConf()` should return undefined if the default path do n
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
@@ -132,7 +174,12 @@ test('`Input.defaultRepoConf()` throws error if provided non-default file do not
     .with('repo-config', () => 'tests/resources/.scala-steward-new.conf')
     .otherwise(() => '')
 
-  const input = Input.from({getInput: inputs}, Logger.noOp)
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
 
   const expected = 'Provided default repo conf file (tests/resources/.scala-steward-new.conf) does not exist'
 

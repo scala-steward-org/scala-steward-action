@@ -1,15 +1,19 @@
-import fs from 'fs'
+import {type Files} from './files'
 import {type Logger} from './logger'
 
 /**
  * Retrieves (and sanitize) inputs.
  */
 export class Input {
-  static from(inputs: {getInput: (name: string) => string}, logger: Logger) {
-    return new Input(inputs, logger)
+  static from(inputs: {getInput: (name: string) => string}, files: Files, logger: Logger) {
+    return new Input(inputs, files, logger)
   }
 
-  constructor(private readonly inputs: {getInput: (name: string) => string}, private readonly logger: Logger) {}
+  constructor(
+    private readonly inputs: {getInput: (name: string) => string},
+    private readonly files: Files,
+    private readonly logger: Logger,
+  ) {}
 
   /**
    * Returns every input for this action.
@@ -77,7 +81,7 @@ export class Input {
   defaultRepoConf(): string | undefined {
     const path = this.inputs.getInput('repo-config')
 
-    const fileExists = fs.existsSync(path)
+    const fileExists = this.files.existsSync(path)
 
     if (!fileExists && path !== '.github/.scala-steward.conf') {
       throw new Error(`Provided default repo conf file (${path}) does not exist`)
@@ -150,10 +154,10 @@ export class Input {
       return undefined
     }
 
-    if (fs.existsSync(file)) {
+    if (this.files.existsSync(file)) {
       this.logger.info(`✓ Using multiple repos file: ${file}`)
 
-      return fs.readFileSync(file, 'utf8')
+      return this.files.readFileSync(file, 'utf8')
     }
 
     throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`)

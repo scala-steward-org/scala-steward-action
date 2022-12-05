@@ -1,4 +1,5 @@
 import process from 'process'
+import fs from 'fs'
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
 import * as github from './github'
@@ -9,6 +10,7 @@ import {type Logger} from './logger'
 import {Input} from './input'
 import {type HttpClient} from './http'
 import * as mill from './mill'
+import {type Files} from './files'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -23,7 +25,8 @@ async function run(): Promise<void> {
   try {
     const logger: Logger = core
     const httpClient: HttpClient = {run: async url => fetch(url)}
-    const inputs = Input.from(core, logger).all()
+    const files: Files = fs
+    const inputs = Input.from(core, files, logger).all()
     const healthCheck: HealthCheck = HealthCheck.from(logger, httpClient)
 
     await healthCheck.mavenCentral()
