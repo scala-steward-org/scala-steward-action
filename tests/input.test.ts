@@ -5,6 +5,75 @@ import {type Files} from '../src/files'
 import {Input} from '../src/input'
 import {Logger} from '../src/logger'
 
+test('`Input.githubAppInfo()` should return GitHub App info', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-app-id', () => '123')
+    .with('github-app-key', () => '42')
+    .otherwise(() => '')
+
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+
+  const file = input.githubAppInfo()
+
+  t.deepEqual(file, {id: '123', key: '42'})
+})
+
+test('`Input.githubAppInfo()` should return undefined on missing inputs', t => {
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: () => ''}, files, Logger.noOp)
+
+  const file = input.githubAppInfo()
+
+  t.is(file, undefined)
+})
+
+test('`Input.githubAppInfo()` should return error if only id input present', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-app-id', () => '123')
+    .otherwise(() => '')
+
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+
+  const expected = '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
+
+  const error = t.throws(() => input.githubAppInfo(), {instanceOf: Error})
+
+  t.is(error?.message, expected)
+})
+
+test('`Input.githubAppInfo()` should return error if only key input present', t => {
+  const inputs = (name: string) => match(name)
+    .with('github-app-key', () => '42')
+    .otherwise(() => '')
+
+  const files: Files = {
+    existsSync: () => false,
+    readFileSync: () => fail('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+
+  const expected = '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
+
+  const error = t.throws(() => input.githubAppInfo(), {instanceOf: Error})
+
+  t.is(error?.message, expected)
+})
+
 test('`Input.reposFile()` should return undefined on missing input', t => {
   const files: Files = {
     existsSync: () => false,
