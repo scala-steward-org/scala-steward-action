@@ -1,9 +1,10 @@
 import fs from 'fs'
 import process from 'process'
 import * as core from '@actions/core'
+import {getOctokit} from '@actions/github'
 import * as coursier from './coursier'
 import {type Files} from './files'
-import * as github from './github'
+import {GitHub} from './github'
 import {Input} from './input'
 import {type Logger} from './logger'
 import {nonEmpty, NonEmptyString} from './types'
@@ -21,8 +22,10 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const files: Files = fs
     const inputs = Input.from(core, files, logger).all()
+    const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
+    const github = GitHub.from(logger, octokit)
 
-    const user = await github.getAuthUser(inputs.github.token, inputs.github.apiUrl)
+    const user = await github.getAuthUser()
 
     const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
     await workspace.restoreWorkspaceCache(workspaceDir)
