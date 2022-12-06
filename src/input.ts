@@ -27,7 +27,7 @@ export class Input {
       },
       steward: {
         defaultConfiguration: this.defaultRepoConf(),
-        repos: this.reposFile() ?? this.githubAppInfo() ? '' : this.githubRepository(),
+        repos: this.reposFile() ?? this.githubRepository(),
         cacheTtl: this.inputs.getInput('cache-ttl'),
         version: this.inputs.getInput('scala-steward-version'),
         timeout: this.inputs.getInput('timeout'),

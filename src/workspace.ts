@@ -90,7 +90,8 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file.
+ * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file. It is only used if no
+ *                             GitHub App key is provided on `gitHubAppKey` parameter.
  * @param {string} token - The Github Token used to authenticate into Github.
  * @param {string | undefined} gitHubAppKey - The Github App private key (optional).
  * @returns {string} The workspace directory path
@@ -100,14 +101,15 @@ export async function prepare(reposList: string, token: string, gitHubAppKey: st
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)
 
-    fs.writeFileSync(`${stewarddir}/repos.md`, reposList)
+    if (gitHubAppKey === undefined) {
+      fs.writeFileSync(`${stewarddir}/repos.md`, reposList)
+    } else {
+      fs.writeFileSync(`${stewarddir}/repos.md`, '')
+      fs.writeFileSync(`${stewarddir}/app.pem`, gitHubAppKey)
+    }
 
     fs.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`)
     await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], {silent: true})
-
-    if (gitHubAppKey !== undefined) {
-      fs.writeFileSync(`${stewarddir}/app.pem`, gitHubAppKey)
-    }
 
     core.info('✓ Scala Steward workspace created')
 
