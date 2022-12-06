@@ -16,11 +16,11 @@ export function nonEmpty(string: string): NonEmptyString | undefined {
 /**
  * Creates a `NonEmptyString` from a `string`. Throws an `Error` if the string is empty.
  */
-export function mandatory(string: string): NonEmptyString {
+export function mandatory(string: string, message = `Input ${string} cannot be empty`): NonEmptyString {
   const value = nonEmpty(string)
 
   if (value === undefined) {
-    throw new Error(`Input ${string} cannot be empty`)
+    throw new Error(message)
   }
 
   return value
