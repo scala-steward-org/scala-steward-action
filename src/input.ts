@@ -6,12 +6,16 @@ import {mandatory, nonEmpty, type NonEmptyString} from './types'
  * Retrieves (and sanitize) inputs.
  */
 export class Input {
-  static from(inputs: {getInput: (name: string) => string}, files: Files, logger: Logger) {
+  static from(
+    inputs: {getInput: (name: string) => string; getBooleanInput: (name: string) => boolean},
+    files: Files,
+    logger: Logger,
+  ) {
     return new Input(inputs, files, logger)
   }
 
   constructor(
-    private readonly inputs: {getInput: (name: string) => string},
+    private readonly inputs: {getInput: (name: string) => string; getBooleanInput: (name: string) => boolean},
     private readonly files: Files,
     private readonly logger: Logger,
   ) {}
@@ -32,7 +36,7 @@ export class Input {
         cacheTtl: nonEmpty(this.inputs.getInput('cache-ttl')),
         version: nonEmpty(this.inputs.getInput('scala-steward-version')),
         timeout: nonEmpty(this.inputs.getInput('timeout')),
-        ignoreOptsFiles: /true/i.test(this.inputs.getInput('ignore-opts-files')),
+        ignoreOptsFiles: this.inputs.getBooleanInput('ignore-opts-files'),
         extraArgs: nonEmpty(this.inputs.getInput('other-args')),
       },
       migrations: {
@@ -41,7 +45,7 @@ export class Input {
       },
       commits: {
         sign: {
-          enabled: /true/i.test(this.inputs.getInput('sign-commits')),
+          enabled: this.inputs.getBooleanInput('sign-commits'),
           key: nonEmpty(this.inputs.getInput('signing-key')),
         },
         author: {

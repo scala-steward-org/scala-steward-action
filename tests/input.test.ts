@@ -18,20 +18,23 @@ test('`Input.all` should return all inputs', t => {
     .with('cache-ttl', () => '20m')
     .with('timeout', () => '60s')
     .with('scala-steward-version', () => '1.0')
-    .with('ignore-opts-files', () => 'true')
     .with('artifact-migrations', () => '.github/artifact-migrations.conf')
     .with('scalafix-migrations', () => '.github/scalafix-migrations.conf')
     .with('other-args', () => '--help')
-    .with('sign-commits', () => 'true')
     .with('signing-key', () => '42')
     .otherwise(() => '')
+
+  const booleanInputs = (name: string) => match(name)
+    .with('ignore-opts-files', () => true)
+    .with('sign-commits', () => true)
+    .run()
 
   const files: Files = {
     existsSync: name => name === '.github/defaults/.scala-steward.conf',
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: booleanInputs}, files, Logger.noOp)
 
   const expected = {
     github: {
@@ -78,7 +81,7 @@ test('`Input.githubAppInfo()` should return GitHub App info', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const file = input.githubAppInfo()
 
@@ -91,7 +94,7 @@ test('`Input.githubAppInfo()` should return undefined on missing inputs', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: () => ''}, files, Logger.noOp)
+  const input = Input.from({getInput: () => '', getBooleanInput: () => false}, files, Logger.noOp)
 
   const file = input.githubAppInfo()
 
@@ -108,7 +111,7 @@ test('`Input.githubAppInfo()` should return error if only id input present', t =
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const expected = '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
 
@@ -127,7 +130,7 @@ test('`Input.githubAppInfo()` should return error if only key input present', t 
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const expected = '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing'
 
@@ -142,7 +145,7 @@ test('`Input.reposFile()` should return undefined on missing input', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: () => ''}, files, Logger.noOp)
+  const input = Input.from({getInput: () => '', getBooleanInput: () => false}, files, Logger.noOp)
 
   const file = input.reposFile()
   t.is(file, undefined)
@@ -160,7 +163,7 @@ test('`Input.reposFile()` should return contents if file exists', t => {
     readFileSync: name => match(name).with('repos.md', () => contents).run(),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const file = input.reposFile() ?? ''
 
@@ -177,7 +180,7 @@ test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const expected = 'The path indicated in `repos-file` (this/does/not/exist.md) does not exist'
 
@@ -196,7 +199,7 @@ test('`Input.githubRepository()` should return repository from input', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -216,7 +219,7 @@ test('`Input.githubRepository()` should return repository from input with custom
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -236,7 +239,7 @@ test('`Input.githubRepository()` should return repository from input with multip
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const content = input.githubRepository()
 
@@ -255,7 +258,7 @@ test('`Input.defaultRepoConf()` should return the path if it exists', t => {
     readFileSync: () => fail('This should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
@@ -274,7 +277,7 @@ test('`Input.defaultRepoConf()` should return the default path if it exists', t 
     readFileSync: () => fail('This should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
@@ -293,7 +296,7 @@ test('`Input.defaultRepoConf()` should return undefined if the default path do n
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const path = input.defaultRepoConf()
 
@@ -310,7 +313,7 @@ test('`Input.defaultRepoConf()` throws error if provided non-default file do not
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
 
   const expected = 'Provided default repo conf file (tests/resources/.scala-steward-new.conf) does not exist'
 
