@@ -1,6 +1,6 @@
 import {getOctokit} from '@actions/github'
 import * as core from '@actions/core'
-import {nonEmpty, type NonEmptyString} from './types'
+import {mandatory, nonEmpty, type NonEmptyString} from './types'
 
 const emailErrorMessage
   = 'Unable to find author\'s email. Either ensure that the token\'s Github Account has the email '
@@ -31,27 +31,9 @@ export async function getAuthUser(token: NonEmptyString, baseUrl: NonEmptyString
     core.debug(`- Name: ${name ?? 'no name found'}`)
 
     return {
-      login() {
-        if (!login) {
-          throw new Error('Unable to retrieve user information from Github')
-        }
-
-        return nonEmpty(login)
-      },
-      email() {
-        if (!email) {
-          throw new Error(emailErrorMessage)
-        }
-
-        return nonEmpty(email)
-      },
-      name() {
-        if (!name) {
-          throw new Error(nameErrorMessage)
-        }
-
-        return nonEmpty(name)
-      },
+      login: () => mandatory(login, 'Unable to retrieve user information from Github'),
+      email: () => mandatory(email ?? '', emailErrorMessage),
+      name: () => mandatory(name ?? '', nameErrorMessage),
     }
   } catch (error: unknown) {
     core.debug(`- User information retrieve failed. Error: ${(error as Error).message}`)
@@ -59,15 +41,15 @@ export async function getAuthUser(token: NonEmptyString, baseUrl: NonEmptyString
     // https://github.community/t/github-actions-bot-email-address/17204/6
     // https://api.github.com/users/github-actions%5Bbot%5D
     return {
-      login: () => nonEmpty('github-actions[bot]'),
-      email: () => nonEmpty('41898282+github-actions[bot]@users.noreply.github.com'),
-      name: () => nonEmpty('github-actions[bot]'),
+      login: () => mandatory('github-actions[bot]'),
+      email: () => mandatory('41898282+github-actions[bot]@users.noreply.github.com'),
+      name: () => mandatory('github-actions[bot]'),
     }
   }
 }
 
 type AuthUser = {
-  email: () => NonEmptyString | undefined;
-  login: () => NonEmptyString | undefined;
-  name: () => NonEmptyString | undefined;
+  email: () => NonEmptyString;
+  login: () => NonEmptyString;
+  name: () => NonEmptyString;
 }
