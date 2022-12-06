@@ -17,8 +17,8 @@ const nameErrorMessage
  * @param token - The token whose user data will be extracted.
  * @returns The login, email and name of token's user.
  */
-export async function getAuthUser(token: NonEmptyString): Promise<AuthUser> {
-  const github = getOctokit(token.value)
+export async function getAuthUser(token: NonEmptyString, baseUrl: NonEmptyString): Promise<AuthUser> {
+  const github = getOctokit(token.value, {baseUrl: baseUrl.value})
 
   try {
     const auth = await github.rest.users.getAuthenticated()

@@ -22,7 +22,7 @@ async function run(): Promise<void> {
     const files: Files = fs
     const inputs = Input.from(core, files, logger).all()
 
-    const user = await github.getAuthUser(inputs.github.token)
+    const user = await github.getAuthUser(inputs.github.token, inputs.github.apiUrl)
 
     const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
     await workspace.restoreWorkspaceCache(workspaceDir)
