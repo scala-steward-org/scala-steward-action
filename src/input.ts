@@ -1,6 +1,6 @@
 import {type Files} from './files'
 import {type Logger} from './logger'
-import {nonEmpty, type NonEmptyString} from './types'
+import {mandatory, nonEmpty, type NonEmptyString} from './types'
 
 /**
  * Retrieves (and sanitize) inputs.
@@ -24,7 +24,7 @@ export class Input {
       github: {
         token: this.githubToken(),
         app: this.githubAppInfo(),
-        apiUrl: nonEmpty(this.inputs.getInput('github-api-url')),
+        apiUrl: mandatory(this.inputs.getInput('github-api-url')),
       },
       steward: {
         defaultConfiguration: this.defaultRepoConf(),
