@@ -3,7 +3,8 @@
   "description": "A Github Action to launch Scala Steward in your repository",
   "scripts": {
     "tsconfig": "echo '{ \"extends\": \"@tsconfig/recommended/tsconfig.json\" }' > tsconfig.json",
-    "build": "npm run tsconfig && npm run build-main && npm run build-post",
+    "build": "npm run tsconfig && npm run build-pre && npm run build-main && npm run build-post",
+    "build-pre": "ncc build --target es2019 src/pre.ts && mv dist/index.js dist/pre.js",
     "build-main": "ncc build --target es2019 src/main.ts && mv dist/index.js dist/main.js",
     "build-post": "ncc build --target es2019 src/post.ts && mv dist/index.js dist/post.js",
     "contributors:add": "all-contributors add",
