@@ -2,6 +2,7 @@ import fs from 'fs'
 import process from 'process'
 import * as core from '@actions/core'
 import {getOctokit} from '@actions/github'
+import * as io from '@actions/io'
 import * as coursier from '../modules/coursier'
 import {type Files} from '../core/files'
 import {GitHub} from '../modules/github'
@@ -20,7 +21,7 @@ import * as workspace from '../modules/workspace'
 async function run(): Promise<void> {
   try {
     const logger: Logger = core
-    const files: Files = fs
+    const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
     const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
     const github = GitHub.from(logger, octokit)

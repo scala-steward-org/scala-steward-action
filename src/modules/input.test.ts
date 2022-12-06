@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {fail} from 'assert'
 import test from 'ava'
 import {match} from 'ts-pattern'
@@ -30,7 +31,11 @@ test('`Input.all` → returns all inputs', t => {
     .run()
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: name => name === '.github/defaults/.scala-steward.conf',
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -77,7 +82,11 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -90,7 +99,11 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
 
 test('`Input.githubAppInfo()` → returns undefined on missing inputs', t => {
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -107,7 +120,11 @@ test('`Input.githubAppInfo()` → throws error if only id input present', t => {
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -126,7 +143,11 @@ test('`Input.githubAppInfo()` → throws error if only key input present', t => 
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -141,7 +162,11 @@ test('`Input.githubAppInfo()` → throws error if only key input present', t => 
 
 test('`Input.reposFile()` → returns undefined on missing input', t => {
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -159,7 +184,11 @@ test('`Input.reposFile()` → returns contents if file exists', t => {
   const contents = '- owner1/repo1\n- owner1/repo2\n- owner2/repo'
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: name => match(name).with('repos.md', () => true).run(),
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: name => match(name).with('repos.md', () => contents).run(),
   }
 
@@ -176,7 +205,11 @@ test('`Input.reposFile()` → throws error if file does not exist', t => {
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -195,7 +228,11 @@ test('`Input.githubRepository()` → returns repository from input', t => {
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -215,7 +252,11 @@ test('`Input.githubRepository()` → returns repository from input with custom b
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -235,7 +276,11 @@ test('`Input.githubRepository()` → returns repository from input with multiple
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -254,7 +299,11 @@ test('`Input.defaultRepoConf()` → returns the path if it exists', t => {
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: name => match(name).with('.scala-steward.conf', () => true).run(),
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('This should not be called'),
   }
 
@@ -273,7 +322,11 @@ test('`Input.defaultRepoConf()` → returns the default path if it exists', t =>
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: name => match(name).with('.github/.scala-steward.conf', () => true).run(),
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('This should not be called'),
   }
 
@@ -292,7 +345,11 @@ test('`Input.defaultRepoConf()` → returns undefined if the default path does n
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
@@ -309,7 +366,11 @@ test('`Input.defaultRepoConf()` → throws error if provided non-default file do
     .otherwise(() => '')
 
   const files: Files = {
+    chmodSync: () => fail('Should not be called'),
+    rmRF: () => fail('Should not be called'),
+    mkdirP: () => fail('Should not be called'),
     existsSync: () => false,
+    writeFileSync: () => fail('Should not be called'),
     readFileSync: () => fail('Should not be called'),
   }
 
