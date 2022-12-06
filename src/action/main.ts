@@ -1,5 +1,7 @@
 import fs from 'fs'
+import os from 'os'
 import process from 'process'
+import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
@@ -9,7 +11,7 @@ import {GitHub} from '../modules/github'
 import {Input} from '../modules/input'
 import {type Logger} from '../core/logger'
 import {nonEmpty, NonEmptyString} from '../core/types'
-import * as workspace from '../modules/workspace'
+import {Workspace} from '../modules/workspace'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -25,6 +27,7 @@ async function run(): Promise<void> {
     const inputs = Input.from(core, files, logger).all()
     const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
     const github = GitHub.from(logger, octokit)
+    const workspace = Workspace.from(logger, files, os, cache)
 
     const user = await github.getAuthUser()
 
