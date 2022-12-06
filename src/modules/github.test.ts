@@ -2,7 +2,7 @@ import test from 'ava'
 import {Logger} from '../core/logger'
 import {GitHub, type GitHubClient} from './github'
 
-test('`GitHub.getAuthUser()` returns every auth user component if present', async t => {
+test('`GitHub.getAuthUser()` → returns every auth user component', async t => {
   const client: GitHubClient = {
     rest: {
       users: {
@@ -20,7 +20,7 @@ test('`GitHub.getAuthUser()` returns every auth user component if present', asyn
   t.is(user.name().value, 'Alex')
 })
 
-test('`GitHub.getAuthUser()` throws error on any empty component', async t => {
+test('`GitHub.getAuthUser()` → throws error on any empty component', async t => {
   const client: GitHubClient = {
     rest: {
       users: {
@@ -51,7 +51,7 @@ test('`GitHub.getAuthUser()` throws error on any empty component', async t => {
   }
 })
 
-test('`GitHub.getAuthUser()` throws error on any null component', async t => {
+test('`GitHub.getAuthUser()` → throws error on any null component', async t => {
   const client: GitHubClient = {
     rest: {
       users: {

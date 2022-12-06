@@ -6,7 +6,7 @@ import {Logger} from '../core/logger'
 import {nonEmpty} from '../core/types'
 import {Input} from './input'
 
-test('`Input.all` should return all inputs', t => {
+test('`Input.all` → returns all inputs', t => {
   const inputs = (name: string) => match(name)
     .with('github-token', () => '123')
     .with('repo-config', () => '.github/defaults/.scala-steward.conf')
@@ -70,7 +70,7 @@ test('`Input.all` should return all inputs', t => {
   t.deepEqual(input.all(), expected)
 })
 
-test('`Input.githubAppInfo()` should return GitHub App info', t => {
+test('`Input.githubAppInfo()` → returns GitHub App info', t => {
   const inputs = (name: string) => match(name)
     .with('github-app-id', () => '123')
     .with('github-app-key', () => '42')
@@ -88,7 +88,7 @@ test('`Input.githubAppInfo()` should return GitHub App info', t => {
   t.deepEqual(file, {id: nonEmpty('123'), key: nonEmpty('42')})
 })
 
-test('`Input.githubAppInfo()` should return undefined on missing inputs', t => {
+test('`Input.githubAppInfo()` → returns undefined on missing inputs', t => {
   const files: Files = {
     existsSync: () => false,
     readFileSync: () => fail('Should not be called'),
@@ -101,7 +101,7 @@ test('`Input.githubAppInfo()` should return undefined on missing inputs', t => {
   t.is(file, undefined)
 })
 
-test('`Input.githubAppInfo()` should return error if only id input present', t => {
+test('`Input.githubAppInfo()` → throws error if only id input present', t => {
   const inputs = (name: string) => match(name)
     .with('github-app-id', () => '123')
     .otherwise(() => '')
@@ -120,7 +120,7 @@ test('`Input.githubAppInfo()` should return error if only id input present', t =
   t.is(error?.message, expected)
 })
 
-test('`Input.githubAppInfo()` should return error if only key input present', t => {
+test('`Input.githubAppInfo()` → throws error if only key input present', t => {
   const inputs = (name: string) => match(name)
     .with('github-app-key', () => '42')
     .otherwise(() => '')
@@ -139,7 +139,7 @@ test('`Input.githubAppInfo()` should return error if only key input present', t 
   t.is(error?.message, expected)
 })
 
-test('`Input.reposFile()` should return undefined on missing input', t => {
+test('`Input.reposFile()` → returns undefined on missing input', t => {
   const files: Files = {
     existsSync: () => false,
     readFileSync: () => fail('Should not be called'),
@@ -151,7 +151,7 @@ test('`Input.reposFile()` should return undefined on missing input', t => {
   t.is(file, undefined)
 })
 
-test('`Input.reposFile()` should return contents if file exists', t => {
+test('`Input.reposFile()` → returns contents if file exists', t => {
   const inputs = (name: string) => match(name)
     .with('repos-file', () => 'repos.md')
     .otherwise(() => '')
@@ -170,7 +170,7 @@ test('`Input.reposFile()` should return contents if file exists', t => {
   t.is(file.toString(), contents)
 })
 
-test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
+test('`Input.reposFile()` → throws error if file does not exist', t => {
   const inputs = (name: string) => match(name)
     .with('repos-file', () => 'this/does/not/exist.md')
     .otherwise(() => '')
@@ -189,7 +189,7 @@ test('`Input.reposFile()` should throw error if file doesn\'t exists', t => {
   t.is(error?.message, expected)
 })
 
-test('`Input.githubRepository()` should return repository from input', t => {
+test('`Input.githubRepository()` → returns repository from input', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .otherwise(() => '')
@@ -208,7 +208,7 @@ test('`Input.githubRepository()` should return repository from input', t => {
   t.is(content, expected)
 })
 
-test('`Input.githubRepository()` should return repository from input with custom branch', t => {
+test('`Input.githubRepository()` → returns repository from input with custom branch', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .with('branches', () => '0.1.x')
@@ -228,7 +228,7 @@ test('`Input.githubRepository()` should return repository from input with custom
   t.is(content, expected)
 })
 
-test('`Input.githubRepository()` should return repository from input with multiple custom branches', t => {
+test('`Input.githubRepository()` → returns repository from input with multiple custom branches', t => {
   const inputs = (name: string) => match(name)
     .with('github-repository', () => 'owner/repo')
     .with('branches', () => 'main,0.1.x,0.2.x')
@@ -248,7 +248,7 @@ test('`Input.githubRepository()` should return repository from input with multip
   t.is(content, expected)
 })
 
-test('`Input.defaultRepoConf()` should return the path if it exists', t => {
+test('`Input.defaultRepoConf()` → returns the path if it exists', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => '.scala-steward.conf')
     .otherwise(() => '')
@@ -267,7 +267,7 @@ test('`Input.defaultRepoConf()` should return the path if it exists', t => {
   t.is(path?.value, expected)
 })
 
-test('`Input.defaultRepoConf()` should return the default path if it exists', t => {
+test('`Input.defaultRepoConf()` → returns the default path if it exists', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
@@ -286,7 +286,7 @@ test('`Input.defaultRepoConf()` should return the default path if it exists', t 
   t.is(path?.value, expected)
 })
 
-test('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {
+test('`Input.defaultRepoConf()` → returns undefined if the default path does not exist', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => '.github/.scala-steward.conf')
     .otherwise(() => '')
@@ -303,7 +303,7 @@ test('`Input.defaultRepoConf()` should return undefined if the default path do n
   t.is(path, undefined)
 })
 
-test('`Input.defaultRepoConf()` throws error if provided non-default file do not exist', t => {
+test('`Input.defaultRepoConf()` → throws error if provided non-default file does not exist', t => {
   const inputs = (name: string) => match(name)
     .with('repo-config', () => 'tests/resources/.scala-steward-new.conf')
     .otherwise(() => '')
