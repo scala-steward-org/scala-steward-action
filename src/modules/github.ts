@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import {type Logger} from './logger'
-import {mandatory, type NonEmptyString} from './types'
+import {type Logger} from '../core/logger'
+import {mandatory, type NonEmptyString} from '../core/types'
 
 const emailErrorMessage
   = 'Unable to find author\'s email. Either ensure that the token\'s Github Account has the email '

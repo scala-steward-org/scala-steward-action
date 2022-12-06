@@ -1,6 +1,6 @@
-import {type Files} from './files'
-import {type Logger} from './logger'
-import {mandatory, nonEmpty, type NonEmptyString} from './types'
+import {type Files} from '../core/files'
+import {type Logger} from '../core/logger'
+import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
 
 /**
  * Retrieves (and sanitize) inputs.

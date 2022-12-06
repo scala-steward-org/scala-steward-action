@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
-import * as coursier from './coursier'
-import {HealthCheck} from './healthcheck'
-import {type HttpClient} from './http'
-import {type Logger} from './logger'
-import * as mill from './mill'
+import * as coursier from '../modules/coursier'
+import {HealthCheck} from '../modules/healthcheck'
+import {type HttpClient} from '../core/http'
+import {type Logger} from '../core/logger'
+import * as mill from '../modules/mill'
 
 /**
  * Runs the action pre-requisites code. In order it will do the following:

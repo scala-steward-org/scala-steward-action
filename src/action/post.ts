@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
-import * as workspace from './workspace'
-import * as coursier from './coursier'
-import * as mill from './mill'
+import * as workspace from '../modules/workspace'
+import * as coursier from '../modules/coursier'
+import * as mill from '../modules/mill'
 
 /**
  * Performs a cleanup of all the artifacts/folders created by this action.

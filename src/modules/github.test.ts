@@ -1,6 +1,6 @@
 import test from 'ava'
+import {Logger} from '../core/logger'
 import {GitHub, type GitHubClient} from './github'
-import {Logger} from './logger'
 
 test('`GitHub.getAuthUser()` returns every auth user component if present', async t => {
   const client: GitHubClient = {

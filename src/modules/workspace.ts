@@ -6,7 +6,7 @@ import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
 import jsSHA from 'jssha/dist/sha256'
-import {type NonEmptyString} from './types'
+import {type NonEmptyString} from '../core/types'
 
 /**
  * Gets the first eight characters of the SHA-256 hash value for the
