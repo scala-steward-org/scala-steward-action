@@ -1,5 +1,6 @@
 import {type Files} from './files'
 import {type Logger} from './logger'
+import {nonEmpty, type NonEmptyString} from './types'
 
 /**
  * Retrieves (and sanitize) inputs.
@@ -23,29 +24,29 @@ export class Input {
       github: {
         token: this.githubToken(),
         app: this.githubAppInfo(),
-        apiUrl: this.inputs.getInput('github-api-url'),
+        apiUrl: nonEmpty(this.inputs.getInput('github-api-url')),
       },
       steward: {
         defaultConfiguration: this.defaultRepoConf(),
         repos: this.reposFile() ?? this.githubRepository(),
-        cacheTtl: this.inputs.getInput('cache-ttl'),
-        version: this.inputs.getInput('scala-steward-version'),
-        timeout: this.inputs.getInput('timeout'),
+        cacheTtl: nonEmpty(this.inputs.getInput('cache-ttl')),
+        version: nonEmpty(this.inputs.getInput('scala-steward-version')),
+        timeout: nonEmpty(this.inputs.getInput('timeout')),
         ignoreOptsFiles: /true/i.test(this.inputs.getInput('ignore-opts-files')),
-        extraArgs: this.inputs.getInput('other-args'),
+        extraArgs: nonEmpty(this.inputs.getInput('other-args')),
       },
       migrations: {
-        scalafix: this.inputs.getInput('scalafix-migrations'),
-        artifacts: this.inputs.getInput('artifact-migrations'),
+        scalafix: nonEmpty(this.inputs.getInput('scalafix-migrations')),
+        artifacts: nonEmpty(this.inputs.getInput('artifact-migrations')),
       },
       commits: {
         sign: {
           enabled: /true/i.test(this.inputs.getInput('sign-commits')),
-          key: this.inputs.getInput('signing-key'),
+          key: nonEmpty(this.inputs.getInput('signing-key')),
         },
         author: {
-          email: this.inputs.getInput('author-email'),
-          name: this.inputs.getInput('author-name'),
+          email: nonEmpty(this.inputs.getInput('author-email')),
+          name: nonEmpty(this.inputs.getInput('author-name')),
         },
       },
     }
@@ -57,10 +58,10 @@ export class Input {
    *
    * @returns {string} The Github Token read from the `github-token` input.
    */
-  githubToken(): string {
-    const token: string = this.inputs.getInput('github-token')
+  githubToken(): NonEmptyString {
+    const token = nonEmpty(this.inputs.getInput('github-token'))
 
-    if (token === '') {
+    if (!token) {
       throw new Error('You need to provide a Github token in the `github-token` input')
     }
 
@@ -78,17 +79,21 @@ export class Input {
    * @returns {string | undefined} The path indicated in the `repo-config` input, if it
    *                               exists; otherwise, `undefined`.
    */
-  defaultRepoConf(): string | undefined {
-    const path = this.inputs.getInput('repo-config')
+  defaultRepoConf(): NonEmptyString | undefined {
+    const path = nonEmpty(this.inputs.getInput('repo-config'))
 
-    const fileExists = this.files.existsSync(path)
+    if (!path) {
+      return undefined
+    }
 
-    if (!fileExists && path !== '.github/.scala-steward.conf') {
-      throw new Error(`Provided default repo conf file (${path}) does not exist`)
+    const fileExists = this.files.existsSync(path.value)
+
+    if (!fileExists && path.value !== '.github/.scala-steward.conf') {
+      throw new Error(`Provided default repo conf file (${path.value}) does not exist`)
     }
 
     if (fileExists) {
-      this.logger.info(`✓ Default Scala Steward configuration set to: ${path}`)
+      this.logger.info(`✓ Default Scala Steward configuration set to: ${path.value}`)
 
       return path
     }
@@ -108,7 +113,7 @@ export class Input {
    * @returns {string} The Github repository read from the `github-repository` input.
    */
   githubRepository(): string {
-    const repo = this.inputs.getInput('github-repository')
+    const repo = nonEmpty(this.inputs.getInput('github-repository'))
 
     if (!repo) {
       throw new Error('Unable to read Github repository from `github-repository` input')
@@ -119,20 +124,20 @@ export class Input {
     if (branches.length === 1) {
       const branch = branches[0]
 
-      this.logger.info(`✓ Github Repository set to: ${repo}. Will update ${branch} branch.`)
+      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branch} branch.`)
 
-      return `- ${repo}:${branch}`
+      return `- ${repo.value}:${branch}`
     }
 
     if (branches.length > 1) {
-      this.logger.info(`✓ Github Repository set to: ${repo}. Will update ${branches.join(', ')} branches.`)
+      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branches.join(', ')} branches.`)
 
-      return branches.map((branch: string) => `- ${repo}:${branch}`).join('\n')
+      return branches.map((branch: string) => `- ${repo.value}:${branch}`).join('\n')
     }
 
-    this.logger.info(`✓ Github Repository set to: ${repo}.`)
+    this.logger.info(`✓ Github Repository set to: ${repo.value}.`)
 
-    return `- ${repo}`
+    return `- ${repo.value}`
   }
 
   /**
@@ -148,19 +153,19 @@ export class Input {
    *                               defined; otherwise, `undefined`.
    */
   reposFile(): string | undefined {
-    const file: string = this.inputs.getInput('repos-file')
+    const file = nonEmpty(this.inputs.getInput('repos-file'))
 
     if (!file) {
       return undefined
     }
 
-    if (this.files.existsSync(file)) {
-      this.logger.info(`✓ Using multiple repos file: ${file}`)
+    if (this.files.existsSync(file.value)) {
+      this.logger.info(`✓ Using multiple repos file: ${file.value}`)
 
-      return this.files.readFileSync(file, 'utf8')
+      return this.files.readFileSync(file.value, 'utf8')
     }
 
-    throw new Error(`The path indicated in \`repos-file\` (${file}) does not exist`)
+    throw new Error(`The path indicated in \`repos-file\` (${file.value}) does not exist`)
   }
 
   /**
@@ -170,16 +175,16 @@ export class Input {
    *
    * @returns {{id: string, key: string} | undefined} App ID and key or undefined if both inputs are empty.
    */
-  githubAppInfo(): {id: string; key: string} | undefined {
-    const id: string = this.inputs.getInput('github-app-id')
-    const key: string = this.inputs.getInput('github-app-key')
+  githubAppInfo(): {id: NonEmptyString; key: NonEmptyString} | undefined {
+    const id = nonEmpty(this.inputs.getInput('github-app-id'))
+    const key = nonEmpty(this.inputs.getInput('github-app-key'))
 
     if (!id && !key) {
       return undefined
     }
 
     if (id && key) {
-      this.logger.info(`✓ Github App ID: ${id}`)
+      this.logger.info(`✓ Github App ID: ${id.value}`)
       this.logger.info('✓ Github App private key will be written to the Scala Steward workspace')
       return {id, key}
     }

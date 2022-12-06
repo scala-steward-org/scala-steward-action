@@ -4,6 +4,7 @@ import {match} from 'ts-pattern'
 import {type Files} from '../src/files'
 import {Input} from '../src/input'
 import {Logger} from '../src/logger'
+import {nonEmpty} from '../src/types'
 
 test('`Input.all` should return all inputs', t => {
   const inputs = (name: string) => match(name)
@@ -34,31 +35,31 @@ test('`Input.all` should return all inputs', t => {
 
   const expected = {
     github: {
-      token: '123',
+      token: nonEmpty('123'),
       app: undefined,
-      apiUrl: 'github.my-org.com',
+      apiUrl: nonEmpty('github.my-org.com'),
     },
     steward: {
-      defaultConfiguration: '.github/defaults/.scala-steward.conf',
+      defaultConfiguration: nonEmpty('.github/defaults/.scala-steward.conf'),
       repos: '- owner/repo:1.0x\n- owner/repo:2.0x',
-      cacheTtl: '20m',
-      version: '1.0',
-      timeout: '60s',
+      cacheTtl: nonEmpty('20m'),
+      version: nonEmpty('1.0'),
+      timeout: nonEmpty('60s'),
       ignoreOptsFiles: true,
-      extraArgs: '--help',
+      extraArgs: nonEmpty('--help'),
     },
     migrations: {
-      scalafix: '.github/scalafix-migrations.conf',
-      artifacts: '.github/artifact-migrations.conf',
+      scalafix: nonEmpty('.github/scalafix-migrations.conf'),
+      artifacts: nonEmpty('.github/artifact-migrations.conf'),
     },
     commits: {
       sign: {
         enabled: true,
-        key: '42',
+        key: nonEmpty('42'),
       },
       author: {
-        email: 'alex@example.com',
-        name: 'Alex',
+        email: nonEmpty('alex@example.com'),
+        name: nonEmpty('Alex'),
       },
     },
   }
@@ -81,7 +82,7 @@ test('`Input.githubAppInfo()` should return GitHub App info', t => {
 
   const file = input.githubAppInfo()
 
-  t.deepEqual(file, {id: '123', key: '42'})
+  t.deepEqual(file, {id: nonEmpty('123'), key: nonEmpty('42')})
 })
 
 test('`Input.githubAppInfo()` should return undefined on missing inputs', t => {
@@ -260,7 +261,7 @@ test('`Input.defaultRepoConf()` should return the path if it exists', t => {
 
   const expected = '.scala-steward.conf'
 
-  t.is(path, expected)
+  t.is(path?.value, expected)
 })
 
 test('`Input.defaultRepoConf()` should return the default path if it exists', t => {
@@ -279,7 +280,7 @@ test('`Input.defaultRepoConf()` should return the default path if it exists', t 
 
   const expected = '.github/.scala-steward.conf'
 
-  t.is(path, expected)
+  t.is(path?.value, expected)
 })
 
 test('`Input.defaultRepoConf()` should return undefined if the default path do not exist', t => {

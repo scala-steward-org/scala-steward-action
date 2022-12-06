@@ -11,6 +11,7 @@ import {Input} from './input'
 import {type HttpClient} from './http'
 import * as mill from './mill'
 import {type Files} from './files'
+import {nonEmpty, NonEmptyString} from './types'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -48,13 +49,13 @@ async function run(): Promise<void> {
     }
 
     await coursier.launch('scala-steward', inputs.steward.version, [
-      arg('--workspace', `${workspaceDir}/workspace`),
-      arg('--repos-file', `${workspaceDir}/repos.md`),
-      arg('--git-ask-pass', `${workspaceDir}/askpass.sh`),
-      arg('--git-author-email', inputs.commits.author.email || user.email()),
-      arg('--git-author-name', inputs.commits.author.name || user.name()),
-      arg('--vcs-login', `${user.login()}"`),
-      arg('--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'),
+      arg('--workspace', nonEmpty(`${workspaceDir}/workspace`)),
+      arg('--repos-file', nonEmpty(`${workspaceDir}/repos.md`)),
+      arg('--git-ask-pass', nonEmpty(`${workspaceDir}/askpass.sh`)),
+      arg('--git-author-email', inputs.commits.author.email ?? user.email()),
+      arg('--git-author-name', inputs.commits.author.name ?? user.name()),
+      arg('--vcs-login', user.login()),
+      arg('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
       arg('--process-timeout', inputs.steward.timeout),
       arg('--vcs-api-host', inputs.github.apiUrl),
       arg('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
@@ -65,10 +66,10 @@ async function run(): Promise<void> {
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
       arg('--github-app-id', inputs.github.app?.id),
-      arg('--github-app-key-file', inputs.github.app ? `${workspaceDir}/app.pem` : undefined),
+      arg('--github-app-key-file', inputs.github.app ? nonEmpty(`${workspaceDir}/app.pem`) : undefined),
       '--do-not-fork',
       '--disable-sandbox',
-      inputs.steward.extraArgs ? inputs.steward.extraArgs.split(' ') : [],
+      inputs.steward.extraArgs ? inputs.steward.extraArgs.value.split(' ') : [],
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
         core.setFailed(` ✕ ${(error as Error).message}`)
@@ -86,12 +87,16 @@ async function run(): Promise<void> {
  * @param value The argument's value, empty string, false booleans or undefined will be skipped.
  * @returns the argument to add if it should be added; otherwise returns `[]`.
  */
-function arg(name: string, value: string | boolean | undefined) {
-  switch (typeof value) {
-    case 'string': { return (value === '') ? [] : [name, value] }
-    case 'boolean': { return value ? [name] : [] }
-    default: { return [] }
+function arg(name: string, value: NonEmptyString | boolean | undefined) {
+  if (value instanceof NonEmptyString) {
+    return [name, value.value]
   }
+
+  if (value === undefined) {
+    return []
+  }
+
+  return value ? [name] : []
 }
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
