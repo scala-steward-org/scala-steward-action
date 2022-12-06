@@ -24,20 +24,6 @@ export class Workspace {
   ) {}
 
   /**
-   * Gets the first eight characters of the SHA-256 hash value for the
-   * provided file's contents.
-   *
-   * @param {string} file - the file for which to calculate the hash
-   * @returns {string} the file content's hash
-   */
-  hashFile(file: string): string {
-    // eslint-disable-next-line unicorn/text-encoding-identifier-case
-    const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
-    sha.update(this.files.readFileSync(file, 'utf8'))
-    return sha.getHash('HEX').slice(0, 8)
-  }
-
-  /**
    * Tries to restore the Scala Steward workspace build from the cache, if any.
    *
    * @param {string} workspace - the Scala Steward workspace directory
@@ -141,5 +127,19 @@ export class Workspace {
    */
   async remove(): Promise<void> {
     await this.files.rmRF(`${this.os.homedir()}/scala-steward`)
+  }
+
+  /**
+   * Gets the first eight characters of the SHA-256 hash value for the
+   * provided file's contents.
+   *
+   * @param {string} file - the file for which to calculate the hash
+   * @returns {string} the file content's hash
+   */
+  private hashFile(file: string): string {
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
+    const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
+    sha.update(this.files.readFileSync(file, 'utf8'))
+    return sha.getHash('HEX').slice(0, 8)
   }
 }
