@@ -54,7 +54,7 @@ async function run(): Promise<void> {
       arg('--github-app-key-file', inputs.github.app ? nonEmpty(`${workspaceDir}/app.pem`) : undefined),
       '--do-not-fork',
       '--disable-sandbox',
-      inputs.steward.extraArgs ? inputs.steward.extraArgs.value.split(' ') : [],
+      inputs.steward.extraArgs?.value.split(' ') ?? [],
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
         core.setFailed(` ✕ ${(error as Error).message}`)
