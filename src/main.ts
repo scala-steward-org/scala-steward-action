@@ -55,11 +55,9 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
-    ]).finally(() => {
-      workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
-        core.setFailed(` ✕ ${(error as Error).message}`)
-      })
-    })
+    ])
+
+    await workspace.saveWorkspaceCache(workspaceDir)
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
