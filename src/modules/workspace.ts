@@ -32,10 +32,8 @@ export class Workspace {
 
   /**
    * Tries to restore the Scala Steward workspace build from the cache, if any.
-   *
-   * @param {string} workspace - the Scala Steward workspace directory
    */
-  async restoreWorkspaceCache(workspace: string): Promise<void> {
+  async restoreWorkspaceCache(): Promise<void> {
     try {
       this.logger.startGroup('Trying to restore workspace contents from cache...')
 
@@ -66,7 +64,7 @@ export class Workspace {
    *
    * @param {string} workspace - the Scala Steward workspace directory
    */
-  async saveWorkspaceCache(workspace: string): Promise<void> {
+  async saveWorkspaceCache(): Promise<void> {
     try {
       this.logger.startGroup('Saving workspace to cache...')
 
@@ -91,18 +89,18 @@ export class Workspace {
    * Prepares the Scala Steward workspace that will be used when launching the app.
    *
    * This will involve:
-   * - Creating a folder `/ops/scala-steward`.
+   * - Creating a folder `scala-steward` in the "HOME" directory.
    * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
+   * - Creating a `app.pem` with the GitHub App key (if applicable).
    * - Creating a `askpass.sh` file inside workspace containing the Github token.
    * - Making the previous file executable.
    *
-   * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file. It is only used if no
-   *                             GitHub App key is provided on `gitHubAppKey` parameter.
-   * @param {string} token - The Github Token used to authenticate into Github.
-   * @param {string | undefined} gitHubAppKey - The Github App private key (optional).
-   * @returns {string} The workspace directory path
+   * @param reposList The Markdown list of repositories to write to the `repos.md` file. It is only used if no
+   *                  GitHub App key is provided on `gitHubAppKey` parameter.
+   * @param token The Github Token used to authenticate into Github.
+   * @param gitHubAppKey The Github App private key (optional).
    */
-  async prepare(reposList: string, token: NonEmptyString, gitHubAppKey: NonEmptyString | undefined): Promise<string> {
+  async prepare(reposList: string, token: NonEmptyString, gitHubAppKey: NonEmptyString | undefined): Promise<void> {
     try {
       await this.files.mkdirP(this.directory)
 
@@ -117,8 +115,6 @@ export class Workspace {
       this.files.chmodSync(this.askpass_sh.value, 0o755)
 
       this.logger.info('✓ Scala Steward workspace created')
-
-      return stewarddir
     } catch (error: unknown) {
       this.logger.debug((error as Error).message)
       throw new Error('Unable to create Scala Steward workspace')

@@ -31,11 +31,11 @@ async function run(): Promise<void> {
 
     const user = await github.getAuthUser()
 
-    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
-    await workspace.restoreWorkspaceCache(workspaceDir)
+    await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
+    await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
-      core.debug('Debug mode activated for Scala Steward')
+      core.debug('🐛 Debug mode activated for Scala Steward')
       core.exportVariable('LOG_LEVEL', 'TRACE')
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
@@ -64,7 +64,7 @@ async function run(): Promise<void> {
       inputs.steward.extraArgs?.value.split(' ') ?? [],
     ])
 
-    await workspace.saveWorkspaceCache(workspaceDir)
+    await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
