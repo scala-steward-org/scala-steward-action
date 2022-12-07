@@ -41,9 +41,9 @@ async function run(): Promise<void> {
     }
 
     await coursier.launch('scala-steward', inputs.steward.version, [
-      arg('--workspace', nonEmpty(`${workspaceDir}/workspace`)),
-      arg('--repos-file', nonEmpty(`${workspaceDir}/repos.md`)),
-      arg('--git-ask-pass', nonEmpty(`${workspaceDir}/askpass.sh`)),
+      arg('--workspace', workspace.workspace),
+      arg('--repos-file', workspace.repos_md),
+      arg('--git-ask-pass', workspace.askpass_sh),
       arg('--git-author-email', inputs.commits.author.email ?? user.email()),
       arg('--git-author-name', inputs.commits.author.name ?? user.name()),
       arg('--vcs-login', user.login()),
@@ -58,7 +58,7 @@ async function run(): Promise<void> {
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
       arg('--github-app-id', inputs.github.app?.id),
-      arg('--github-app-key-file', inputs.github.app ? nonEmpty(`${workspaceDir}/app.pem`) : undefined),
+      arg('--github-app-key-file', inputs.github.app ? workspace.app_pem : undefined),
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],

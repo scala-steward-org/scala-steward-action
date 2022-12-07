@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import path from 'path'
 import jsSHA from 'jssha/dist/sha256'
 import {type ActionCache} from '../core/cache'
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {type OSInfo} from '../core/os'
-import {type NonEmptyString} from '../core/types'
+import {mandatory, type NonEmptyString} from '../core/types'
 
 export class Workspace {
   static from(
@@ -15,6 +16,12 @@ export class Workspace {
   ) {
     return new Workspace(logger, files, os, cache)
   }
+
+  readonly directory = path.join(this.os.homedir(), 'scala-steward')
+  readonly workspace = mandatory(path.join(this.directory, 'workspace'))
+  readonly repos_md = mandatory(path.join(this.directory, 'repos.md'))
+  readonly app_pem = mandatory(path.join(this.directory, 'app.pem'))
+  readonly askpass_sh = mandatory(path.join(this.directory, 'askpass.sh'))
 
   constructor(
     private readonly logger: Logger,
@@ -32,10 +39,10 @@ export class Workspace {
     try {
       this.logger.startGroup('Trying to restore workspace contents from cache...')
 
-      const hash = this.hashFile(path.join(workspace, 'repos.md'))
-      const paths = [path.join(workspace, 'workspace')]
+      const hash = this.hashFile(this.repos_md.value)
+
       const cacheHit = await this.cache.restoreCache(
-        paths,
+        [this.workspace.value],
         `scala-steward-${hash}-${Date.now().toString()}`,
         [`scala-steward-${hash}`, 'scala-steward-'],
       )
@@ -64,15 +71,12 @@ export class Workspace {
       this.logger.startGroup('Saving workspace to cache...')
 
       // We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
-      await this.files.rmRF(path.join(workspace, 'workspace', 'store', 'refresh_error'))
-      await this.files.rmRF(path.join(workspace, 'workspace', 'repos'))
+      await this.files.rmRF(path.join(this.workspace.value, 'store', 'refresh_error'))
+      await this.files.rmRF(path.join(this.workspace.value, 'repos'))
 
-      const hash = this.hashFile(path.join(workspace, 'repos.md'))
+      const hash = this.hashFile(this.repos_md.value)
 
-      await this.cache.saveCache(
-        [path.join(workspace, 'workspace')],
-        `scala-steward-${hash}-${Date.now().toString()}`,
-      )
+      await this.cache.saveCache([this.workspace.value], `scala-steward-${hash}-${Date.now().toString()}`)
 
       this.logger.info('Scala Steward workspace contents saved to cache')
       this.logger.endGroup()
@@ -100,18 +104,17 @@ export class Workspace {
    */
   async prepare(reposList: string, token: NonEmptyString, gitHubAppKey: NonEmptyString | undefined): Promise<string> {
     try {
-      const stewarddir = `${this.os.homedir()}/scala-steward`
-      await this.files.mkdirP(stewarddir)
+      await this.files.mkdirP(this.directory)
 
       if (gitHubAppKey === undefined) {
-        this.files.writeFileSync(`${stewarddir}/repos.md`, reposList)
+        this.files.writeFileSync(this.repos_md.value, reposList)
       } else {
-        this.files.writeFileSync(`${stewarddir}/repos.md`, '')
-        this.files.writeFileSync(`${stewarddir}/app.pem`, gitHubAppKey.value)
+        this.files.writeFileSync(this.repos_md.value, '')
+        this.files.writeFileSync(this.app_pem.value, gitHubAppKey.value)
       }
 
-      this.files.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token.value}'`)
-      this.files.chmodSync(`${stewarddir}/askpass.sh`, 0o755)
+      this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token.value}'`)
+      this.files.chmodSync(this.askpass_sh.value, 0o755)
 
       this.logger.info('✓ Scala Steward workspace created')
 
@@ -126,7 +129,7 @@ export class Workspace {
    * Removes the Scala Steward's workspace.
    */
   async remove(): Promise<void> {
-    await this.files.rmRF(`${this.os.homedir()}/scala-steward`)
+    await this.files.rmRF(this.directory)
   }
 
   /**
