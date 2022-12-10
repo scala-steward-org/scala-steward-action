@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import path from 'path'
 import jsSHA from 'jssha/dist/sha256'
 import {type ActionCache} from '../core/cache'

@@ -15,8 +15,8 @@ export type Logger = {
   warning(message: string): void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Logger = {
-  noOp: {info() {}, debug() {}, error() {}, warning() {}, startGroup() {}, endGroup() {}}, // eslint-disable-line @typescript-eslint/no-empty-function
+  noOp: {info() {}, debug() {}, error() {}, warning() {}, startGroup() {}, endGroup() {}},
 
 }

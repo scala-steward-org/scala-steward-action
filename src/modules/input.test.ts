@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import {fail} from 'assert'
 import test from 'ava'
 import {match} from 'ts-pattern'

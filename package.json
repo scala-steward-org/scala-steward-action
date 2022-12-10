@@ -57,6 +57,8 @@
       "n/file-extension-in-import": 0,
       "node/prefer-global/process": 0,
       "import/extensions": 0,
+      "@typescript-eslint/naming-convention": 0,
+      "@typescript-eslint/no-empty-function": 0,
       "unicorn/prefer-node-protocol": 0
     }
   },
