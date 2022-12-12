@@ -135,6 +135,7 @@ export async function launch(
  * Removes coursier binary
  */
 export async function remove(): Promise<void> {
+  await io.rmRF(path.join(os.homedir(), '.cache', 'coursier', 'v1'))
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'))
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'))
   await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafix'))
