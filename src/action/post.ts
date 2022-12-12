@@ -12,7 +12,7 @@ import {type Files} from '../core/files'
 /**
  * Performs a cleanup of all the artifacts/folders created by this action.
  */
-async function post(): Promise<void> {
+async function run(): Promise<void> {
   try {
     const logger: Logger = core
     const files: Files = {...fs, ...io}
@@ -32,4 +32,4 @@ async function post(): Promise<void> {
 }
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
-void post()
+void run()
