@@ -67,6 +67,9 @@ inputs:
   github-app-id:
     description: "Github application ID"
     required: false
+  github-app-installation-id:
+    description: "GitHub App Installation ID"
+    required: false
   github-app-key:
     description: "Github application private key"
     required: false

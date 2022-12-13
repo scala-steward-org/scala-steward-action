@@ -1,6 +1,9 @@
+
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
+
+export type GitHubAppInfo = {id: NonEmptyString; installation: NonEmptyString | undefined; key: NonEmptyString}
 
 /**
  * Retrieves (and sanitize) inputs.
@@ -179,8 +182,9 @@ export class Input {
    *
    * @returns {{id: string, key: string} | undefined} App ID and key or undefined if both inputs are empty.
    */
-  githubAppInfo(): {id: NonEmptyString; key: NonEmptyString} | undefined {
+  githubAppInfo(): GitHubAppInfo | undefined {
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
+    const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
     const key = nonEmpty(this.inputs.getInput('github-app-key'))
 
     if (!id && !key) {
@@ -188,13 +192,9 @@ export class Input {
     }
 
     if (id && key) {
-      this.logger.info(`✓ Github App ID: ${id.value}`)
-      this.logger.info('✓ Github App private key will be written to the Scala Steward workspace')
-      return {id, key}
+      return {id, installation, key}
     }
 
-    throw new Error(
-      '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing',
-    )
+    throw new Error('`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing')
   }
 }

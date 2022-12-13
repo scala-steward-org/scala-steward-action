@@ -78,6 +78,7 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
   const inputs = (name: string) => match(name)
     .with('github-app-id', () => '123')
     .with('github-app-key', () => '42')
+    .with('github-app-installation-id', () => '456')
     .otherwise(() => '')
 
   const files: Files = {
@@ -93,7 +94,7 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
 
   const file = input.githubAppInfo()
 
-  t.deepEqual(file, {id: nonEmpty('123'), key: nonEmpty('42')})
+  t.deepEqual(file, {id: nonEmpty('123'), key: nonEmpty('42'), installation: nonEmpty('456')})
 })
 
 test('`Input.githubAppInfo()` → returns undefined on missing inputs', t => {
