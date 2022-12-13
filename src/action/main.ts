@@ -25,13 +25,14 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
-    const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
+    const token = inputs.github.token.value
+    const octokit = getOctokit(token, {baseUrl: inputs.github.apiUrl.value})
     const github = GitHub.from(logger, octokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
     const user = await github.getAuthUser()
 
-    await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
+    await workspace.prepare(inputs.steward.repos, token, inputs.github.app?.key)
     await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {

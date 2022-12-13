@@ -99,7 +99,7 @@ export class Workspace {
    * @param token The Github Token used to authenticate into Github.
    * @param gitHubAppKey The Github App private key (optional).
    */
-  async prepare(reposList: string, token: NonEmptyString, gitHubAppKey: NonEmptyString | undefined): Promise<void> {
+  async prepare(reposList: string, token: string, gitHubAppKey: NonEmptyString | undefined): Promise<void> {
     try {
       await this.files.mkdirP(this.directory)
 
@@ -110,7 +110,7 @@ export class Workspace {
         this.files.writeFileSync(this.app_pem.value, gitHubAppKey.value)
       }
 
-      this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token.value}'`)
+      this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token}'`)
       this.files.chmodSync(this.askpass_sh.value, 0o755)
 
       this.logger.info('✓ Scala Steward workspace created')

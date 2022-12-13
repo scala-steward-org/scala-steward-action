@@ -58,7 +58,7 @@ test.after(() => {
 test('`Workspace.prepare()` → prepares the workspace', async t => {
   const {workspace, calls} = fixture()
 
-  await workspace.prepare('- owner/repo1\n- owner/repo2', mandatory('123'), undefined)
+  await workspace.prepare('- owner/repo1\n- owner/repo2', '123', undefined)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
@@ -75,7 +75,7 @@ test('`Workspace.prepare()` → prepares the workspace when using a GitHub App',
 
   const gitHubAppKey = mandatory('this-is-the-key')
 
-  await workspace.prepare('this will not be used', mandatory('123'), gitHubAppKey)
+  await workspace.prepare('this will not be used', '123', gitHubAppKey)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
