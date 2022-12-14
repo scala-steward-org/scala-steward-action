@@ -55,6 +55,33 @@ export class GitHub {
       return this.defaultUser
     }
   }
+
+  /**
+   * Returns the login, email and name of the authenticated user.
+   */
+  async getAppUser(slug: string | undefined): Promise<AuthUser> {
+    try {
+      if (slug === undefined) {
+        throw new Error('Unable to find GitHub App Slug')
+      }
+
+      const response = await this.github.rest.users.getByUsername({username: slug + '[bot]'})
+
+      // Workaround until https://github.com/github/rest-api-description/issues/288 is fixed
+      const {login, id} = (response as {data: {login: string; id: string}}).data
+
+      this.logger.info('✓ GitHub App information retrieved from GitHub')
+
+      return {
+        login: () => mandatory(login, 'Unable to retrieve user information from GitHub'),
+        email: () => mandatory(`${id}+${login}@users.noreply.github.com`),
+        name: () => mandatory(login),
+      }
+    } catch (error: unknown) {
+      this.logger.debug(`- GitHub App User information retrieve failed. Error: ${(error as Error).message}`)
+      return this.defaultUser
+    }
+  }
 }
 
 type AuthUser = {
@@ -67,6 +94,7 @@ export type GitHubClient = {
   rest: {
     users: {
       getAuthenticated: () => Promise<{data: {login: string; email: string | null; name: string | null}}>;
+      getByUsername: (parameters?: {username: string}) => Promise<unknown>;
     };
   };
 }
