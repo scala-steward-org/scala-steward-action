@@ -34,7 +34,7 @@ export class Input {
   all() {
     return {
       github: {
-        token: this.githubToken(),
+        token: mandatory(this.inputs.getInput('github-token')),
         app: this.githubAppInfo(),
         apiUrl: mandatory(this.inputs.getInput('github-api-url')),
       },
@@ -62,24 +62,6 @@ export class Input {
         },
       },
     }
-  }
-
-  /**
-   * Reads the GitHub Token from the `github-token` input. Throws error if the
-   * input is empty or returns the token in case it is not.
-   *
-   * @returns {string} The GitHub Token read from the `github-token` input.
-   */
-  githubToken(): NonEmptyString {
-    const token = nonEmpty(this.inputs.getInput('github-token'))
-
-    if (!token) {
-      throw new Error('You need to provide a GitHub token in the `github-token` input')
-    }
-
-    this.logger.info('✓ GitHub Token provided as input')
-
-    return token
   }
 
   /**
@@ -146,8 +128,6 @@ export class Input {
 
       return branches.map((branch: string) => `- ${repo.value}:${branch}`).join('\n')
     }
-
-    this.logger.info(`✓ GitHub Repository set to: ${repo.value}.`)
 
     return `- ${repo.value}`
   }
