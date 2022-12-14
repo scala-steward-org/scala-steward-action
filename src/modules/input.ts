@@ -3,7 +3,12 @@ import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
 
-export type GitHubAppInfo = {id: NonEmptyString; installation: NonEmptyString | undefined; key: NonEmptyString}
+export type GitHubAppInfo = {
+  authOnly: boolean;
+  id: NonEmptyString;
+  installation: NonEmptyString | undefined;
+  key: NonEmptyString;
+}
 
 /**
  * Retrieves (and sanitize) inputs.
@@ -183,6 +188,7 @@ export class Input {
    * @returns {{id: string, key: string} | undefined} App ID and key or undefined if both inputs are empty.
    */
   githubAppInfo(): GitHubAppInfo | undefined {
+    const authOnly = this.inputs.getBooleanInput('github-app-auth-only')
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
     const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
     const key = nonEmpty(this.inputs.getInput('github-app-key'))
@@ -192,7 +198,7 @@ export class Input {
     }
 
     if (id && key) {
-      return {id, installation, key}
+      return {authOnly, id, installation, key}
     }
 
     throw new Error('`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing')

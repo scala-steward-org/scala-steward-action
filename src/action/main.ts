@@ -37,7 +37,7 @@ async function run(): Promise<void> {
       .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
       .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
 
-    await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app?.key)
+    await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
@@ -63,8 +63,8 @@ async function run(): Promise<void> {
       arg('--scalafix-migrations', inputs.migrations.scalafix),
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
-      arg('--github-app-id', inputs.github.app?.id),
-      arg('--github-app-key-file', inputs.github.app ? workspace.app_pem : undefined),
+      arg('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
+      arg('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],

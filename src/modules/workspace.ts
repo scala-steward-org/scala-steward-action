@@ -5,6 +5,7 @@ import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {type OSInfo} from '../core/os'
 import {mandatory, type NonEmptyString} from '../core/types'
+import {type GitHubAppInfo} from './input'
 
 export class Workspace {
   static from(
@@ -97,17 +98,17 @@ export class Workspace {
    * @param reposList The Markdown list of repositories to write to the `repos.md` file. It is only used if no
    *                  GitHub App key is provided on `gitHubAppKey` parameter.
    * @param token The GitHub Token used to authenticate into GitHub.
-   * @param gitHubAppKey The GitHub App private key (optional).
+   * @param gitHubAppInfo The GitHub App information as provided by the user.
    */
-  async prepare(reposList: string, token: string, gitHubAppKey: NonEmptyString | undefined): Promise<void> {
+  async prepare(reposList: string, token: string, gitHubAppInfo: GitHubAppInfo | undefined): Promise<void> {
     try {
       await this.files.mkdirP(this.directory)
 
-      if (gitHubAppKey === undefined) {
-        this.files.writeFileSync(this.repos_md.value, reposList)
-      } else {
+      if (gitHubAppInfo && !gitHubAppInfo.authOnly) {
         this.files.writeFileSync(this.repos_md.value, '')
-        this.files.writeFileSync(this.app_pem.value, gitHubAppKey.value)
+        this.files.writeFileSync(this.app_pem.value, gitHubAppInfo.key.value)
+      } else {
+        this.files.writeFileSync(this.repos_md.value, reposList)
       }
 
       this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token}'`)

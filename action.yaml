@@ -64,6 +64,12 @@ inputs:
   artifact-migrations:
     description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md"
     required: false
+  github-app-auth-only:
+    description: >
+      If set to `true` the GitHub App information will only be used for authentication. Repositories to update will be read
+      from the `repos-file` or the `github-repository` inputs.
+    default: "false"
+    required: false
   github-app-id:
     description: "GitHub application ID"
     required: false
