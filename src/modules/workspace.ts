@@ -91,13 +91,13 @@ export class Workspace {
    * - Creating a folder `scala-steward` in the "HOME" directory.
    * - Creating a `repos.md` file inside workspace containing the repository/repositories to update.
    * - Creating a `app.pem` with the GitHub App key (if applicable).
-   * - Creating a `askpass.sh` file inside workspace containing the Github token.
+   * - Creating a `askpass.sh` file inside workspace containing the GitHub token.
    * - Making the previous file executable.
    *
    * @param reposList The Markdown list of repositories to write to the `repos.md` file. It is only used if no
    *                  GitHub App key is provided on `gitHubAppKey` parameter.
-   * @param token The Github Token used to authenticate into Github.
-   * @param gitHubAppKey The Github App private key (optional).
+   * @param token The GitHub Token used to authenticate into GitHub.
+   * @param gitHubAppKey The GitHub App private key (optional).
    */
   async prepare(reposList: string, token: string, gitHubAppKey: NonEmptyString | undefined): Promise<void> {
     try {

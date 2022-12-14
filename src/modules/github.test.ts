@@ -34,18 +34,18 @@ test('`GitHub.getAuthUser()` → throws error on any empty component', async t =
   const user = await input.getAuthUser()
 
   {
-    const expected = 'Unable to retrieve user information from Github'
+    const expected = 'Unable to retrieve user information from GitHub'
     t.throws(() => user.login().value, {instanceOf: Error, message: expected})
   }
 
   {
-    const expected = 'Unable to find author\'s email. Either ensure that the token\'s Github Account '
+    const expected = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account '
       + 'has the email privacy feature disabled for at least one email or use the `author-email` input to provide one.'
     t.throws(() => user.email().value, {instanceOf: Error, message: expected})
   }
 
   {
-    const expected = 'Unable to find author\'s name. Either ensure that the token\'s Github Account '
+    const expected = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account '
       + 'has a valid name set in its profile or use the `author-name` input to provide one.'
     t.throws(() => user.name().value, {instanceOf: Error, message: expected})
   }
@@ -65,13 +65,13 @@ test('`GitHub.getAuthUser()` → throws error on any null component', async t =>
   const user = await input.getAuthUser()
 
   {
-    const expected = 'Unable to find author\'s email. Either ensure that the token\'s Github Account '
+    const expected = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account '
       + 'has the email privacy feature disabled for at least one email or use the `author-email` input to provide one.'
     t.throws(() => user.email().value, {instanceOf: Error, message: expected})
   }
 
   {
-    const expected = 'Unable to find author\'s name. Either ensure that the token\'s Github Account '
+    const expected = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account '
       + 'has a valid name set in its profile or use the `author-name` input to provide one.'
     t.throws(() => user.name().value, {instanceOf: Error, message: expected})
   }

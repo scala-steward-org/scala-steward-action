@@ -3,11 +3,11 @@ import {type Logger} from '../core/logger'
 import {mandatory, type NonEmptyString} from '../core/types'
 
 const emailErrorMessage
-  = 'Unable to find author\'s email. Either ensure that the token\'s Github Account has the email '
+  = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account has the email '
   + 'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
 
 const nameErrorMessage
-  = 'Unable to find author\'s name. Either ensure that the token\'s Github Account has a valid name '
+  = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account has a valid name '
   + 'set in its profile or use the `author-name` input to provide one.'
 
 export class GitHub {
@@ -39,14 +39,14 @@ export class GitHub {
       const auth = await this.github.rest.users.getAuthenticated()
       const {login, email, name} = auth.data
 
-      this.logger.info('✓ User information retrieved from Github')
+      this.logger.info('✓ User information retrieved from GitHub')
 
       this.logger.debug(`- Login: ${login}`)
       this.logger.debug(`- Email: ${email ?? 'no email found'}`)
       this.logger.debug(`- Name: ${name ?? 'no name found'}`)
 
       return {
-        login: () => mandatory(login, 'Unable to retrieve user information from Github'),
+        login: () => mandatory(login, 'Unable to retrieve user information from GitHub'),
         email: () => mandatory(email ?? '', emailErrorMessage),
         name: () => mandatory(name ?? '', nameErrorMessage),
       }

@@ -17,7 +17,7 @@ import {Workspace} from '../modules/workspace'
 /**
  * Runs the action main code. In order it will do the following:
  * - Recover user inputs
- * - Get authenticated user data from provided Github Token
+ * - Get authenticated user data from provided GitHub Token
  * - Prepare Scala Steward's workspace
  * - Run Scala Steward using Coursier.
  */

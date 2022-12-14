@@ -60,19 +60,19 @@ export class Input {
   }
 
   /**
-   * Reads the Github Token from the `github-token` input. Throws error if the
+   * Reads the GitHub Token from the `github-token` input. Throws error if the
    * input is empty or returns the token in case it is not.
    *
-   * @returns {string} The Github Token read from the `github-token` input.
+   * @returns {string} The GitHub Token read from the `github-token` input.
    */
   githubToken(): NonEmptyString {
     const token = nonEmpty(this.inputs.getInput('github-token'))
 
     if (!token) {
-      throw new Error('You need to provide a Github token in the `github-token` input')
+      throw new Error('You need to provide a GitHub token in the `github-token` input')
     }
 
-    this.logger.info('✓ Github Token provided as input')
+    this.logger.info('✓ GitHub Token provided as input')
 
     return token
   }
@@ -117,13 +117,13 @@ export class Input {
    *
    * If the `branches` input is set, the selected branches will be added.
    *
-   * @returns {string} The Github repository read from the `github-repository` input.
+   * @returns {string} The GitHub repository read from the `github-repository` input.
    */
   githubRepository(): string {
     const repo = nonEmpty(this.inputs.getInput('github-repository'))
 
     if (!repo) {
-      throw new Error('Unable to read Github repository from `github-repository` input')
+      throw new Error('Unable to read GitHub repository from `github-repository` input')
     }
 
     const branches = this.inputs.getInput('branches').split(',').filter(Boolean)
@@ -131,18 +131,18 @@ export class Input {
     if (branches.length === 1) {
       const branch = branches[0]
 
-      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branch} branch.`)
+      this.logger.info(`✓ GitHub Repository set to: ${repo.value}. Will update ${branch} branch.`)
 
       return `- ${repo.value}:${branch}`
     }
 
     if (branches.length > 1) {
-      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branches.join(', ')} branches.`)
+      this.logger.info(`✓ GitHub Repository set to: ${repo.value}. Will update ${branches.join(', ')} branches.`)
 
       return branches.map((branch: string) => `- ${repo.value}:${branch}`).join('\n')
     }
 
-    this.logger.info(`✓ Github Repository set to: ${repo.value}.`)
+    this.logger.info(`✓ GitHub Repository set to: ${repo.value}.`)
 
     return `- ${repo.value}`
   }
@@ -176,7 +176,7 @@ export class Input {
   }
 
   /**
-   * Checks that Github App ID and private key are set together.
+   * Checks that GitHub App ID and private key are set together.
    *
    * Throws error if only one of the two inputs is set.
    *
