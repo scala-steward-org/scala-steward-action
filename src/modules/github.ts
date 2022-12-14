@@ -18,6 +18,14 @@ export class GitHub {
     return new GitHub(logger, github)
   }
 
+  // https://github.community/t/github-actions-bot-email-address/17204/6
+  // https://api.github.com/users/github-actions%5Bbot%5D
+  private readonly defaultUser = {
+    login: () => mandatory('github-actions[bot]'),
+    email: () => mandatory('41898282+github-actions[bot]@users.noreply.github.com'),
+    name: () => mandatory('github-actions[bot]'),
+  }
+
   constructor(
     private readonly logger: Logger,
     private readonly github: GitHubClient,
@@ -44,14 +52,7 @@ export class GitHub {
       }
     } catch (error: unknown) {
       this.logger.debug(`- User information retrieve failed. Error: ${(error as Error).message}`)
-
-      // https://github.community/t/github-actions-bot-email-address/17204/6
-      // https://api.github.com/users/github-actions%5Bbot%5D
-      return {
-        login: () => mandatory('github-actions[bot]'),
-        email: () => mandatory('41898282+github-actions[bot]@users.noreply.github.com'),
-        name: () => mandatory('github-actions[bot]'),
-      }
+      return this.defaultUser
     }
   }
 }
