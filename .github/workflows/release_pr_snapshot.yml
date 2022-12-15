@@ -41,6 +41,7 @@ jobs:
         run: unzip dist.zip -d dist
 
       - name: Create snapshot branch
+        id: snapshot-branch
         run: |
           pr_number=$(cat ./dist/PR_NUMBER)
           git checkout -b "snapshots/$pr_number"
@@ -49,25 +50,29 @@ jobs:
           git add -f dist
           git commit --message "Release snapshot for #$pr_number"
           git push -f origin "snapshots/$pr_number"
+          echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
 
-      - name: Comment on PR
-        uses: actions/github-script@v3
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
+          issue-number: ${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+          comment-author: "github-actions[bot]"
+          body-includes: A snapshot release
 
-            const issue_number = Number(fs.readFileSync('./dist/PR_NUMBER'));
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+          edit-mode: replace
+          body: |
+            A snapshot release has been created as `snapshots/${{ steps.snapshot-branch.outputs.PR_NUMBER }}`.
 
-            const body = `A snapshot release has been created as \`snapshots/${issue_number}\`.\n\n`
-              + 'You can test it out with:\n\n'
-              + '```yaml\n'
-              + `uses: scala-steward-org/scala-steward-action@snapshots/${issue_number}\n`
-              + '```'
+            You can test it out with:
 
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number,
-              body
-            });
+            ```yaml
+            uses: scala-steward-org/scala-steward-action@snapshots/${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+            ```
+
+            It will be automatically recreated on any change to this PR.
