@@ -17,46 +17,29 @@ jobs:
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
 
       - name: Download dist folder
-        uses: actions/github-script@v3.1.0
+        uses: dawidd6/action-download-artifact@v2
         with:
-          script: |
-            const artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
+          name: dist
+          path: dist
 
-            const download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: artifacts.data.artifacts[0].id,
-               archive_format: 'zip',
-            });
-
-            const fs = require('fs');
-
-            fs.writeFileSync('${{github.workspace}}/dist.zip', Buffer.from(download.data));
-
-      - name: Unzip dist folder
-        run: unzip dist.zip -d dist
-
-      - name: Create snapshot branch
-        id: snapshot-branch
+      - name: Extract PR number
+        id: extract-pr-number
         run: |
           pr_number=$(cat ./dist/PR_NUMBER)
-          git checkout -b "snapshots/$pr_number"
-          git config user.name "github-actions"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f dist
-          git commit --message "Release snapshot for #$pr_number"
-          git push -f origin "snapshots/$pr_number"
           echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
+
+      - name: Create snapshot branch
+        uses: alejandrohdezma/actions commit-and-push@v1
+        with:
+          message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
+          force-push: "true"
+          branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: find-comment
         with:
-          issue-number: ${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+          issue-number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
           comment-author: "github-actions[bot]"
           body-includes: A snapshot release
 
@@ -64,15 +47,15 @@ jobs:
         uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+          issue-number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
           edit-mode: replace
           body: |
-            A snapshot release has been created as `snapshots/${{ steps.snapshot-branch.outputs.PR_NUMBER }}`.
+            A snapshot release has been created as `snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}`.
 
             You can test it out with:
 
             ```yaml
-            uses: scala-steward-org/scala-steward-action@snapshots/${{ steps.snapshot-branch.outputs.PR_NUMBER }}
+            uses: scala-steward-org/scala-steward-action@snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
             ```
 
             It will be automatically recreated on any change to this PR.
