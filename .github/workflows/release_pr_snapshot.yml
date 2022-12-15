@@ -48,7 +48,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f dist
           git commit --message "Release snapshot for #$pr_number"
-          git push origin "snapshots/$pr_number"
+          git push -f origin "snapshots/$pr_number"
 
       - name: Comment on PR
         uses: actions/github-script@v3
