@@ -1,4 +1,4 @@
-name: Run `npm run all` in the project
+name: CI
 
 on: [pull_request]
 
@@ -18,3 +18,12 @@ jobs:
 
       - name: Run `npm run all`
         run: npm run all
+
+      - name: Save PR number to `dist`
+        run: echo ${{ github.event.number }} > ./dist/PR_NUMBER
+
+      - name: Upload artifact with `dist` folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
