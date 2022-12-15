@@ -1,4 +1,4 @@
-name: Run `npm run all` in the project
+name: CI
 
 on: [pull_request]
 
