@@ -22,7 +22,8 @@ jobs:
       - name: Save PR number to `dist`
         run: echo ${{ github.event.number }} > ./dist/PR_NUMBER
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifact with `dist` folder
+        uses: actions/upload-artifact@v2
         with:
           name: dist
           path: dist/

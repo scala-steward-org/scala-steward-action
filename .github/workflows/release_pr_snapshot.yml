@@ -29,7 +29,7 @@ jobs:
           echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
 
       - name: Create snapshot branch
-        uses: alejandrohdezma/actions commit-and-push@v1
+        uses: alejandrohdezma/actions/commit-and-push@v1
         with:
           message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
           force-push: "true"
