@@ -37,22 +37,37 @@ jobs:
 
             fs.writeFileSync('${{github.workspace}}/dist.zip', Buffer.from(download.data));
 
-      - run: unzip dist.zip -d dist
+      - name: Unzip dist folder
+        run: unzip dist.zip -d dist
 
-      - run: ls
+      - name: Create snapshot branch
+        run: >
+          pr_number=$(cat ./dist/PR_NUMBER)
+          git checkout -b "snapshots/$pr_number"
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist
+          git commit --message "Release snapshot for #$pr_number"
+          git push origin "snapshots/$pr_number"
 
-      - run: ls dist
-
-      - name: "Comment on PR"
+      - name: Comment on PR
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./dist/PR_NUMBER'));
+            const fs = require('fs');
+
+            const issue_number = Number(fs.readFileSync('./dist/PR_NUMBER'));
+
+            const body = `A snapshot release has been created as \`snapshots/${issue_number}\`.\n\n`
+              + 'You can test it out with:\n\n'
+              + '```yaml\n'
+              + `uses: scala-steward-org/scala-steward-action@snapshots/${issue_number}\n`
+              + '```'
+
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'This is a test'
+              issue_number,
+              body
             });
