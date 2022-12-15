@@ -29,7 +29,7 @@ jobs:
             const download = await github.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               artifact_id: artifacts.data.artifacts.[0].id,
+               artifact_id: artifacts.data.artifacts[0].id,
                archive_format: 'zip',
             });
 
