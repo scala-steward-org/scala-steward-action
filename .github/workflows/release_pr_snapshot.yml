@@ -33,6 +33,7 @@ jobs:
         uses: alejandrohdezma/actions/commit-and-push@v1
         with:
           message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
+          force-add: "true"
           force-push: "true"
           branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
 
