@@ -73,4 +73,4 @@ jobs:
     if: github.event_name == 'pull_request_target'
     steps:
       - name: Remove snapshot branch
-        run: git push origin -d snapshots/${{ github.event.number }} &>/dev/null
+        run: git push origin -d snapshots/${{ github.event.number }}
