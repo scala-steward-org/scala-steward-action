@@ -23,6 +23,9 @@ jobs:
           name: dist
           path: dist
 
+      - name: Remove `dist` from `.gitignore`
+        run: sed -i -E 's|^/?dist/?||g' .gitignore
+
       - name: Extract PR number
         id: extract-pr-number
         run: |
@@ -33,7 +36,6 @@ jobs:
         uses: alejandrohdezma/actions/commit-and-push@v1
         with:
           message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
-          force-add: "true"
           force-push: "true"
           branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
 
