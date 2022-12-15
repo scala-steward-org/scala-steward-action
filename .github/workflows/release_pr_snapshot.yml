@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  upload:
+  release-snapshot-artifact:
     runs-on: ubuntu-latest
     if: >
       github.event.workflow_run.event == 'pull_request' &&
@@ -41,7 +41,7 @@ jobs:
         run: unzip dist.zip -d dist
 
       - name: Create snapshot branch
-        run: >
+        run: |
           pr_number=$(cat ./dist/PR_NUMBER)
           git checkout -b "snapshots/$pr_number"
           git config user.name "github-actions"
