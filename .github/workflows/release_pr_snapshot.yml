@@ -1,0 +1,65 @@
+name: Release a snapshot artifact for a PR
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  release-snapshot-artifact:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+
+      - name: Download dist folder
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          run_id: ${{github.event.workflow_run.id }}
+          name: dist
+          path: dist
+
+      - name: Remove `dist` from `.gitignore`
+        run: sed -i -E 's|^/?dist/?||g' .gitignore
+
+      - name: Extract PR number
+        id: extract-pr-number
+        run: |
+          pr_number=$(cat ./dist/PR_NUMBER)
+          echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
+
+      - name: Create snapshot branch
+        uses: alejandrohdezma/actions/commit-and-push@v1
+        with:
+          message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
+          force-push: "true"
+          branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
+          comment-author: "github-actions[bot]"
+          body-includes: A snapshot release
+
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
+          edit-mode: replace
+          body: |
+            A snapshot release has been created as `snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}`.
+
+            You can test it out with:
+
+            ```yaml
+            uses: scala-steward-org/scala-steward-action@snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
+            ```
+
+            It will be automatically recreated on any change to this PR.
