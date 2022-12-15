@@ -72,5 +72,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request_target'
     steps:
+      - name: Checkout project
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+
       - name: Remove snapshot branch
         run: git push origin -d snapshots/${{ github.event.number }}
