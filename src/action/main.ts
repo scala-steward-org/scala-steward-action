@@ -1,22 +1,20 @@
-import process from 'process'
 import fs from 'fs'
+import os from 'os'
+import process from 'process'
+import * as cache from '@actions/cache'
 import * as core from '@actions/core'
-import fetch from 'node-fetch'
-import * as github from './github'
-import {HealthCheck} from './healthcheck'
-import * as workspace from './workspace'
-import * as coursier from './coursier'
-import {type Logger} from './logger'
-import {Input} from './input'
-import {type HttpClient} from './http'
-import * as mill from './mill'
-import {type Files} from './files'
-import {nonEmpty, NonEmptyString} from './types'
+import {getOctokit} from '@actions/github'
+import * as io from '@actions/io'
+import * as coursier from '../modules/coursier'
+import {type Files} from '../core/files'
+import {GitHub} from '../modules/github'
+import {Input} from '../modules/input'
+import {type Logger} from '../core/logger'
+import {nonEmpty, NonEmptyString} from '../core/types'
+import {Workspace} from '../modules/workspace'
 
 /**
  * Runs the action main code. In order it will do the following:
- * - Check connection with Maven Central
- * - Install Coursier
  * - Recover user inputs
  * - Get authenticated user data from provided Github Token
  * - Prepare Scala Steward's workspace
@@ -25,33 +23,27 @@ import {nonEmpty, NonEmptyString} from './types'
 async function run(): Promise<void> {
   try {
     const logger: Logger = core
-    const httpClient: HttpClient = {run: async url => fetch(url)}
-    const files: Files = fs
+    const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
-    const healthCheck: HealthCheck = HealthCheck.from(logger, httpClient)
+    const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
+    const github = GitHub.from(logger, octokit)
+    const workspace = Workspace.from(logger, files, os, cache)
 
-    await healthCheck.mavenCentral()
+    const user = await github.getAuthUser()
 
-    await coursier.selfInstall()
-    await coursier.install('scalafmt')
-    await coursier.install('scalafix')
-    await mill.install()
-
-    const user = await github.getAuthUser(inputs.github.token)
-
-    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
-    await workspace.restoreWorkspaceCache(workspaceDir)
+    await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
+    await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
-      core.debug('Debug mode activated for Scala Steward')
+      core.debug('🐛 Debug mode activated for Scala Steward')
       core.exportVariable('LOG_LEVEL', 'TRACE')
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
 
     await coursier.launch('scala-steward', inputs.steward.version, [
-      arg('--workspace', nonEmpty(`${workspaceDir}/workspace`)),
-      arg('--repos-file', nonEmpty(`${workspaceDir}/repos.md`)),
-      arg('--git-ask-pass', nonEmpty(`${workspaceDir}/askpass.sh`)),
+      arg('--workspace', workspace.workspace),
+      arg('--repos-file', workspace.repos_md),
+      arg('--git-ask-pass', workspace.askpass_sh),
       arg('--git-author-email', inputs.commits.author.email ?? user.email()),
       arg('--git-author-name', inputs.commits.author.name ?? user.name()),
       arg('--vcs-login', user.login()),
@@ -66,15 +58,13 @@ async function run(): Promise<void> {
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
       arg('--github-app-id', inputs.github.app?.id),
-      arg('--github-app-key-file', inputs.github.app ? nonEmpty(`${workspaceDir}/app.pem`) : undefined),
+      arg('--github-app-key-file', inputs.github.app ? workspace.app_pem : undefined),
       '--do-not-fork',
       '--disable-sandbox',
-      inputs.steward.extraArgs ? inputs.steward.extraArgs.value.split(' ') : [],
-    ]).finally(() => {
-      workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
-        core.setFailed(` ✕ ${(error as Error).message}`)
-      })
-    })
+      inputs.steward.extraArgs?.value.split(' ') ?? [],
+    ])
+
+    await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }

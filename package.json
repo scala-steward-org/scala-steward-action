@@ -3,9 +3,10 @@
   "description": "A Github Action to launch Scala Steward in your repository",
   "scripts": {
     "tsconfig": "echo '{ \"extends\": \"@tsconfig/recommended/tsconfig.json\" }' > tsconfig.json",
-    "build": "npm run tsconfig && npm run build-main && npm run build-post",
-    "build-main": "ncc build --target es2019 src/main.ts && mv dist/index.js dist/main.js",
-    "build-post": "ncc build --target es2019 src/post.ts && mv dist/index.js dist/post.js",
+    "build": "npm run tsconfig && npm run build-pre && npm run build-main && npm run build-post",
+    "build-pre": "ncc build --target es2019 src/action/pre.ts && mv dist/index.js dist/pre.js",
+    "build-main": "ncc build --target es2019 src/action/main.ts && mv dist/index.js dist/main.js",
+    "build-post": "ncc build --target es2019 src/action/post.ts && mv dist/index.js dist/post.js",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "contributors:check": "all-contributors check",
@@ -33,6 +34,7 @@
     "@actions/io": "^1.1.2",
     "@actions/tool-cache": "^2.0.1",
     "@types/node-fetch": "^2.6.1",
+    "@types/sinon": "^10.0.13",
     "jssha": "^3.3.0",
     "node-fetch": "^2.6.7"
   },
@@ -44,6 +46,7 @@
     "all-contributors-cli": "^6.24.0",
     "ava": "^5.1.0",
     "c8": "^7.12.0",
+    "sinon": "^15.0.0",
     "ts-node": "^10.9.1",
     "ts-pattern": "^4.0.6",
     "typescript": "^4.9.4",
@@ -58,12 +61,14 @@
       "n/file-extension-in-import": 0,
       "node/prefer-global/process": 0,
       "import/extensions": 0,
+      "@typescript-eslint/naming-convention": 0,
+      "@typescript-eslint/no-empty-function": 0,
       "unicorn/prefer-node-protocol": 0
     }
   },
   "ava": {
     "files": [
-      "tests/*"
+      "src/**/*.test.ts"
     ],
     "extensions": [
       "ts"

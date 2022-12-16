@@ -5,7 +5,7 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
-import {type NonEmptyString} from './types'
+import {type NonEmptyString} from '../core/types'
 
 /**
  * Install `coursier` and add its executable to the `PATH`.
@@ -135,7 +135,8 @@ export async function launch(
  * Removes coursier binary
  */
 export async function remove(): Promise<void> {
-  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'cs'))
-  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafmt'))
-  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'scalafix'))
+  await io.rmRF(path.join(os.homedir(), '.cache', 'coursier', 'v1'))
+  await io.rmRF(path.join(os.homedir(), 'bin', 'cs'))
+  await io.rmRF(path.join(os.homedir(), 'bin', 'scalafmt'))
+  await io.rmRF(path.join(os.homedir(), 'bin', 'scalafix'))
 }
