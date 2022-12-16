@@ -1,4 +1,4 @@
-name: "Scala Steward Github Action"
+name: "Scala Steward GitHub Action"
 author: alejandrohdezma
 description: "🤖 A bot that helps you keeping your Scala projects up-to-date "
 branding:
@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ${{ github.repository }}
   github-token:
-    description: "Github Personal Access Token with permission to create branches on repo"
+    description: "GitHub Personal Access Token with permission to create branches on repo"
     required: false
     default: ${{ github.token }}
   author-email:
@@ -55,7 +55,7 @@ inputs:
     default: "2hours"
     required: false
   github-api-url:
-    description: "The URL of the Github API, only use this input if you are using Github Enterprise"
+    description: "The URL of the GitHub API, only use this input if you are using GitHub Enterprise"
     default: "https://api.github.com"
     required: false
   scalafix-migrations:
@@ -64,11 +64,20 @@ inputs:
   artifact-migrations:
     description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md"
     required: false
+  github-app-auth-only:
+    description: >
+      If set to `true` the GitHub App information will only be used for authentication. Repositories to update will be read
+      from the `repos-file` or the `github-repository` inputs.
+    default: "false"
+    required: false
   github-app-id:
-    description: "Github application ID"
+    description: "GitHub application ID"
+    required: false
+  github-app-installation-id:
+    description: "GitHub App Installation ID"
     required: false
   github-app-key:
-    description: "Github application private key"
+    description: "GitHub application private key"
     required: false
   repo-config:
     description: "Location of a `.scala-steward.conf` file with default values"

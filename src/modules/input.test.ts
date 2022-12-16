@@ -27,7 +27,7 @@ test('`Input.all` → returns all inputs', t => {
   const booleanInputs = (name: string) => match(name)
     .with('ignore-opts-files', () => true)
     .with('sign-commits', () => true)
-    .run()
+    .otherwise(() => false)
 
   const files: Files = {
     chmodSync: () => fail('Should not be called'),
@@ -76,9 +76,15 @@ test('`Input.all` → returns all inputs', t => {
 
 test('`Input.githubAppInfo()` → returns GitHub App info', t => {
   const inputs = (name: string) => match(name)
+    .with('github-app-auth-only', () => 'true')
     .with('github-app-id', () => '123')
     .with('github-app-key', () => '42')
+    .with('github-app-installation-id', () => '456')
     .otherwise(() => '')
+
+  const booleanInputs = (name: string) => match(name)
+    .with('github-app-auth-only', () => true)
+    .otherwise(() => false)
 
   const files: Files = {
     chmodSync: () => fail('Should not be called'),
@@ -89,11 +95,11 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
     readFileSync: () => fail('Should not be called'),
   }
 
-  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
+  const input = Input.from({getInput: inputs, getBooleanInput: booleanInputs}, files, Logger.noOp)
 
   const file = input.githubAppInfo()
 
-  t.deepEqual(file, {id: nonEmpty('123'), key: nonEmpty('42')})
+  t.deepEqual(file, {authOnly: true, id: nonEmpty('123'), key: nonEmpty('42'), installation: nonEmpty('456')})
 })
 
 test('`Input.githubAppInfo()` → returns undefined on missing inputs', t => {

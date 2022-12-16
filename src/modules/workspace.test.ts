@@ -58,7 +58,7 @@ test.after(() => {
 test('`Workspace.prepare()` → prepares the workspace', async t => {
   const {workspace, calls} = fixture()
 
-  await workspace.prepare('- owner/repo1\n- owner/repo2', mandatory('123'), undefined)
+  await workspace.prepare('- owner/repo1\n- owner/repo2', '123', undefined)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
@@ -73,14 +73,41 @@ test('`Workspace.prepare()` → prepares the workspace', async t => {
 test('`Workspace.prepare()` → prepares the workspace when using a GitHub App', async t => {
   const {workspace, calls} = fixture()
 
-  const gitHubAppKey = mandatory('this-is-the-key')
+  const gitHubAppInfo = {
+    authOnly: false,
+    id: mandatory('this-is-the-id'),
+    installation: mandatory('this-is-the-installation-id'),
+    key: mandatory('this-is-the-key'),
+  }
 
-  await workspace.prepare('this will not be used', mandatory('123'), gitHubAppKey)
+  await workspace.prepare('this will not be used', '123', gitHubAppInfo)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
     'writeFileSync("/home/scala-steward/repos.md", "")',
     'writeFileSync("/home/scala-steward/app.pem", "this-is-the-key")',
+    'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
+    'chmodSync("/home/scala-steward/askpass.sh", 493)',
+  ]
+
+  t.deepEqual(calls, expected)
+})
+
+test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth only"', async t => {
+  const {workspace, calls} = fixture()
+
+  const gitHubAppInfo = {
+    authOnly: true,
+    id: mandatory('this-is-the-id'),
+    installation: mandatory('this-is-the-installation-id'),
+    key: mandatory('this-is-the-key'),
+  }
+
+  await workspace.prepare('- owner/repo', '123', gitHubAppInfo)
+
+  const expected: string[] = [
+    'mkdirP("/home/scala-steward")',
+    'writeFileSync("/home/scala-steward/repos.md", "- owner/repo")',
     'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
     'chmodSync("/home/scala-steward/askpass.sh", 493)',
   ]

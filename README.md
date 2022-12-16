@@ -1,8 +1,8 @@
-# Scala Steward Github Action
+# Scala Steward GitHub Action
 
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
-A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/scala-steward) in your repository.
+A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/scala-steward) in your repository.
 
 <p align="center">
   <a href="https://github.com/scala-steward-org/scala-steward" target="_blank">
@@ -16,7 +16,7 @@ A Github Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 - [Configuration](#configuration)
   * [Specify JVM version](#specify-jvm-version)
   * [Alternative Options for the GitHub Token](#alternative-options-for-the-github-token)
-    + [Using the default Github Action Token](#using-the-default-github-action-token)
+    + [Using the default GitHub Action Token](#using-the-default-github-action-token)
     + [Using a Personal Access Token](#using-a-personal-access-token)
   * [Update targets](#update-targets)
     + [Updating a different repository](#updating-a-different-repository)
@@ -103,7 +103,7 @@ on:
   workflow_dispatch:
 ```
 
-Once you added this trigger Github will show a "Run workflow" button at the workflow page.
+Once you added this trigger GitHub will show a "Run workflow" button at the workflow page.
 
 
 ## Configuration
@@ -114,16 +114,16 @@ The following inputs are available (all of them are optional):
 | :--- | :---: | :---: |
 | <details><summary>`repos-file`</summary><br/>Path to a file containing the list of repositories to update in markdown format (- owner/repo)</details>| File paths | `''` |
 | <details><summary>`github-repository`</summary><br/>Repository to update. The current repository will be used by default</details> | {{owner}}/{{repo}} | `$GITHUB_REPOSITORY` |
-| <details><summary>`github-token`</summary><br/>Github Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`)</details> | Valid [Github Token](https://github.com/settings/tokens) | `''` |
-| <details><summary>`author-email`</summary><br/>Author email address to use in commits</details> | Email address | Github user's *Public email* |
-| <details><summary>`author-name`</summary><br/>Author name to use in commits</details> | String | Github user's *Name* |
+| <details><summary>`github-token`</summary><br/>GitHub Personal Access Token with permission to create branches on repo (or `${{ secrets.GITHUB_TOKEN }}`)</details> | Valid [GitHub Token](https://github.com/settings/tokens) | `''` |
+| <details><summary>`author-email`</summary><br/>Author email address to use in commits</details> | Email address | GitHub user's *Public email* |
+| <details><summary>`author-name`</summary><br/>Author name to use in commits</details> | String | GitHub user's *Name* |
 | <details><summary>`scala-steward-version`</summary><br/>Scala Steward version to use</details> | Valid [Scala Steward's version](https://github.com/scala-steward-org/scala-steward/releases) | `''` |
 | <details><summary>`ignore-opts-files`</summary><br/>Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not</details> | true/false | `true` |
 | <details><summary>`sign-commits`</summary><br/>Whether to sign commits or not</details> | true/false | `false` |
 | <details><summary>`signing-key`</summary><br/>Key ID of signing key to use for signing commits. Analogous to git's `user.signingkey` configuration setting.</details> | Signing key ID | ' ' |
 | <details><summary>`cache-ttl`</summary><br/>TTL of cache for fetching dependency versions and metadata. Set it to `0s` to disable cache completely.</details> | like 24hours, 5min, 10s, or 0s | `2hours` |
 | <details><summary>`timeout`</summary><br/>Timeout for external process invocations.</details> | like 2hours, 5min, 10s, or 0s | `20min` |
-| <details><summary>`github-api-url`</summary><br/>The URL of the Github API, only use this input if you are using Github Enterprise</details> | https://git.yourcompany.com/api/v3 | `https://api.github.com` |
+| <details><summary>`github-api-url`</summary><br/>The URL of the GitHub API, only use this input if you are using GitHub Enterprise</details> | https://git.yourcompany.com/api/v3 | `https://api.github.com` |
 | <details><summary>`coursier-cli-url`</summary><br/>The Url to download the coursier CLI from.</details> | Valid Url to install coursier CLI from | `https://git.io/coursier-cli-linux` |
 | <details><summary>`scalafix-migrations`</summary><br/>Scalafix migrations to run when updating dependencies. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) for more information.</details> | Path to HOCON file<br/>or remote URL<br/>with [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/scalafix-migrations.md) | `''` |
 | <details><summary>`artifact-migrations`</summary><br/>Artifact migrations to find newer dependency updates. Check [here](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) for more information.</details> | Path to HOCON file<br/>with [migration](https://github.com/scala-steward-org/scala-steward/blob/master/docs/artifact-migrations.md) | `''` |
@@ -148,7 +148,7 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
 
 If for some reason the token provided by the GitHub App (as described in the [Usage](#usage) section) doesn't work for you, you can use a default GitHub Action token or a personal one.
 
-#### Using the default Github Action Token
+#### Using the default GitHub Action Token
 
 By default, the action will use the default GitHub Token if none is provided via `github-token`.
 
@@ -156,7 +156,7 @@ By default, the action will use the default GitHub Token if none is provided via
 
 #### Using a Personal Access Token
 
-1. You will need to generate a [Github Personal Access Token](https://github.com/settings/tokens) with `repo` permissions for reading/writing in the repository/repositories you wish to update.
+1. You will need to generate a [GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` permissions for reading/writing in the repository/repositories you wish to update.
 2. Add it as a repository secret.
 3. Provide it to the action using `github-token` input:
 
@@ -251,8 +251,8 @@ should follow the instructions [here](https://github.com/scala-steward-org/scala
 
 If you want commits created by Scala Steward to be automatically signed with a GPG key, follow these steps:
 
-1. Generate a new GPG key following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key).
-2. Add your new GPG key to your [user's Github account](https://github.com/settings/keys) following [Github's own tutorial](https://help.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account).
+1. Generate a new GPG key following [GitHub's own tutorial](https://help.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key).
+2. Add your new GPG key to your [user's GitHub account](https://github.com/settings/keys) following [GitHub's own tutorial](https://help.github.com/en/github/authenticating-to-github/adding-a-new-gpg-key-to-your-github-account).
 3. Export the GPG private key as an ASCII armored version to your clipboard (change `joe@foo.bar` with your key email address):
 
     ```bash

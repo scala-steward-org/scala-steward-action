@@ -5,18 +5,19 @@ import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
-import * as coursier from '../modules/coursier'
+import {createAppAuth} from '@octokit/auth-app'
 import {type Files} from '../core/files'
-import {GitHub} from '../modules/github'
-import {Input} from '../modules/input'
 import {type Logger} from '../core/logger'
 import {nonEmpty, NonEmptyString} from '../core/types'
+import * as coursier from '../modules/coursier'
+import {GitHub} from '../modules/github'
+import {Input, type GitHubAppInfo} from '../modules/input'
 import {Workspace} from '../modules/workspace'
 
 /**
  * Runs the action main code. In order it will do the following:
  * - Recover user inputs
- * - Get authenticated user data from provided Github Token
+ * - Get authenticated user data from provided GitHub Token
  * - Prepare Scala Steward's workspace
  * - Run Scala Steward using Coursier.
  */
@@ -25,13 +26,18 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
-    const octokit = getOctokit(inputs.github.token.value, {baseUrl: inputs.github.apiUrl.value})
+    const gitHubToken = await gitHubAppToken(inputs.github.app, 'installation') ?? inputs.github.token.value
+    const gitHubApiUrl = inputs.github.apiUrl.value
+    const octokit = getOctokit(gitHubToken, {baseUrl: gitHubApiUrl})
     const github = GitHub.from(logger, octokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
-    const user = await github.getAuthUser()
+    const user = await gitHubAppToken(inputs.github.app, 'app')
+      .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
+      .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
+      .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
 
-    await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
+    await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
@@ -57,8 +63,8 @@ async function run(): Promise<void> {
       arg('--scalafix-migrations', inputs.migrations.scalafix),
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
-      arg('--github-app-id', inputs.github.app?.id),
-      arg('--github-app-key-file', inputs.github.app ? workspace.app_pem : undefined),
+      arg('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
+      arg('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
@@ -68,6 +74,27 @@ async function run(): Promise<void> {
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
+}
+
+/**
+ * Returns a GitHub App Token.
+ *
+ * @param app The GitHub App information.
+ * @param type The type of token to retrieve, either `app` or `installation`.
+ * @returns the GitHub App Token for the provided installation.
+ */
+async function gitHubAppToken(app: GitHubAppInfo | undefined, type: 'app' | 'installation') {
+  if (!app) {
+    return undefined
+  }
+
+  const auth = createAppAuth({appId: app.id.value, privateKey: app.key.value})
+
+  const response = type === 'app'
+    ? await auth({type: 'app'})
+    : (app.installation ? await auth({type: 'installation', installationId: app.installation.value}) : undefined)
+
+  return response?.token
 }
 
 /**

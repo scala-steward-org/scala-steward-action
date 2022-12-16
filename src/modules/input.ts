@@ -1,6 +1,14 @@
+
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
+
+export type GitHubAppInfo = {
+  authOnly: boolean;
+  id: NonEmptyString;
+  installation: NonEmptyString | undefined;
+  key: NonEmptyString;
+}
 
 /**
  * Retrieves (and sanitize) inputs.
@@ -26,7 +34,7 @@ export class Input {
   all() {
     return {
       github: {
-        token: this.githubToken(),
+        token: mandatory(this.inputs.getInput('github-token')),
         app: this.githubAppInfo(),
         apiUrl: mandatory(this.inputs.getInput('github-api-url')),
       },
@@ -54,24 +62,6 @@ export class Input {
         },
       },
     }
-  }
-
-  /**
-   * Reads the Github Token from the `github-token` input. Throws error if the
-   * input is empty or returns the token in case it is not.
-   *
-   * @returns {string} The Github Token read from the `github-token` input.
-   */
-  githubToken(): NonEmptyString {
-    const token = nonEmpty(this.inputs.getInput('github-token'))
-
-    if (!token) {
-      throw new Error('You need to provide a Github token in the `github-token` input')
-    }
-
-    this.logger.info('✓ Github Token provided as input')
-
-    return token
   }
 
   /**
@@ -114,13 +104,13 @@ export class Input {
    *
    * If the `branches` input is set, the selected branches will be added.
    *
-   * @returns {string} The Github repository read from the `github-repository` input.
+   * @returns {string} The GitHub repository read from the `github-repository` input.
    */
   githubRepository(): string {
     const repo = nonEmpty(this.inputs.getInput('github-repository'))
 
     if (!repo) {
-      throw new Error('Unable to read Github repository from `github-repository` input')
+      throw new Error('Unable to read GitHub repository from `github-repository` input')
     }
 
     const branches = this.inputs.getInput('branches').split(',').filter(Boolean)
@@ -128,18 +118,16 @@ export class Input {
     if (branches.length === 1) {
       const branch = branches[0]
 
-      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branch} branch.`)
+      this.logger.info(`✓ GitHub Repository set to: ${repo.value}. Will update ${branch} branch.`)
 
       return `- ${repo.value}:${branch}`
     }
 
     if (branches.length > 1) {
-      this.logger.info(`✓ Github Repository set to: ${repo.value}. Will update ${branches.join(', ')} branches.`)
+      this.logger.info(`✓ GitHub Repository set to: ${repo.value}. Will update ${branches.join(', ')} branches.`)
 
       return branches.map((branch: string) => `- ${repo.value}:${branch}`).join('\n')
     }
-
-    this.logger.info(`✓ Github Repository set to: ${repo.value}.`)
 
     return `- ${repo.value}`
   }
@@ -173,14 +161,16 @@ export class Input {
   }
 
   /**
-   * Checks that Github App ID and private key are set together.
+   * Checks that GitHub App ID and private key are set together.
    *
    * Throws error if only one of the two inputs is set.
    *
    * @returns {{id: string, key: string} | undefined} App ID and key or undefined if both inputs are empty.
    */
-  githubAppInfo(): {id: NonEmptyString; key: NonEmptyString} | undefined {
+  githubAppInfo(): GitHubAppInfo | undefined {
+    const authOnly = this.inputs.getBooleanInput('github-app-auth-only')
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
+    const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
     const key = nonEmpty(this.inputs.getInput('github-app-key'))
 
     if (!id && !key) {
@@ -188,13 +178,9 @@ export class Input {
     }
 
     if (id && key) {
-      this.logger.info(`✓ Github App ID: ${id.value}`)
-      this.logger.info('✓ Github App private key will be written to the Scala Steward workspace')
-      return {id, key}
+      return {authOnly, id, installation, key}
     }
 
-    throw new Error(
-      '`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing',
-    )
+    throw new Error('`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing')
   }
 }
