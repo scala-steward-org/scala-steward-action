@@ -33,3 +33,9 @@ jobs:
         with:
           name: dist
           path: dist/
+
+      - name: Upload artifact with `covertura.xml`
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # v3.1.1
+        with:
+          name: cobertura
+          path: coverage/cobertura-coverage.xml
