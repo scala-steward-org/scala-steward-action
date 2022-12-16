@@ -80,6 +80,6 @@
   "c8": {
     "all": true,
     "src": "src",
-    "reporter": ["cobertura"]
+    "reporter": ["text", "cobertura"]
   }
 }
