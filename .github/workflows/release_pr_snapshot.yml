@@ -24,13 +24,20 @@ jobs:
           name: dist
           path: dist
 
+      - name: Download PR_NUMBER
+        uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
+        with:
+          run_id: ${{github.event.workflow_run.id }}
+          name: PR_NUMBER
+          path: PR_NUMBER
+
       - name: Remove `dist` from `.gitignore`
         run: sed -i -E 's|^/?dist/?||g' .gitignore
 
       - name: Extract PR number
         id: extract-pr-number
         run: |
-          pr_number=$(cat ./dist/PR_NUMBER)
+          pr_number=$(cat ./PR_NUMBER)
           echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
 
       - name: Create snapshot branch
