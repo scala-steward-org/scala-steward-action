@@ -18,7 +18,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout project
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Download dist folder
         uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
@@ -73,7 +73,7 @@ jobs:
     if: github.event_name == 'pull_request_target'
     steps:
       - name: Checkout project
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # v2.4.0
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Remove snapshot branch
         run: git push origin -d snapshots/${{ github.event.number }} &>/dev/null
