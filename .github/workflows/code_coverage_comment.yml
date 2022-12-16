@@ -29,7 +29,7 @@ jobs:
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: PR_NUMBER
-          path: PR_NUMBER
+          path: .
 
       - name: Extract PR number
         id: extract-pr-number
