@@ -11,7 +11,7 @@
     "contributors:check": "all-contributors check",
     "test": "xo && c8 ava",
     "report": "c8 report",
-    "all": "npm test && npm run report && npm run build"
+    "all": "npm run build && npm test && npm run report"
   },
   "repository": {
     "type": "git",
