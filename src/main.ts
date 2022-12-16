@@ -1,11 +1,17 @@
-import {Buffer} from 'buffer'
 import process from 'process'
+import fs from 'fs'
 import * as core from '@actions/core'
+import fetch from 'node-fetch'
 import * as github from './github'
-import * as check from './check'
+import {HealthCheck} from './healthcheck'
 import * as workspace from './workspace'
 import * as coursier from './coursier'
+import {type Logger} from './logger'
+import {Input} from './input'
+import {type HttpClient} from './http'
 import * as mill from './mill'
+import {type Files} from './files'
+import {nonEmpty, NonEmptyString} from './types'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -18,49 +24,23 @@ import * as mill from './mill'
  */
 async function run(): Promise<void> {
   try {
-    await check.mavenCentral()
+    const logger: Logger = core
+    const httpClient: HttpClient = {run: async url => fetch(url)}
+    const files: Files = fs
+    const inputs = Input.from(core, files, logger).all()
+    const healthCheck: HealthCheck = HealthCheck.from(logger, httpClient)
+
+    await healthCheck.mavenCentral()
+
     await coursier.selfInstall()
-    const token = check.githubToken()
-    const user = await github.getAuthUser(token)
+    await coursier.install('scalafmt')
+    await coursier.install('scalafix')
+    await mill.install()
 
-    const authorEmail = core.getInput('author-email') || user.email()
-    const authorName = core.getInput('author-name') || user.name()
+    const user = await github.getAuthUser(inputs.github.token)
 
-    const githubAppInfo = check.githubAppInfo()
-
-    const defaultRepoConfPath = check.defaultRepoConf()
-
-    // Content of the repos.md file either comes from the input file
-    // or is empty (replaced by the Github App info) or is a single repo
-    const reposList
-      = check.reposFile()
-      ?? (githubAppInfo ? Buffer.from('') : Buffer.from(check.githubRepository()))
-
-    const workspaceDir = await workspace.prepare(reposList, token)
-
-    const cacheTtl = core.getInput('cache-ttl')
-
+    const workspaceDir = await workspace.prepare(inputs.steward.repos, inputs.github.token, inputs.github.app?.key)
     await workspace.restoreWorkspaceCache(workspaceDir)
-
-    const timeout = core.getInput('timeout')
-
-    const version = core.getInput('scala-steward-version')
-
-    const signCommits = /true/i.test(core.getInput('sign-commits'))
-    const signingKey = core.getInput('signing-key')
-    const ignoreOptionsFiles = /true/i.test(core.getInput('ignore-opts-files'))
-    const githubApiUrl = core.getInput('github-api-url')
-    const scalafixMigrations = core.getInput('scalafix-migrations')
-      ? ['--scalafix-migrations', core.getInput('scalafix-migrations')]
-      : []
-    const artifactMigrations = core.getInput('artifact-migrations')
-      ? ['--artifact-migrations', core.getInput('artifact-migrations')]
-      : []
-    const defaultRepoConf = defaultRepoConfPath ? ['--repo-config', defaultRepoConfPath] : []
-
-    const githubAppArgs = githubAppInfo
-      ? ['--github-app-id', githubAppInfo.id, '--github-app-key-file', githubAppInfo.keyFile]
-      : []
 
     if (process.env.RUNNER_DEBUG) {
       core.debug('Debug mode activated for Scala Steward')
@@ -68,35 +48,28 @@ async function run(): Promise<void> {
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
 
-    const otherArgs = core.getInput('other-args')
-      ? core.getInput('other-args').split(' ')
-      : []
-
-    await coursier.install('scalafmt')
-    await coursier.install('scalafix')
-    await mill.install()
-
-    await coursier.launch('scala-steward', version, [
-      ['--workspace', `${workspaceDir}/workspace`],
-      ['--repos-file', `${workspaceDir}/repos.md`],
-      ['--git-ask-pass', `${workspaceDir}/askpass.sh`],
-      ['--git-author-email', `${authorEmail}"`],
-      ['--git-author-name', `${authorName}"`],
-      ['--vcs-login', `${user.login()}"`],
-      ['--env-var', '"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"'],
-      ['--process-timeout', timeout],
-      ['--vcs-api-host', githubApiUrl],
-      ignoreOptionsFiles ? '--ignore-opts-files' : [],
-      signCommits ? '--sign-commits' : [],
-      signingKey ? ['--git-author-signing-key', signingKey] : [],
-      ['--cache-ttl', cacheTtl],
-      scalafixMigrations,
-      artifactMigrations,
-      defaultRepoConf,
+    await coursier.launch('scala-steward', inputs.steward.version, [
+      arg('--workspace', nonEmpty(`${workspaceDir}/workspace`)),
+      arg('--repos-file', nonEmpty(`${workspaceDir}/repos.md`)),
+      arg('--git-ask-pass', nonEmpty(`${workspaceDir}/askpass.sh`)),
+      arg('--git-author-email', inputs.commits.author.email ?? user.email()),
+      arg('--git-author-name', inputs.commits.author.name ?? user.name()),
+      arg('--vcs-login', user.login()),
+      arg('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
+      arg('--process-timeout', inputs.steward.timeout),
+      arg('--vcs-api-host', inputs.github.apiUrl),
+      arg('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
+      arg('--sign-commits', inputs.commits.sign.enabled),
+      arg('--git-author-signing-key', inputs.commits.sign.key),
+      arg('--cache-ttl', inputs.steward.cacheTtl),
+      arg('--scalafix-migrations', inputs.migrations.scalafix),
+      arg('--artifact-migrations', inputs.migrations.artifacts),
+      arg('--repo-config', inputs.steward.defaultConfiguration),
+      arg('--github-app-id', inputs.github.app?.id),
+      arg('--github-app-key-file', inputs.github.app ? nonEmpty(`${workspaceDir}/app.pem`) : undefined),
       '--do-not-fork',
       '--disable-sandbox',
-      githubAppArgs,
-      otherArgs,
+      inputs.steward.extraArgs ? inputs.steward.extraArgs.value.split(' ') : [],
     ]).finally(() => {
       workspace.saveWorkspaceCache(workspaceDir).catch((error: unknown) => {
         core.setFailed(` ✕ ${(error as Error).message}`)
@@ -105,6 +78,25 @@ async function run(): Promise<void> {
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
+}
+
+/**
+ * Creates an optional argument depending on an input's value.
+ *
+ * @param name Name of the arg being added.
+ * @param value The argument's value, empty string, false booleans or undefined will be skipped.
+ * @returns the argument to add if it should be added; otherwise returns `[]`.
+ */
+function arg(name: string, value: NonEmptyString | boolean | undefined) {
+  if (value instanceof NonEmptyString) {
+    return [name, value.value]
+  }
+
+  if (value === undefined) {
+    return []
+  }
+
+  return value ? [name] : []
 }
 
 // eslint-disable-next-line unicorn/prefer-top-level-await

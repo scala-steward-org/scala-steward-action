@@ -5,6 +5,7 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
+import {type NonEmptyString} from './types'
 
 /**
  * Install `coursier` and add its executable to the `PATH`.
@@ -94,17 +95,16 @@ export async function install(app: string): Promise<void> {
  *
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
  *
- * @param {string} org - The application's organization.
- * @param {string} app - The application's artifact name.
- * @param {string} version - The application's version.
- * @param {(string | string[])[]} args - The args to pass to the application launcher.
+ * @param app - The application's artifact name.
+ * @param version - The application's version.
+ * @param args - The args to pass to the application launcher.
  */
 export async function launch(
   app: string,
-  version: string,
+  version: NonEmptyString | undefined,
   args: Array<string | string[]> = [],
 ): Promise<void> {
-  const name = version ? `${app}:${version}` : app
+  const name = version ? `${app}:${version.value}` : app
 
   core.startGroup(`Launching ${name}`)
 

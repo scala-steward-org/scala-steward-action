@@ -1,4 +1,3 @@
-import type Buffer from 'buffer'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -7,6 +6,7 @@ import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
 import jsSHA from 'jssha/dist/sha256'
+import {type NonEmptyString} from './types'
 
 /**
  * Gets the first eight characters of the SHA-256 hash value for the
@@ -91,18 +91,25 @@ export async function saveWorkspaceCache(workspace: string): Promise<void> {
  * - Creating a `askpass.sh` file inside workspace containing the Github token.
  * - Making the previous file executable.
  *
- * @param {Buffer} reposList - The Markdown list of repositories to write to the `repos.md` file.
+ * @param {string} reposList - The Markdown list of repositories to write to the `repos.md` file. It is only used if no
+ *                             GitHub App key is provided on `gitHubAppKey` parameter.
  * @param {string} token - The Github Token used to authenticate into Github.
+ * @param {string | undefined} gitHubAppKey - The Github App private key (optional).
  * @returns {string} The workspace directory path
  */
-export async function prepare(reposList: Buffer, token: string): Promise<string> {
+export async function prepare(reposList: string, token: NonEmptyString, gitHubAppKey: NonEmptyString | undefined): Promise<string> {
   try {
     const stewarddir = `${os.homedir()}/scala-steward`
     await io.mkdirP(stewarddir)
 
-    fs.writeFileSync(`${stewarddir}/repos.md`, reposList)
+    if (gitHubAppKey === undefined) {
+      fs.writeFileSync(`${stewarddir}/repos.md`, reposList)
+    } else {
+      fs.writeFileSync(`${stewarddir}/repos.md`, '')
+      fs.writeFileSync(`${stewarddir}/app.pem`, gitHubAppKey.value)
+    }
 
-    fs.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token}'`)
+    fs.writeFileSync(`${stewarddir}/askpass.sh`, `#!/bin/sh\n\necho '${token.value}'`)
     await exec.exec('chmod', ['+x', `${stewarddir}/askpass.sh`], {silent: true})
 
     core.info('✓ Scala Steward workspace created')

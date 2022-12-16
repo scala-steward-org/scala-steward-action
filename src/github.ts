@@ -1,5 +1,6 @@
 import {getOctokit} from '@actions/github'
 import * as core from '@actions/core'
+import {nonEmpty, type NonEmptyString} from './types'
 
 const emailErrorMessage
   = 'Unable to find author\'s email. Either ensure that the token\'s Github Account has the email '
@@ -13,11 +14,11 @@ const nameErrorMessage
  * Returns the login, email and name of the authenticated user using
  * the provided Github token.
  *
- * @param {string} token - The token whose user data will be extracted.
- * @returns {Promise<AuthUser>} The login, email and name of token's user.
+ * @param token - The token whose user data will be extracted.
+ * @returns The login, email and name of token's user.
  */
-export async function getAuthUser(token: string): Promise<AuthUser> {
-  const github = getOctokit(token)
+export async function getAuthUser(token: NonEmptyString): Promise<AuthUser> {
+  const github = getOctokit(token.value)
 
   try {
     const auth = await github.rest.users.getAuthenticated()
@@ -35,21 +36,21 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
           throw new Error('Unable to retrieve user information from Github')
         }
 
-        return login
+        return nonEmpty(login)
       },
       email() {
         if (!email) {
           throw new Error(emailErrorMessage)
         }
 
-        return email
+        return nonEmpty(email)
       },
       name() {
         if (!name) {
           throw new Error(nameErrorMessage)
         }
 
-        return name
+        return nonEmpty(name)
       },
     }
   } catch (error: unknown) {
@@ -58,15 +59,15 @@ export async function getAuthUser(token: string): Promise<AuthUser> {
     // https://github.community/t/github-actions-bot-email-address/17204/6
     // https://api.github.com/users/github-actions%5Bbot%5D
     return {
-      login: () => 'github-actions[bot]',
-      email: () => '41898282+github-actions[bot]@users.noreply.github.com',
-      name: () => 'github-actions[bot]',
+      login: () => nonEmpty('github-actions[bot]'),
+      email: () => nonEmpty('41898282+github-actions[bot]@users.noreply.github.com'),
+      name: () => nonEmpty('github-actions[bot]'),
     }
   }
 }
 
 type AuthUser = {
-  email: () => string;
-  login: () => string;
-  name: () => string;
+  email: () => NonEmptyString | undefined;
+  login: () => NonEmptyString | undefined;
+  name: () => NonEmptyString | undefined;
 }
