@@ -1,0 +1,54 @@
+name: Add comment with code-coverage to PR
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  add-comment-with-code-coverage:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
+
+      - name: Download cobertura.xml file
+        uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
+        with:
+          run_id: ${{github.event.workflow_run.id }}
+          name: cobertura
+          path: cobertura.xml
+
+      - name: Download PR_NUMBER
+        uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
+        with:
+          run_id: ${{github.event.workflow_run.id }}
+          name: PR_NUMBER
+          path: PR_NUMBER
+
+      - name: Extract PR number
+        id: extract-pr-number
+        run: |
+          pr_number=$(cat ./PR_NUMBER)
+          echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
+
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@51cc3a756ddcd398d447c044c02cb6aa83fdae95 # v1.3.0
+        with:
+          filename: cobertura.xml
+          badge: true
+          format: markdown
+          output: both
+          thresholds: "60 80"
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@fcf6fe9e4a0409cd9316a5011435be0f3327f1e1 # v2.3.1
+        with:
+          recreate: true
+          number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
+          path: code-coverage-results.md
