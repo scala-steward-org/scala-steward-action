@@ -1,4 +1,4 @@
-name: Release a snapshot artifact for a PR
+name: Remove snapshot branch
 
 on:
   pull_request_target:
