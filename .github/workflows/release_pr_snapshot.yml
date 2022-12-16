@@ -1,9 +1,6 @@
 name: Release a snapshot artifact for a PR
 
 on:
-  pull_request_target:
-    types:
-      - closed
   workflow_run:
     workflows: ["CI"]
     types:
@@ -67,13 +64,3 @@ jobs:
             ```
 
             It will be automatically recreated on any change to this PR.
-
-  delete-pr-branch:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_target'
-    steps:
-      - name: Checkout project
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
-
-      - name: Remove snapshot branch
-        run: git push origin -d snapshots/${{ github.event.number }} &>/dev/null
