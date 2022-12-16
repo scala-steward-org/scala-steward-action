@@ -22,7 +22,7 @@ jobs:
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: cobertura
-          path: cobertura.xml
+          path: .
 
       - name: Download PR_NUMBER
         uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
@@ -40,7 +40,7 @@ jobs:
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@51cc3a756ddcd398d447c044c02cb6aa83fdae95 # v1.3.0
         with:
-          filename: cobertura.xml
+          filename: cobertura-coverage.xml
           badge: true
           format: markdown
           output: both
