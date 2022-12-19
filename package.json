@@ -81,7 +81,7 @@
   "c8": {
     "all": true,
     "src": "src",
-    "exclude": ["src/core/!(types.ts)", "src/action"],
+    "exclude": ["src/core/!(types.ts)", "src/action", "src/**/*.test.ts"],
     "reporter": ["text", "cobertura"]
   }
 }
