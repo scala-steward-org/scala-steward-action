@@ -28,7 +28,7 @@ inputs:
     required: false
   coursier-cli-url:
     description: "Url to download the coursier linux CLI from"
-    default: "https://git.io/coursier-cli-linux"
+    default: "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz"
     required: false
   ignore-opts-files:
     description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'

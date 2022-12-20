@@ -18,38 +18,40 @@ export async function selfInstall(): Promise<void> {
 
     core.debug(`Installing coursier from ${coursierUrl}`)
 
-    const temporary = await tc.downloadTool(coursierUrl)
-
-    await exec.exec('chmod', ['+x', temporary], {silent: true, ignoreReturnCode: true})
-
-    const homedir = os.homedir()
-    const binPath = path.join(homedir, 'bin')
-
+    const binPath = path.join(os.homedir(), 'bin')
     await io.mkdirP(binPath)
-    await io.cp(temporary, path.join(binPath, 'cs'))
-    await io.rmRF(temporary)
+
+    const zip = await tc.downloadTool(coursierUrl, path.join(binPath, 'cs.gz'))
+
+    await exec.exec('gzip', ['-d', zip], {silent: true})
+    await exec.exec('chmod', ['+x', path.join(binPath, 'cs')], {silent: true})
 
     core.addPath(binPath)
+
+    await exec.exec('cs', ['setup', '--yes', '--jvm', 'adoptium:17'], {
+      silent: true,
+      listeners: {stdline: core.debug, errline: core.debug},
+    })
+
+    let version = ''
+
+    const code = await exec.exec('cs', ['version'], {
+      silent: true,
+      ignoreReturnCode: true,
+      listeners: {stdout(data) {
+        (version += data.toString())
+      }, errline: core.error},
+    })
+
+    if (code !== 0) {
+      throw new Error('Coursier didn\t install correctly')
+    }
+
+    core.info(`✓ Coursier installed, version: ${version.trim()}`)
   } catch (error: unknown) {
     core.debug((error as Error).message)
     throw new Error('Unable to install coursier')
   }
-
-  let version = ''
-
-  const code = await exec.exec('cs', ['--version'], {
-    silent: true,
-    ignoreReturnCode: true,
-    listeners: {stdout(data) {
-      (version += data.toString())
-    }, errline: core.error},
-  })
-
-  if (code !== 0) {
-    throw new Error('Unable to install coursier')
-  }
-
-  core.info(`✓ Coursier installed, version: ${version.trim()}`)
 }
 
 /**
@@ -136,6 +138,11 @@ export async function launch(
  */
 export async function remove(): Promise<void> {
   await io.rmRF(path.join(os.homedir(), '.cache', 'coursier', 'v1'))
+  await exec.exec('cs', ['uninstall', '--all'], {
+    silent: true,
+    ignoreReturnCode: true,
+    listeners: {stdline: core.info, errline: core.error},
+  })
   await io.rmRF(path.join(os.homedir(), 'bin', 'cs'))
   await io.rmRF(path.join(os.homedir(), 'bin', 'scalafmt'))
   await io.rmRF(path.join(os.homedir(), 'bin', 'scalafix'))
