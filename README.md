@@ -2,10 +2,14 @@
 
 A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/scala-steward) in your repository.
 
+<!-- toc -->
+
 - [Installation](#installation)
 - [Usage](#usage)
 - [Guides](#guides)
 - [Contributors](#contributors)
+
+<!-- tocstop -->
 
 ---
 
@@ -113,6 +117,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
 
 ## Usage
 
+<!-- start usage -->
 ```yaml
 - uses: scala-steward-org/scala-steward-action@v2
   with:
@@ -252,6 +257,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: 20min
     timeout: ''
 ```
+<!-- end usage -->
 
 ## Guides
 
