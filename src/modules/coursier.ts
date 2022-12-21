@@ -34,8 +34,8 @@ export async function install(): Promise<void> {
       'cs',
       ['setup', '--yes', '--jvm', 'adoptium:17', '--apps', 'scalafmt,scalafix', '--install-dir', binPath],
       {
-      silent: true,
-      listeners: {stdline: core.debug, errline: core.debug},
+        silent: true,
+        listeners: {stdline: core.debug, errline: core.debug},
       },
     )
 
@@ -54,44 +54,6 @@ export async function install(): Promise<void> {
     core.debug((error as Error).message)
     throw new Error('Unable to install coursier or managed tools')
   }
-}
-
-/**
- * Installs an app using `coursier`.
- *
- * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
- *
- * @param {string} app - The application's name.
- */
-export async function install(app: string): Promise<void> {
-  const homedir = os.homedir()
-  const binPath = path.join(homedir, 'bin')
-
-  let code = await exec.exec('cs', ['install', app, '--install-dir', binPath], {
-    silent: true,
-    ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.debug},
-  })
-
-  if (code !== 0) {
-    throw new Error(`Installing ${app} failed`)
-  }
-
-  let version = ''
-
-  code = await exec.exec(app, ['--version'], {
-    silent: true,
-    ignoreReturnCode: true,
-    listeners: {stdout(data) {
-      (version += data.toString())
-    }, errline: core.error},
-  })
-
-  if (code !== 0) {
-    throw new Error(`Installing ${app} failed`)
-  }
-
-  core.info(`✓ ${app} installed, version: ${version.trim()}`)
 }
 
 /**
