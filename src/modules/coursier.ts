@@ -1,4 +1,3 @@
-import process from 'process'
 import * as path from 'path'
 import * as os from 'os'
 import * as core from '@actions/core'
@@ -8,11 +7,14 @@ import * as exec from '@actions/exec'
 import {type NonEmptyString} from '../core/types'
 
 /**
- * Install `coursier` and add its executable to the `PATH`.
+ * Installs `coursier` and add its executable to the `PATH`.
+ *
+ * Once coursier is installed, installs the JVM and the `scalafmt`
+ * and `scalafix` tools.
  *
  * Throws error if the installation fails.
  */
-export async function selfInstall(): Promise<void> {
+export async function install(): Promise<void> {
   try {
     const coursierUrl = core.getInput('coursier-cli-url')
 
@@ -28,29 +30,29 @@ export async function selfInstall(): Promise<void> {
 
     core.addPath(binPath)
 
-    await exec.exec('cs', ['setup', '--yes', '--jvm', 'adoptium:17'], {
+    await exec.exec(
+      'cs',
+      ['setup', '--yes', '--jvm', 'adoptium:17', '--apps', 'scalafmt,scalafix', '--install-dir', binPath],
+      {
       silent: true,
       listeners: {stdline: core.debug, errline: core.debug},
-    })
+      },
+    )
 
-    let version = ''
+    const coursierVersion = await execute('cs', 'version')
 
-    const code = await exec.exec('cs', ['version'], {
-      silent: true,
-      ignoreReturnCode: true,
-      listeners: {stdout(data) {
-        (version += data.toString())
-      }, errline: core.error},
-    })
+    core.info(`✓ Coursier installed, version: ${coursierVersion.trim()}`)
 
-    if (code !== 0) {
-      throw new Error('Coursier didn\t install correctly')
-    }
+    const scalafmtVersion = await execute('scalafmt', '--version')
 
-    core.info(`✓ Coursier installed, version: ${version.trim()}`)
+    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
+
+    const scalafixVersion = await execute('scalafix', '--version')
+
+    core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
   } catch (error: unknown) {
     core.debug((error as Error).message)
-    throw new Error('Unable to install coursier')
+    throw new Error('Unable to install coursier or managed tools')
   }
 }
 
@@ -146,4 +148,25 @@ export async function remove(): Promise<void> {
   await io.rmRF(path.join(os.homedir(), 'bin', 'cs'))
   await io.rmRF(path.join(os.homedir(), 'bin', 'scalafmt'))
   await io.rmRF(path.join(os.homedir(), 'bin', 'scalafix'))
+}
+
+/**
+ * Executes a tool and returns its output.
+ */
+async function execute(tool: string, ...args: string[]): Promise<string> {
+  let output = ''
+
+  const code = await exec.exec(tool, args, {
+    silent: true,
+    ignoreReturnCode: true,
+    listeners: {stdout(data) {
+      (output += data.toString())
+    }, errline: core.debug},
+  })
+
+  if (code !== 0) {
+    throw new Error(`There was an error while executing '${tool} ${args.join(' ')}'`)
+  }
+
+  return output
 }
