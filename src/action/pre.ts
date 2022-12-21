@@ -8,17 +8,15 @@ import * as mill from '../modules/mill'
  * Runs the action pre-requisites code. In order it will do the following:
  *
  * - Check connection with Maven Central
- * - Install Coursier
- * - Install JVM
- * - Install Scalafmt
- * - Install Scalafix
- * - Install Mill
+ * - Restore caches
+ * - Install required tools
  */
 async function run(): Promise<void> {
   try {
     const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
     await healthCheck.mavenCentral()
 
+    await coursier.restoreCache()
     await coursier.install()
     await mill.install()
   } catch (error: unknown) {

@@ -10,7 +10,8 @@ import {Workspace} from '../modules/workspace'
 import {type Files} from '../core/files'
 
 /**
- * Performs a cleanup of all the artifacts/folders created by this action.
+ * Saves caches and performs a cleanup of all the tools/folders
+ * created by this action.
  */
 async function run(): Promise<void> {
   try {
@@ -21,6 +22,7 @@ async function run(): Promise<void> {
     await workspace.remove()
     core.info('🗑 Scala Steward\'s workspace removed')
 
+    await coursier.saveCache()
     await coursier.remove()
     core.info('🗑 Coursier binary removed')
 
