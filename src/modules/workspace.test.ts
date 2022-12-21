@@ -135,6 +135,7 @@ test('`Workspace.restoreWorkspaceCache()` → tries to restore the workspace cac
   const now = Date.now()
 
   const expected: string[] = [
+    'mkdirP("/home/scala-steward")',
     'readFileSync("/home/scala-steward/repos.md")',
     `restoreCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}", [scala-steward-acc000fd,scala-steward-])`,
   ]
@@ -150,6 +151,7 @@ test('`Workspace.restoreWorkspaceCache()` → generates same hash for same conte
   const now = Date.now()
 
   const expected: string[] = [
+    'mkdirP("/home/scala-steward")',
     'readFileSync("/home/scala-steward/repos.md")',
     `restoreCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}", [scala-steward-acc000fd,scala-steward-])`,
   ]
@@ -165,6 +167,7 @@ test('`Workspace.restoreWorkspaceCache()` → generates different hash for diffe
   const now = Date.now()
 
   const expected: string[] = [
+    'mkdirP("/home/scala-steward")',
     'readFileSync("/home/scala-steward/repos.md")',
     `restoreCache([/home/scala-steward/workspace], "scala-steward-fe470d28-${now}", [scala-steward-fe470d28,scala-steward-])`,
   ]

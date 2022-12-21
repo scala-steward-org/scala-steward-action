@@ -38,7 +38,6 @@ async function run(): Promise<void> {
       .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
 
     await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
-    await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
       core.debug('🐛 Debug mode activated for Scala Steward')
@@ -69,8 +68,6 @@ async function run(): Promise<void> {
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
     ])
-
-    await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }

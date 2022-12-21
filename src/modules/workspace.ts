@@ -4,7 +4,7 @@ import {type ActionCache} from '../core/cache'
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {type OSInfo} from '../core/os'
-import {mandatory, type NonEmptyString} from '../core/types'
+import {mandatory} from '../core/types'
 import {type GitHubAppInfo} from './input'
 
 export class Workspace {
@@ -35,6 +35,8 @@ export class Workspace {
    */
   async restoreWorkspaceCache(): Promise<void> {
     try {
+      await this.files.mkdirP(this.directory)
+
       this.logger.startGroup('Trying to restore workspace contents from cache...')
 
       const hash = this.hashFile(this.repos_md.value)
@@ -68,7 +70,7 @@ export class Workspace {
     try {
       this.logger.startGroup('Saving workspace to cache...')
 
-      // We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
+      // We don't want any of these folders in the cache
       await this.files.rmRF(path.join(this.workspace.value, 'store', 'refresh_error'))
       await this.files.rmRF(path.join(this.workspace.value, 'repos'))
 

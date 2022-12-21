@@ -19,10 +19,12 @@ async function run(): Promise<void> {
     const files: Files = {...fs, ...io}
     const workspace = Workspace.from(logger, files, os, cache)
 
+    await coursier.saveCache()
+    await workspace.saveWorkspaceCache()
+
     await workspace.remove()
     core.info('🗑 Scala Steward\'s workspace removed')
 
-    await coursier.saveCache()
     await coursier.remove()
     core.info('🗑 Coursier binary removed')
 
