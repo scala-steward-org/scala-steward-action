@@ -56,6 +56,7 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@fcf6fe9e4a0409cd9316a5011435be0f3327f1e1 # v2.3.1
         with:
           recreate: true
+          header: snapshot
           number: ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
           message: |
             A snapshot release has been created as `snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}`.
