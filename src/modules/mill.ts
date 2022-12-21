@@ -10,60 +10,52 @@ import * as exec from '@actions/exec'
  *
  * Throws error if the installation fails.
  */
-export async function install(): Promise<string> {
+export async function install(): Promise<void> {
   try {
     const millVersion = core.getInput('mill-version') || '0.10.9'
 
     const cachedPath = tc.find('mill', millVersion)
 
-    if (!cachedPath) {
+    if (cachedPath) {
+      core.addPath(cachedPath)
+    } else {
       const millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersion}/${millVersion}`
 
       core.debug(`Attempting to install Mill from ${millUrl}`)
 
-      const millDownload = await tc.downloadTool(millUrl)
+      const binPath = path.join(os.homedir(), 'bin')
+      await io.mkdirP(binPath)
 
-      await exec.exec('chmod', ['+x', millDownload], {silent: true, ignoreReturnCode: true})
+      const mill = await tc.downloadTool(millUrl, path.join(binPath, 'mill'))
 
-      const homedir = os.homedir()
+      await exec.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
 
-      const binPath = path.join(homedir, 'bin')
-
-      const millBin = path.join(binPath, 'mill')
-
-      // We first copy and then remove here to avoid this
-      // https://stackoverflow.com/questions/44146393/error-exdev-cross-device-link-not-permitted-rename-nodejs
-      // This idea is taken from https://github.com/shelljs/shelljs/pull/187
-      // It didn't get merged there, but for our usecase just mimicking this
-      // should hopefully work fine.
-      await io.cp(millDownload, millBin)
-      await io.rmRF(millDownload)
-
-      await tc.cacheFile(millBin, 'mill', 'mill', millVersion)
+      await tc.cacheFile(mill, 'mill', 'mill', millVersion)
     }
+
+    let output = ''
+
+    const code = await exec.exec('mill', ['--version'], {
+      silent: true,
+      ignoreReturnCode: true,
+      listeners: {
+        stdout(data) {
+          (output += data.toString())
+        }, errline: core.debug,
+      },
+    })
+
+    if (code !== 0) {
+      throw new Error('Unable to install Mill')
+    }
+
+    const version = output.split('\n')[0].replace(/^Mill Build Tool version /, '').trim()
+
+    core.info(`✓ Mill installed, version: ${version}`)
   } catch (error: unknown) {
     core.error((error as Error).message)
     throw new Error('Unable to install Mill')
   }
-
-  let version = ''
-
-  const code = await exec.exec('mill', ['--version'], {
-    silent: true,
-    ignoreReturnCode: true,
-    listeners: {
-      stdout(data) {
-        (version += data.toString())
-      }, errline: core.error,
-    },
-  })
-
-  if (code !== 0) {
-    throw new Error('Unable to install Mill')
-  }
-
-  core.info(`✓ Mill installed, version: ${version.trim()}`)
-  return version
 }
 
 /**
