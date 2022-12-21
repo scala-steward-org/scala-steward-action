@@ -255,7 +255,26 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ckipp01",
+      "name": "Chris Kipp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13974112?v=4",
+      "profile": "https://chris-kipp.io/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "regadas",
+      "name": "Filipe Regadas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163899?v=4",
+      "profile": "https://regadas.dev/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 6
 }
