@@ -1,94 +1,163 @@
-name: "Scala Steward GitHub Action"
-author: alejandrohdezma
-description: "🤖 A bot that helps you keeping your Scala projects up-to-date "
+name: Scala Steward GitHub Action
+author: The Scala Steward contributors
+description: 🤖 A bot that helps you keeping your Scala projects up-to-date
 branding:
   icon: arrow-up-circle
   color: red
 
 inputs:
-  repos-file:
-    description: "Path to a file containing the list of repositories to update in markdown format (- owner/repo)"
+  artifact-migrations:
+    description: |
+      Artifact migrations for newer versions of artifacts with
+      different group Ids, artifact ids, or both different.
+
+      Expects the path to HOCON file with migration/s.
+
+      See https://github.com/scala-steward-org/scala-steward/blob/main/docs/artifact-migrations.md
     required: false
-  github-repository:
-    description: "Repository to update. The current repository will be used by default"
-    required: false
-    default: ${{ github.repository }}
-  github-token:
-    description: "GitHub Personal Access Token with permission to create branches on repo"
-    required: false
-    default: ${{ github.token }}
   author-email:
-    description: Author email address to use in commits
+    description: |
+      Author email address to use in commits. If set it will
+      override any email retrieved from GitHub.
     required: false
   author-name:
-    description: Author name to use in commits
-    required: false
-  scala-steward-version:
-    description: "Scala Steward version to use"
-    required: false
-  coursier-cli-url:
-    description: "Url to download the coursier linux CLI from"
-    default: "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz"
-    required: false
-  ignore-opts-files:
-    description: 'Whether to ignore "opts" files (such as `.jvmopts` or `.sbtopts`) when found on repositories or not'
-    default: "true"
+    description: |
+      Author name to use in commits. If set it will override
+      any name retrieved from GitHub.
     required: false
   branches:
-    description: A comma-separated list of branches to update (if not provided, the repository's default branch will be
-      updated instead). This option only has effect if updating the current repository or using the `github-repository` input.
-    required: false
-  sign-commits:
-    description: "Whether to sign commits or not"
-    default: "false"
-    required: false
-  signing-key:
-    description: "Key ID of GPG key to use for signing commits."
-    default: ""
-    required: false
-  timeout:
-    description: "Timeout for external process invocations"
-    default: "20min"
+    description: |
+      A comma-separated list of branches to update (if not
+      provided, the repository's default branch will be
+      updated instead).
+
+      This option only has effect if updating the current
+      repository or using the `github-repository` input.
     required: false
   cache-ttl:
-    description: "TTL of cache for fetching dependency versions and metadata, set it to 0s to disable it"
-    default: "2hours"
+    description: |
+      TTL of cache for fetching dependency versions and
+      metadata, set it to 0s to disable it.
+    default: 2hours
+    required: false
+  coursier-cli-url:
+    description: |
+      Url to download the coursier linux CLI from.
+    default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     required: false
   github-api-url:
-    description: "The URL of the GitHub API, only use this input if you are using GitHub Enterprise"
-    default: "https://api.github.com"
-    required: false
-  scalafix-migrations:
-    description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/scalafix-migrations.md"
-    required: false
-  artifact-migrations:
-    description: "https://github.com/scala-steward-org/scala-steward/blob/5dafbcd522a0465af7fbbaf4304d48a7b25e3516/docs/artifact-migrations.md"
+    description: |
+      The URL of the GitHub API, only use this input if
+      you are using GitHub Enterprise.
+    default: https://api.github.com
     required: false
   github-app-auth-only:
-    description: >
-      If set to `true` the GitHub App information will only be used for authentication. Repositories to update will be read
-      from the `repos-file` or the `github-repository` inputs.
+    description: |
+      If set to `true` the GitHub App information will
+      only be used for authentication.
+
+      Repositories to update will be read from either
+      the `repos-file` or the `github-repository` inputs.
     default: "false"
     required: false
   github-app-id:
-    description: "GitHub application ID"
+    description: |
+      GitHub App ID. See the "Installation" section of the
+      README to learn how to set up the app and how to fill this input.
     required: false
   github-app-installation-id:
-    description: "GitHub App Installation ID"
+    description: |
+      GitHub App Installation ID. See the "Installation"
+      section of the README to learn how to set up the app
+      and how to fill this input.
     required: false
   github-app-key:
-    description: "GitHub application private key"
+    description: |
+      GitHub App Private Key. See the "Installation" section
+      of the README to learn how to set up the app and how to
+      fill this input.
     required: false
-  repo-config:
-    description: "Location of a `.scala-steward.conf` file with default values"
-    default: ".github/.scala-steward.conf"
+  github-repository:
+    description: |
+      Repository to update. Will be ignored if either
+      `repos-file` is provided or the `github-app-*`
+      inputs are and `github-app-auth-only` is not `true`.
+    required: false
+    default: ${{ github.repository }}
+  github-token:
+    description: |
+      GitHub Personal Access Token with permission to create
+      branches on repo.
+
+      If `github-app-*` inputs are provided an App's
+      installation token will be used instead of this one.
+    required: false
+    default: ${{ github.token }}
+  ignore-opts-files:
+    description: |
+      Whether to ignore "opts" files (such as `.jvmopts`
+      or `.sbtopts`) when found on repositories or not.
+    default: "true"
     required: false
   other-args:
-    description: "Other Scala Steward arguments not yet supported by this action as a separate argument"
+    description: |
+      Other Scala Steward arguments not yet supported by
+      this action as a separate argument.
+    required: false
+  repo-config:
+    description: |
+      Location of a `.scala-steward.conf` file with default
+      values.
+
+      If the provided file is missing the action will fail.
+    default: ".github/.scala-steward.conf"
+    required: false
+  repos-file:
+    description: |
+      Path to a file containing the list of repositories
+      to update in markdown format:
+
+      - owner/repo1
+      - owner/repo2
+
+      This input will be ignored if the `github-app-*`
+      inputs are provided and `github-app-auth-only` is
+      not `true`.
+    required: false
+  scala-steward-version:
+    description: |
+      Scala Steward version to use. If not provided it
+      will use the last one published.
+    required: false
+  scalafix-migrations:
+    description: |
+      Scalafix rules for version updates to run after
+      certain updates.
+
+      Expects the path to HOCON file with migration/s.
+
+      See https://github.com/scala-steward-org/scala-steward/blob/main/docs/scalafix-migrations.md
+    required: false
+  sign-commits:
+    description: |
+      Whether to sign commits or not.
+    default: "false"
+    required: false
+  signing-key:
+    description: |
+      Key ID of GPG key to use for signing commits. See the
+      "Signing commits with GPG" section to learn how to
+      prepare the environment and fill this input.
+    default: ""
+    required: false
+  timeout:
+    description: |
+      Timeout for external process invocations.
+    default: 20min
     required: false
 
 runs:
-  using: "node16"
-  pre: "dist/pre.js"
-  main: "dist/main.js"
-  post: "dist/post.js"
+  using: node16
+  pre: dist/pre.js
+  main: dist/main.js
+  post: dist/post.js
