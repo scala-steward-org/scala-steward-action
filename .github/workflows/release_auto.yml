@@ -13,7 +13,8 @@ on:
       - master
 
 jobs:
-  tag:
+  new-release:
+    name: Create new release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
@@ -36,3 +37,22 @@ jobs:
         uses: int128/release-typescript-action@8fe76ff937d9a322c48a9ccc2e33fb5731ea80d0 # v1.18.0
         with:
           major-version: 2
+
+  update-docs:
+    name: Update documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Run `npm run docs`
+        run: npm run docs
+
+      - name: Commit changes by `npm run docs`
+        uses: alejandrohdezma/actions/commit-and-push@v1
+        with:
+          message: Run `npm run docs` [skip ci]
+          branch: master
