@@ -48,6 +48,9 @@ jobs:
           fetch-depth: 0
           ref: master
 
+      - name: Run `npm install`
+        run: npm install
+
       - name: Run `npm run docs`
         run: npm run docs
 
