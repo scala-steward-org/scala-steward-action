@@ -91,6 +91,10 @@ async function gitHubAppToken(app: GitHubAppInfo | undefined, type: 'app' | 'ins
     ? await auth({type: 'app'})
     : (app.installation ? await auth({type: 'installation', installationId: app.installation.value}) : undefined)
 
+  if (response?.expiresAt) {
+    core.debug(`${type} token expires in ${response.expiresAt}`)
+  }
+
   return response?.token
 }
 
