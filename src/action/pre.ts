@@ -9,6 +9,7 @@ import * as mill from '../modules/mill'
  *
  * - Check connection with Maven Central
  * - Install Coursier
+ * - Install JVM
  * - Install Scalafmt
  * - Install Scalafix
  * - Install Mill
@@ -18,9 +19,7 @@ async function run(): Promise<void> {
     const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
     await healthCheck.mavenCentral()
 
-    await coursier.selfInstall()
-    await coursier.install('scalafmt')
-    await coursier.install('scalafix')
+    await coursier.install()
     await mill.install()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
