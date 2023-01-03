@@ -1,6 +1,5 @@
 import * as path from 'path'
 import * as os from 'os'
-import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
@@ -99,54 +98,6 @@ export async function launch(
 }
 
 /**
- * Tries to restore the Coursier cache, if there is one.
- */
-export async function restoreCache(hash: string): Promise<void> {
-  try {
-    core.startGroup('Trying to restore Coursier\'s cache...')
-
-    const cacheHit = await cache.restoreCache(
-      [path.join(os.homedir(), '.cache', 'coursier', 'v1')],
-      `coursier-cache-${hash}-${Date.now().toString()}`,
-      [`coursier-cache-${hash}`, 'coursier-cache-'],
-    )
-
-    if (cacheHit) {
-      core.info('Coursier cache was restored')
-    } else {
-      core.info('Coursier cache wasn\'t found')
-    }
-
-    core.endGroup()
-  } catch (error: unknown) {
-    core.debug((error as Error).message)
-    core.warning('Unable to restore Coursier\'s cache')
-    core.endGroup()
-  }
-}
-
-/**
- * Tries to save the Coursier cache.
- */
-export async function saveCache(hash: string): Promise<void> {
-  try {
-    core.startGroup('Saving Coursier\'s cache...')
-
-    await cache.saveCache(
-      [path.join(os.homedir(), '.cache', 'coursier', 'v1')],
-      `coursier-cache-${hash}-${Date.now().toString()}`,
-    )
-
-    core.info('Coursier cache has been saved')
-    core.endGroup()
-  } catch (error: unknown) {
-    core.debug((error as Error).message)
-    core.warning('Unable to save Coursier\'s cache')
-    core.endGroup()
-  }
-}
-
-/**
  * Removes coursier binary
  */
 export async function remove(): Promise<void> {
@@ -154,7 +105,7 @@ export async function remove(): Promise<void> {
   await exec.exec('cs', ['uninstall', '--all'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.debug, errline: core.debug},
+    listeners: {stdline: core.info, errline: core.error},
   })
   await io.rmRF(path.join(os.homedir(), 'bin', 'cs'))
   await io.rmRF(path.join(os.homedir(), 'bin', 'scalafmt'))
