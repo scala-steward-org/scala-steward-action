@@ -101,14 +101,14 @@ export async function launch(
 /**
  * Tries to restore the Coursier cache, if there is one.
  */
-export async function restoreCache(): Promise<void> {
+export async function restoreCache(hash: string): Promise<void> {
   try {
     core.startGroup('Trying to restore Coursier\'s cache...')
 
     const cacheHit = await cache.restoreCache(
       [path.join(os.homedir(), '.cache', 'coursier', 'v1')],
-      `coursier-cache-${Date.now().toString()}`,
-      ['coursier-cache-'],
+      `coursier-cache-${hash}-${Date.now().toString()}`,
+      [`coursier-cache-${hash}`, 'coursier-cache-'],
     )
 
     if (cacheHit) {
@@ -128,11 +128,14 @@ export async function restoreCache(): Promise<void> {
 /**
  * Tries to save the Coursier cache.
  */
-export async function saveCache(): Promise<void> {
+export async function saveCache(hash: string): Promise<void> {
   try {
     core.startGroup('Saving Coursier\'s cache...')
 
-    await cache.saveCache([path.join(os.homedir(), '.cache', 'coursier', 'v1')], `coursier-cache-${Date.now().toString()}`)
+    await cache.saveCache(
+      [path.join(os.homedir(), '.cache', 'coursier', 'v1')],
+      `coursier-cache-${hash}-${Date.now().toString()}`,
+    )
 
     core.info('Coursier cache has been saved')
     core.endGroup()

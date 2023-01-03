@@ -24,8 +24,8 @@ async function run(): Promise<void> {
     await healthCheck.mavenCentral()
 
     await workspace.restoreWorkspaceCache()
+    await coursier.restoreCache(workspace.reposHash())
 
-    await coursier.restoreCache()
     await coursier.install()
     await mill.install()
   } catch (error: unknown) {

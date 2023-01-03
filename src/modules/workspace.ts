@@ -30,6 +30,10 @@ export class Workspace {
     private readonly cache: ActionCache,
   ) {}
 
+  reposHash(): string {
+    return this.hashFile(this.repos_md.value)
+  }
+
   /**
    * Tries to restore the Scala Steward workspace build from the cache, if any.
    */
@@ -39,7 +43,7 @@ export class Workspace {
 
       this.logger.startGroup('Trying to restore workspace contents from cache...')
 
-      const hash = this.hashFile(this.repos_md.value)
+      const hash = this.reposHash()
 
       const cacheHit = await this.cache.restoreCache(
         [this.workspace.value],

@@ -19,7 +19,7 @@ async function run(): Promise<void> {
     const files: Files = {...fs, ...io}
     const workspace = Workspace.from(logger, files, os, cache)
 
-    await coursier.saveCache()
+    await coursier.saveCache(workspace.reposHash())
     await workspace.saveWorkspaceCache()
 
     await workspace.remove()
