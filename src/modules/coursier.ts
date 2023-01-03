@@ -105,11 +105,8 @@ export async function remove(): Promise<void> {
   await exec.exec('cs', ['uninstall', '--all'], {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdline: core.info, errline: core.error},
+    listeners: {stdline: core.info, errline: core.debug},
   })
-  await io.rmRF(path.join(os.homedir(), 'bin', 'cs'))
-  await io.rmRF(path.join(os.homedir(), 'bin', 'scalafmt'))
-  await io.rmRF(path.join(os.homedir(), 'bin', 'scalafix'))
 }
 
 /**
