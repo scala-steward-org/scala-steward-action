@@ -9,7 +9,6 @@ import * as mill from '../modules/mill'
  *
  * - Check connection with Maven Central
  * - Install Coursier
- * - Install JVM
  * - Install Scalafmt
  * - Install Scalafix
  * - Install Mill

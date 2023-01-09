@@ -32,7 +32,7 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['setup', '--yes', '--jvm', 'adoptium:17', '--apps', 'scalafmt,scalafix', '--install-dir', binPath],
+      ['install', 'scalafmt', 'scalafix', '--install-dir', binPath],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
