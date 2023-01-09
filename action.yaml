@@ -99,6 +99,14 @@ inputs:
       or `.sbtopts`) when found on repositories or not.
     default: "true"
     required: false
+  mill-version:
+    description: |
+      Mill version to install. Take into account this will
+      just affect the global `mill` executable. Scala 
+      Steward will still respect the version specified in
+      your repository while updating it.
+    default: "0.10.9"
+    required: false
   other-args:
     description: |
       Other Scala Steward arguments not yet supported by

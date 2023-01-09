@@ -12,7 +12,7 @@ import * as exec from '@actions/exec'
  */
 export async function install(): Promise<void> {
   try {
-    const millVersion = core.getInput('mill-version') || '0.10.9'
+    const millVersion = core.getInput('mill-version')
 
     const cachedPath = tc.find('mill', millVersion)
 
