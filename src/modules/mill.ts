@@ -12,7 +12,7 @@ import * as exec from '@actions/exec'
  */
 export async function install(): Promise<void> {
   try {
-    const millVersion = core.getInput('mill-version') || '0.10.9'
+    const millVersion = core.getInput('mill-version')
 
     const cachedPath = tc.find('mill', millVersion)
 
@@ -33,25 +33,7 @@ export async function install(): Promise<void> {
       await tc.cacheFile(mill, 'mill', 'mill', millVersion)
     }
 
-    let output = ''
-
-    const code = await exec.exec('mill', ['--version'], {
-      silent: true,
-      ignoreReturnCode: true,
-      listeners: {
-        stdout(data) {
-          (output += data.toString())
-        }, errline: core.debug,
-      },
-    })
-
-    if (code !== 0) {
-      throw new Error('Unable to install Mill')
-    }
-
-    const version = output.split('\n')[0].replace(/^Mill Build Tool version /, '').trim()
-
-    core.info(`✓ Mill installed, version: ${version}`)
+    core.info(`✓ Mill installed, version: ${millVersion}`)
   } catch (error: unknown) {
     core.error((error as Error).message)
     throw new Error('Unable to install Mill')

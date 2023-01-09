@@ -32,7 +32,7 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['setup', '--yes', '--jvm', 'adoptium:17', '--apps', 'scalafmt,scalafix', '--install-dir', binPath],
+      ['install', 'scalafmt', 'scalafix', '--install-dir', binPath],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -43,11 +43,11 @@ export async function install(): Promise<void> {
 
     core.info(`✓ Coursier installed, version: ${coursierVersion.trim()}`)
 
-    const scalafmtVersion = await execute('scalafmt', '--version')
+    const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
 
     core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
 
-    const scalafixVersion = await execute('scalafix', '--version')
+    const scalafixVersion = await execute('cs', 'launch', 'scalafix', '--', '--version')
 
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
   } catch (error: unknown) {
