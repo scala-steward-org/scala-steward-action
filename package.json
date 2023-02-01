@@ -35,10 +35,10 @@
     "@actions/io": "^1.1.2",
     "@actions/tool-cache": "^2.0.1",
     "@octokit/auth-app": "^4.0.9",
-    "@types/node-fetch": "^2.6.1",
+    "@types/node-fetch": "^2.6.2",
     "@types/sinon": "^10.0.13",
     "jssha": "^3.3.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.9"
   },
   "devDependencies": {
     "@ava/typescript": "^3.0.1",
