@@ -18,14 +18,14 @@ jobs:
         uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Download cobertura.xml file
-        uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
+        uses: dawidd6/action-download-artifact@bd10f381a96414ce2b13a11bfa89902ba7cea07f # v2.24.3
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: cobertura
           path: .
 
       - name: Download PR_NUMBER
-        uses: dawidd6/action-download-artifact@e6e25ac3a2b93187502a8be1ef9e9603afc34925 # v2.24.2
+        uses: dawidd6/action-download-artifact@bd10f381a96414ce2b13a11bfa89902ba7cea07f # v2.24.3
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: PR_NUMBER
