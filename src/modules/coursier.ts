@@ -9,8 +9,8 @@ import {type NonEmptyString} from '../core/types'
 /**
  * Installs `coursier` and add its executable to the `PATH`.
  *
- * Once coursier is installed, installs the JVM and the `scalafmt`
- * and `scalafix` tools.
+ * Once coursier is installed, installs `scalafmt`
+ * `scalafix` and `scala-cli` tools.
  *
  * Throws error if the installation fails.
  */
@@ -32,7 +32,7 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scalafix', '--install-dir', binPath],
+      ['install', 'scalafmt', 'scalafix', 'scala-cli', '--install-dir', binPath],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -50,6 +50,8 @@ export async function install(): Promise<void> {
     const scalafixVersion = await execute('cs', 'launch', 'scalafix', '--', '--version')
 
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
+
+    core.info('✓ scala-cli installed')
   } catch (error: unknown) {
     core.debug((error as Error).message)
     throw new Error('Unable to install coursier or managed tools')
