@@ -66,11 +66,13 @@ export async function install(): Promise<void> {
  * @param app - The application's artifact name.
  * @param version - The application's version.
  * @param args - The args to pass to the application launcher.
+ * @param extraJars - Extra JARs to be added to the classpath of the launched application. Directories accepted too.
  */
 export async function launch(
   app: string,
   version: NonEmptyString | undefined,
-  args: Array<string | string[]> = [],
+  args: Array<string | string[]>,
+  extraJars: NonEmptyString | undefined,
 ): Promise<void> {
   const name = version ? `${app}:${version.value}` : app
 
@@ -78,6 +80,7 @@ export async function launch(
 
   const launchArgs = [
     'launch',
+    ...(extraJars ? ['--extra-jars', extraJars.value] : []),
     '--contrib',
     '-r',
     'sonatype:snapshots',

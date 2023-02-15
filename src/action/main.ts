@@ -68,7 +68,7 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
-    ])
+    ], inputs.steward.extraJars)
 
     await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
