@@ -275,6 +275,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "fmeriaux",
+      "name": "Florian Meriaux",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16759768?v=4",
+      "profile": "https://github.com/fmeriaux",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 6
