@@ -284,6 +284,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "adamw",
+      "name": "Adam Warski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60503?v=4",
+      "profile": "http://www.warski.org/",
+      "contributions": [
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 6
