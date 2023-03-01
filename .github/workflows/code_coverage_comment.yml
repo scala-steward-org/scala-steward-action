@@ -2,7 +2,7 @@ name: Add comment with code-coverage to PR
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types:
       - completed
 
@@ -10,6 +10,7 @@ jobs:
   add-comment-with-code-coverage:
     runs-on: ubuntu-latest
     if: >
+      github.actor != 'dependabot[bot]' &&
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
@@ -44,7 +45,7 @@ jobs:
           badge: true
           format: markdown
           output: both
-          thresholds: "60 80"
+          thresholds: '60 80'
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@3d60a5b2dae89d44e0c6ddc69dd7536aec2071cd # v2.5.0

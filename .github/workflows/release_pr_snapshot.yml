@@ -10,6 +10,7 @@ jobs:
   release-snapshot-artifact:
     runs-on: ubuntu-latest
     if: >
+      github.actor != 'dependabot[bot]' &&
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'

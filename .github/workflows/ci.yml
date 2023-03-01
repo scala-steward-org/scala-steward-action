@@ -20,21 +20,25 @@ jobs:
         run: npm run all
 
       - name: Save PR number
+        if: github.actor != 'dependabot[bot]'
         run: echo ${{ github.event.number }} > PR_NUMBER
 
       - name: Upload artifact with `PR_NUMBER`
+        if: github.actor != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: PR_NUMBER
           path: PR_NUMBER
 
       - name: Upload artifact with `dist` folder
+        if: github.actor != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: dist
           path: dist/
 
       - name: Upload artifact with `covertura.xml`
+        if: github.actor != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: cobertura
