@@ -15,6 +15,7 @@ on:
 jobs:
   new-release:
     name: Create new release
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
@@ -40,6 +41,7 @@ jobs:
 
   update-docs:
     name: Update documentation
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
