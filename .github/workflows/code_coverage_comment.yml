@@ -3,17 +3,13 @@ name: Add comment with code-coverage to PR
 on:
   workflow_run:
     workflows: ['CI']
-    types:
-      - completed
+    branches-ignore: ['dependabot/*']
+    types: [completed]
 
 jobs:
   add-comment-with-code-coverage:
     runs-on: ubuntu-latest
-    if: >
-      github.actor != 'dependabot[bot]' &&
-      github.event_name == 'workflow_run' &&
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: low_run.conclusion == 'success'
     steps:
       - name: Checkout project
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0

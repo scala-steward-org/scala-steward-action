@@ -5,7 +5,6 @@ on: [pull_request]
 jobs:
   ci:
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout project
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
@@ -24,18 +23,21 @@ jobs:
         run: echo ${{ github.event.number }} > PR_NUMBER
 
       - name: Upload artifact with `PR_NUMBER`
+        if: github.event.sender.login != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: PR_NUMBER
           path: PR_NUMBER
 
       - name: Upload artifact with `dist` folder
+        if: github.event.sender.login != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: dist
           path: dist/
 
       - name: Upload artifact with `covertura.xml`
+        if: github.event.sender.login != 'dependabot[bot]'
         uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: cobertura
