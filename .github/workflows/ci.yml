@@ -20,6 +20,7 @@ jobs:
         run: npm run all
 
       - name: Save PR number
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         run: echo ${{ github.event.number }} > PR_NUMBER
 
       - name: Upload artifact with `PR_NUMBER`
