@@ -2,18 +2,14 @@ name: Release a snapshot artifact for a PR
 
 on:
   workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+    workflows: ['CI']
+    branches-ignore: ['dependabot/**']
+    types: [completed]
 
 jobs:
   release-snapshot-artifact:
     runs-on: ubuntu-latest
-    if: >
-      github.actor != 'dependabot[bot]' &&
-      github.event_name == 'workflow_run' &&
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download PR_NUMBER
         uses: dawidd6/action-download-artifact@5e780fc7bbd0cac69fc73271ed86edf5dcb72d67 # v2.26.0
@@ -21,21 +17,21 @@ jobs:
           run_id: ${{github.event.workflow_run.id }}
           name: PR_NUMBER
           path: .
-          
+
       - name: Extract PR number
         id: extract-pr-number
         run: |
           pr_number=$(cat ./PR_NUMBER)
           echo "PR_NUMBER=$pr_number" >> $GITHUB_OUTPUT
-          
+
       - name: Checkout project
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
-        
+
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr checkout ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
-          
+
       - name: Download dist folder
         uses: dawidd6/action-download-artifact@5e780fc7bbd0cac69fc73271ed86edf5dcb72d67 # v2.26.0
         with:
@@ -49,10 +45,10 @@ jobs:
       - name: Create snapshot branch
         uses: alejandrohdezma/actions/commit-and-push@v1
         with:
-          message: "Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}"
-          force-push: "true"
+          message: 'Release snapshot for #${{ steps.extract-pr-number.outputs.PR_NUMBER }}'
+          force-push: 'true'
           branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
-      
+
       - name: Create Comment
         uses: marocchino/sticky-pull-request-comment@3d60a5b2dae89d44e0c6ddc69dd7536aec2071cd # v2.5.0
         with:
