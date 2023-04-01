@@ -41,7 +41,7 @@
     "node-fetch": "^2.6.9"
   },
   "devDependencies": {
-    "@ava/typescript": "^3.0.1",
+    "@ava/typescript": "^4.0.0",
     "@tsconfig/recommended": "^1.0.2",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^18.11.18",
