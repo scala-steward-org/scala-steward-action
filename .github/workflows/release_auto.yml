@@ -8,6 +8,7 @@
 name: Release new version
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
