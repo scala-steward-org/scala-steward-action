@@ -44,7 +44,7 @@
     "@ava/typescript": "^4.0.0",
     "@tsconfig/recommended": "^1.0.2",
     "@types/js-yaml": "^4.0.5",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.3",
     "@vercel/ncc": "^0.36.1",
     "all-contributors-cli": "^6.24.0",
     "ava": "^5.2.0",
