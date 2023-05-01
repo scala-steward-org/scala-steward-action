@@ -54,7 +54,7 @@
     "sinon": "^15.0.3",
     "ts-node": "^10.9.1",
     "ts-pattern": "^4.2.2",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "xo": "^0.54.2"
   },
   "xo": {
