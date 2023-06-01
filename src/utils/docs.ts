@@ -8,7 +8,7 @@ import * as yaml from 'js-yaml'
  */
 type ActionYaml = {inputs: Record<string, {description: string; default: string | undefined}>}
 
-const actionYaml = yaml.load(fs.readFileSync('action.yaml', {encoding: 'utf8'})) as ActionYaml
+const actionYaml = yaml.load(fs.readFileSync('action.yml', {encoding: 'utf8'})) as ActionYaml
 
 const inputs = Object.entries(actionYaml.inputs).flatMap(input => ['']
   .concat(...input[1].description.trimEnd().split('\n').map(line => `    # ${line}`))
