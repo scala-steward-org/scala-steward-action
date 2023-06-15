@@ -22,6 +22,7 @@ export class Workspace {
   readonly repos_md = mandatory(path.join(this.directory, 'repos.md'))
   readonly app_pem = mandatory(path.join(this.directory, 'app.pem'))
   readonly askpass_sh = mandatory(path.join(this.directory, 'askpass.sh'))
+  readonly runSummary_md: string = path.join(this.workspace.value, 'run-summary.md')
 
   constructor(
     private readonly logger: Logger,
