@@ -70,13 +70,13 @@ async function run(): Promise<void> {
       inputs.steward.extraArgs?.value.split(' ') ?? [],
     ])
 
-    if (this.files.existsSync(workspace.runSummary_md)) {
-      this.logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
+    if (files.existsSync(workspace.runSummary_md)) {
+      logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
 
-      const summaryMarkdown = this.files.readFileSync(workspace.runSummary_md, 'utf8')
+      const summaryMarkdown = files.readFileSync(workspace.runSummary_md, 'utf8')
       await core.summary.addRaw(summaryMarkdown).write()
     }
-    
+
     await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
