@@ -182,6 +182,7 @@ test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
   const expected: string[] = [
     'rmRF("/home/scala-steward/workspace/store/refresh_error")',
     'rmRF("/home/scala-steward/workspace/repos")',
+    'rmRF("/home/scala-steward/workspace/run-summary.md")',
     'readFileSync("/home/scala-steward/repos.md")',
     `saveCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}")`,
   ]
