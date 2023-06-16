@@ -73,6 +73,9 @@ export class Workspace {
       await this.files.rmRF(path.join(this.workspace.value, 'store', 'refresh_error'))
       await this.files.rmRF(path.join(this.workspace.value, 'repos'))
 
+      // Don't persist a summary that's specific to this run
+      await this.files.rmRF(this.runSummary_md)
+
       const hash = this.hashFile(this.repos_md.value)
 
       await this.cache.saveCache([this.workspace.value], `scala-steward-${hash}-${Date.now().toString()}`)
