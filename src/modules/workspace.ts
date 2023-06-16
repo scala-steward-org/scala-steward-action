@@ -72,7 +72,9 @@ export class Workspace {
       // We don't want to keep `workspace/store/refresh_error` nor `workspace/repos` in the cache.
       await this.files.rmRF(path.join(this.workspace.value, 'store', 'refresh_error'))
       await this.files.rmRF(path.join(this.workspace.value, 'repos'))
-      await this.files.rmRF(this.runSummary_md) // don't persist a summary that's specific to this run
+
+      // Don't persist a summary that's specific to this run
+      await this.files.rmRF(this.runSummary_md)
 
       const hash = this.hashFile(this.repos_md.value)
 
