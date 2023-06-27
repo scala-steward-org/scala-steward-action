@@ -42,6 +42,7 @@ export class Input {
         defaultConfiguration: this.defaultRepoConf(),
         repos: this.reposFile() ?? this.githubRepository(),
         cacheTtl: nonEmpty(this.inputs.getInput('cache-ttl')),
+        maxBufferSize: nonEmpty(this.inputs.getInput('max-buffer-size')),
         version: nonEmpty(this.inputs.getInput('scala-steward-version')),
         timeout: nonEmpty(this.inputs.getInput('timeout')),
         ignoreOptsFiles: this.inputs.getBooleanInput('ignore-opts-files'),

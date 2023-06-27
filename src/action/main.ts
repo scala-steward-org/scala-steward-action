@@ -60,6 +60,7 @@ async function run(): Promise<void> {
       arg('--sign-commits', inputs.commits.sign.enabled),
       arg('--git-author-signing-key', inputs.commits.sign.key),
       arg('--cache-ttl', inputs.steward.cacheTtl),
+      arg('--max-buffer-size', inputs.steward.maxBufferSize),
       arg('--scalafix-migrations', inputs.migrations.scalafix),
       arg('--artifact-migrations', inputs.migrations.artifacts),
       arg('--repo-config', inputs.steward.defaultConfiguration),
