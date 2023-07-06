@@ -434,7 +434,7 @@ By default, Scala Steward will ignore "opts" files (such as `.jvmopts` or `.sbto
 <br/>
 </details>
 
-<details><summary><b>Run Scala Steward in debug mode</b></summary><br/>
+<details><summary><b>Run Scala Steward with step debug logging</b></summary><br/>
 
 You just need to enable [GitHub Actions' "step debug logging"](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging#enabling-step-debug-logging) and Scala Steward will start automatically in debug mode too.
 
@@ -448,6 +448,17 @@ For this you must set the following secret in the repository that contains the w
 
 <br/>
 </details>
+
+<details><summary><b>Running locally to attach a JVM debugger</b></summary><br/>
+
+When debugging the behaviour of Scala Steward, it can be helpful to run Scala Steward
+locally, while mimicking the settings used by the Scala Steward GitHub Action, so that
+a debugger can be attached - [the Guardian have notes on how they do that](https://github.com/guardian/scala-steward-public-repos/blob/main/running-locally.md),
+which may provide a helpful example if you need to do that in your own organisation. 
+
+<br/>
+</details>
+
 
 <details><summary><b>Using the default GitHub Action Token (instead of the GitHub App)</b></summary><br/>
 
