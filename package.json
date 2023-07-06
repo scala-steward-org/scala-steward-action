@@ -51,7 +51,7 @@
     "c8": "^7.13.0",
     "js-yaml": "^4.1.0",
     "markdown-toc-gen": "^1.0.1",
-    "sinon": "^15.1.0",
+    "sinon": "^15.2.0",
     "ts-node": "^10.9.1",
     "ts-pattern": "^4.3.0",
     "typescript": "^5.0.4",
