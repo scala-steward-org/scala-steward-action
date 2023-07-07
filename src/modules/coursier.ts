@@ -63,25 +63,21 @@ export async function install(): Promise<void> {
  *
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
  *
- * @param app - The application's artifact name.
- * @param version - The application's version.
+ * @param app - The application to launch
  * @param args - The args to pass to the application launcher.
  */
 export async function launch(
   app: string,
-  version: NonEmptyString | undefined,
   args: Array<string | string[]> = [],
 ): Promise<void> {
-  const name = version ? `${app}:${version.value}` : app
-
-  core.startGroup(`Launching ${name}`)
+  core.startGroup(`Launching ${app}`)
 
   const launchArgs = [
     'launch',
     '--contrib',
     '-r',
     'sonatype:snapshots',
-    name,
+    app,
     '--',
     ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg)),
   ]
@@ -95,7 +91,7 @@ export async function launch(
   core.endGroup()
 
   if (code !== 0) {
-    throw new Error(`Launching ${name} failed`)
+    throw new Error(`Launching ${app} failed`)
   }
 }
 
