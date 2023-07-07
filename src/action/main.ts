@@ -46,7 +46,7 @@ async function run(): Promise<void> {
       core.exportVariable('ROOT_LOG_LEVEL', 'TRACE')
     }
 
-    await coursier.launch('scala-steward', inputs.steward.version, [
+    await coursier.launch('org.scala-steward:scala-steward-core_2.13', inputs.steward.version, [
       arg('--workspace', workspace.workspace),
       arg('--repos-file', workspace.repos_md),
       arg('--git-ask-pass', workspace.askpass_sh),
