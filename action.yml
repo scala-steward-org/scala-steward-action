@@ -49,7 +49,7 @@ inputs:
     description: |
       The URL of the GitHub API, only use this input if
       you are using GitHub Enterprise.
-    default: https://api.github.com
+    default: ${{ github.api_url }}
     required: false
   github-app-auth-only:
     description: |
