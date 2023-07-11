@@ -171,7 +171,7 @@ export class Input {
     const authOnly = this.inputs.getBooleanInput('github-app-auth-only')
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
     const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
-    const key = nonEmpty(this.inputs.getInput('github-app-key'))
+    const key = nonEmpty(this.inputs.getInput('github-app-key')?.replace(/\\n/g, '\n'))
 
     if (!id && !key) {
       return undefined
