@@ -6,6 +6,7 @@ import * as core from '@actions/core'
 import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
 import {createAppAuth} from '@octokit/auth-app'
+import {request} from '@octokit/request'
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {nonEmpty, NonEmptyString} from '../core/types'
@@ -26,13 +27,13 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
-    const gitHubToken = await gitHubAppToken(inputs.github.app, 'installation') ?? inputs.github.token.value
     const gitHubApiUrl = inputs.github.apiUrl.value
+    const gitHubToken = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation') ?? inputs.github.token.value
     const octokit = getOctokit(gitHubToken, {baseUrl: gitHubApiUrl})
     const github = GitHub.from(logger, octokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
-    const user = await gitHubAppToken(inputs.github.app, 'app')
+    const user = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'app')
       .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
       .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
       .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
@@ -92,15 +93,22 @@ async function run(): Promise<void> {
  * Returns a GitHub App Token.
  *
  * @param app The GitHub App information.
+ * @param gitHubApiUrl The GitHub API URL.
  * @param type The type of token to retrieve, either `app` or `installation`.
  * @returns the GitHub App Token for the provided installation.
  */
-async function gitHubAppToken(app: GitHubAppInfo | undefined, type: 'app' | 'installation') {
+async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: string, type: 'app' | 'installation') {
   if (!app) {
     return undefined
   }
 
-  const auth = createAppAuth({appId: app.id.value, privateKey: app.key.value})
+  const auth = createAppAuth({
+    appId: app.id.value,
+    privateKey: app.key.value,
+    request: request.defaults({
+      baseUrl: gitHubApiUrl,
+    }),
+  })
 
   const response = type === 'app'
     ? await auth({type: 'app'})
