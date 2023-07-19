@@ -40,6 +40,12 @@ inputs:
       metadata, set it to 0s to disable it.
     default: 2hours
     required: false
+  max-buffer-size:
+    description: |
+      Size of the buffer for the output of an external process
+      in lines. The default is 16384.
+    default: "16384"
+    required: false
   coursier-cli-url:
     description: |
       Url to download the coursier linux CLI from.

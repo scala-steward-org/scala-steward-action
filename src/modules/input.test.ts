@@ -16,6 +16,7 @@ test('`Input.all` → returns all inputs', t => {
     .with('author-name', () => 'Alex')
     .with('github-api-url', () => 'github.my-org.com')
     .with('cache-ttl', () => '20m')
+    .with('max-buffer-size', () => '16384')
     .with('timeout', () => '60s')
     .with('scala-steward-version', () => '1.0')
     .with('artifact-migrations', () => '.github/artifact-migrations.conf')
@@ -50,6 +51,7 @@ test('`Input.all` → returns all inputs', t => {
       defaultConfiguration: nonEmpty('.github/defaults/.scala-steward.conf'),
       repos: '- owner/repo:1.0x\n- owner/repo:2.0x',
       cacheTtl: nonEmpty('20m'),
+      maxBufferSize: nonEmpty('16384'),
       version: nonEmpty('1.0'),
       timeout: nonEmpty('60s'),
       ignoreOptsFiles: true,

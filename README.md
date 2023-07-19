@@ -151,6 +151,12 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: 2hours
     cache-ttl: ''
 
+    # Size of the buffer for the output of an external process
+    # in lines.
+    #
+    # Default: 16384
+    max-buffer-size: ''
+
     # Url to download the coursier linux CLI from.
     #
     # Default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
