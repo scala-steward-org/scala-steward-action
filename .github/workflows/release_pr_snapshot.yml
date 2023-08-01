@@ -50,7 +50,7 @@ jobs:
           branch: snapshots/${{ steps.extract-pr-number.outputs.PR_NUMBER }}
 
       - name: Create Comment
-        uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
+        uses: marocchino/sticky-pull-request-comment@f6a2580ed520ae15da6076e7410b088d1c5dddd9 # v2.7.0
         with:
           recreate: true
           header: snapshot
