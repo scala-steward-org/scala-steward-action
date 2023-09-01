@@ -12,7 +12,7 @@ jobs:
     if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout project
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Download cobertura.xml file
         uses: dawidd6/action-download-artifact@246dbf436b23d7c49e21a7ab8204ca9ecd1fe615 # v2.27.0
