@@ -37,7 +37,7 @@
     "@octokit/auth-app": "^4.0.9",
     "@octokit/request": "^6.0.0",
     "@types/node-fetch": "^2.6.4",
-    "@types/sinon": "^10.0.15",
+    "@types/sinon": "^10.0.16",
     "jssha": "^3.3.0",
     "node-fetch": "^2.6.12"
   },
