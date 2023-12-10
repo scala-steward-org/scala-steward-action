@@ -17,19 +17,26 @@ export class Workspace {
     return new Workspace(logger, files, os, cache)
   }
 
-  readonly directory = path.join(this.os.homedir(), 'scala-steward')
-  readonly workspace = mandatory(path.join(this.directory, 'workspace'))
-  readonly repos_md = mandatory(path.join(this.directory, 'repos.md'))
-  readonly app_pem = mandatory(path.join(this.directory, 'app.pem'))
-  readonly askpass_sh = mandatory(path.join(this.directory, 'askpass.sh'))
-  readonly runSummary_md: string = path.join(this.workspace.value, 'run-summary.md')
+  readonly directory: string
+  readonly workspace: NonEmptyString
+  readonly repos_md: NonEmptyString
+  readonly app_pem: NonEmptyString
+  readonly askpass_sh: NonEmptyString
+  readonly runSummary_md: string
 
   constructor(
     private readonly logger: Logger,
     private readonly files: Files,
     private readonly os: OSInfo,
     private readonly cache: ActionCache,
-  ) {}
+  ) {
+    this.directory = path.join(this.os.homedir(), 'scala-steward')
+    this.workspace = mandatory(path.join(this.directory, 'workspace'))
+    this.repos_md = mandatory(path.join(this.directory, 'repos.md'))
+    this.app_pem = mandatory(path.join(this.directory, 'app.pem'))
+    this.askpass_sh = mandatory(path.join(this.directory, 'askpass.sh'))
+    this.runSummary_md = path.join(this.workspace.value, 'run-summary.md')
+  }
 
   /**
    * Tries to restore the Scala Steward workspace build from the cache, if any.
