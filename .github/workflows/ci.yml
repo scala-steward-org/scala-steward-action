@@ -25,21 +25,21 @@ jobs:
 
       - name: Upload artifact with `PR_NUMBER`
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
           name: PR_NUMBER
           path: PR_NUMBER
 
       - name: Upload artifact with `dist` folder
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
           name: dist
           path: dist/
 
       - name: Upload artifact with `covertura.xml`
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
           name: cobertura
           path: coverage/cobertura-coverage.xml
