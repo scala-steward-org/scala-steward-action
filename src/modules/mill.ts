@@ -23,10 +23,10 @@ export async function install(): Promise<void> {
 
       core.debug(`Attempting to install Mill from ${millUrl}`)
 
-      const binPath = path.join(os.homedir(), 'bin')
-      await io.mkdirP(binPath)
+      const binary = path.join(os.homedir(), 'bin')
+      await io.mkdirP(binary)
 
-      const mill = await tc.downloadTool(millUrl, path.join(binPath, 'mill'))
+      const mill = await tc.downloadTool(millUrl, path.join(binary, 'mill'))
 
       await exec.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
 

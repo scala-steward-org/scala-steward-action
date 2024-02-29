@@ -179,7 +179,9 @@ export class Input {
     }
 
     if (id && key) {
-      return {authOnly, id, installation, key}
+      return {
+        authOnly, id, installation, key,
+      }
     }
 
     throw new Error('`github-app-id` and `github-app-key` inputs have to be set together. One of them is missing')

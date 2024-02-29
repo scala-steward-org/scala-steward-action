@@ -52,25 +52,25 @@ async function run(): Promise<void> {
       : 'scala-steward'
 
     await coursier.launch(app, [
-      arg('--workspace', workspace.workspace),
-      arg('--repos-file', workspace.repos_md),
-      arg('--git-ask-pass', workspace.askpass_sh),
-      arg('--git-author-email', inputs.commits.author.email ?? user.email()),
-      arg('--git-author-name', inputs.commits.author.name ?? user.name()),
-      arg('--forge-login', user.login()),
-      arg('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
-      arg('--process-timeout', inputs.steward.timeout),
-      arg('--forge-api-host', inputs.github.apiUrl),
-      arg('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
-      arg('--sign-commits', inputs.commits.sign.enabled),
-      arg('--git-author-signing-key', inputs.commits.sign.key),
-      arg('--cache-ttl', inputs.steward.cacheTtl),
-      arg('--max-buffer-size', inputs.steward.maxBufferSize),
-      arg('--scalafix-migrations', inputs.migrations.scalafix),
-      arg('--artifact-migrations', inputs.migrations.artifacts),
-      arg('--repo-config', inputs.steward.defaultConfiguration),
-      arg('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
-      arg('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
+      argument('--workspace', workspace.workspace),
+      argument('--repos-file', workspace.repos_md),
+      argument('--git-ask-pass', workspace.askpass_sh),
+      argument('--git-author-email', inputs.commits.author.email ?? user.email()),
+      argument('--git-author-name', inputs.commits.author.name ?? user.name()),
+      argument('--forge-login', user.login()),
+      argument('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
+      argument('--process-timeout', inputs.steward.timeout),
+      argument('--forge-api-host', inputs.github.apiUrl),
+      argument('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
+      argument('--sign-commits', inputs.commits.sign.enabled),
+      argument('--git-author-signing-key', inputs.commits.sign.key),
+      argument('--cache-ttl', inputs.steward.cacheTtl),
+      argument('--max-buffer-size', inputs.steward.maxBufferSize),
+      argument('--scalafix-migrations', inputs.migrations.scalafix),
+      argument('--artifact-migrations', inputs.migrations.artifacts),
+      argument('--repo-config', inputs.steward.defaultConfiguration),
+      argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
+      argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
@@ -124,7 +124,7 @@ async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: stri
  * @param value The argument's value, empty string, false booleans or undefined will be skipped.
  * @returns the argument to add if it should be added; otherwise returns `[]`.
  */
-function arg(name: string, value: NonEmptyString | boolean | undefined) {
+function argument(name: string, value: NonEmptyString | boolean | undefined) {
   if (value instanceof NonEmptyString) {
     return [name, value.value]
   }
