@@ -20,19 +20,19 @@ export async function install(): Promise<void> {
 
     core.debug(`Installing coursier from ${coursierUrl}`)
 
-    const binPath = path.join(os.homedir(), 'bin')
-    await io.mkdirP(binPath)
+    const binary = path.join(os.homedir(), 'bin')
+    await io.mkdirP(binary)
 
-    const zip = await tc.downloadTool(coursierUrl, path.join(binPath, 'cs.gz'))
+    const zip = await tc.downloadTool(coursierUrl, path.join(binary, 'cs.gz'))
 
     await exec.exec('gzip', ['-d', zip], {silent: true})
-    await exec.exec('chmod', ['+x', path.join(binPath, 'cs')], {silent: true})
+    await exec.exec('chmod', ['+x', path.join(binary, 'cs')], {silent: true})
 
-    core.addPath(binPath)
+    core.addPath(binary)
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scalafix', 'scala-cli', '--install-dir', binPath],
+      ['install', 'scalafmt', 'scalafix', 'scala-cli', '--install-dir', binary],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -64,25 +64,25 @@ export async function install(): Promise<void> {
  * Refer to [coursier](https://get-coursier.io/docs/cli-launch) for more information.
  *
  * @param app - The application to launch
- * @param args - The args to pass to the application launcher.
+ * @param arguments_ - The args to pass to the application launcher.
  */
 export async function launch(
   app: string,
-  args: Array<string | string[]> = [],
+  arguments_: Array<string | string[]> = [],
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 
-  const launchArgs = [
+  const launchArguments = [
     'launch',
     '--contrib',
     '-r',
     'sonatype:snapshots',
     app,
     '--',
-    ...args.flatMap((arg: string | string[]) => (typeof arg === 'string' ? [arg] : arg)),
+    ...arguments_.flatMap((argument: string | string[]) => (typeof argument === 'string' ? [argument] : argument)),
   ]
 
-  const code = await exec.exec('cs', launchArgs, {
+  const code = await exec.exec('cs', launchArguments, {
     silent: true,
     ignoreReturnCode: true,
     listeners: {stdline: core.info, errline: core.error},
@@ -110,19 +110,21 @@ export async function remove(): Promise<void> {
 /**
  * Executes a tool and returns its output.
  */
-async function execute(tool: string, ...args: string[]): Promise<string> {
+async function execute(tool: string, ...arguments_: string[]): Promise<string> {
   let output = ''
 
-  const code = await exec.exec(tool, args, {
+  const code = await exec.exec(tool, arguments_, {
     silent: true,
     ignoreReturnCode: true,
-    listeners: {stdout(data) {
-      (output += data.toString())
-    }, errline: core.debug},
+    listeners: {
+      stdout(data) {
+        (output += data.toString())
+      }, errline: core.debug,
+    },
   })
 
   if (code !== 0) {
-    throw new Error(`There was an error while executing '${tool} ${args.join(' ')}'`)
+    throw new Error(`There was an error while executing '${tool} ${arguments_.join(' ')}'`)
   }
 
   return output

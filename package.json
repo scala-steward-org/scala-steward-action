@@ -2,7 +2,7 @@
   "name": "scala-steward-action",
   "description": "A GitHub Action to launch Scala Steward in your repository",
   "scripts": {
-    "tsconfig": "echo '{ \"extends\": \"@tsconfig/node20/tsconfig.json\" }' > tsconfig.json",
+    "tsconfig": "cp node_modules/@tsconfig/node20/tsconfig.json tsconfig.json",
     "build": "npm run tsconfig && npm run build-pre && npm run build-main && npm run build-post",
     "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
     "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
@@ -51,7 +51,7 @@
     "@types/node": "^20.4.5",
     "@vercel/ncc": "^0.36.1",
     "all-contributors-cli": "^6.26.1",
-    "ava": "^5.3.1",
+    "ava": "^6.1.2",
     "c8": "^7.13.0",
     "js-yaml": "^4.1.0",
     "markdown-toc-gen": "^1.0.1",
@@ -59,7 +59,7 @@
     "ts-node": "^10.9.1",
     "ts-pattern": "^5.0.5",
     "typescript": "^5.2.2",
-    "xo": "^0.54.2"
+    "xo": "^0.57.0"
   },
   "xo": {
     "space": true,
