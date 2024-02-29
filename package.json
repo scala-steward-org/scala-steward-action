@@ -2,7 +2,7 @@
   "name": "scala-steward-action",
   "description": "A GitHub Action to launch Scala Steward in your repository",
   "scripts": {
-    "tsconfig": "echo '{ \"extends\": \"@tsconfig/node20/tsconfig.json\" }' > tsconfig.json",
+    "tsconfig": "cp node_modules/@tsconfig/node20/tsconfig.json tsconfig.json",
     "build": "npm run tsconfig && npm run build-pre && npm run build-main && npm run build-post",
     "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
     "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
