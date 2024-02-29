@@ -2,11 +2,11 @@
   "name": "scala-steward-action",
   "description": "A GitHub Action to launch Scala Steward in your repository",
   "scripts": {
-    "tsconfig": "echo '{ \"extends\": \"@tsconfig/recommended/tsconfig.json\" }' > tsconfig.json",
+    "tsconfig": "echo '{ \"extends\": \"@tsconfig/node20/tsconfig.json\" }' > tsconfig.json",
     "build": "npm run tsconfig && npm run build-pre && npm run build-main && npm run build-post",
-    "build-pre": "ncc build --target es2019 src/action/pre.ts && mv dist/index.js dist/pre.js",
-    "build-main": "ncc build --target es2019 src/action/main.ts && mv dist/index.js dist/main.js",
-    "build-post": "ncc build --target es2019 src/action/post.ts && mv dist/index.js dist/post.js",
+    "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
+    "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
+    "build-post": "ncc build --target es2022 src/action/post.ts && mv dist/index.js dist/post.js",
     "docs": "ts-node src/utils/docs.ts && markdown-toc-gen update README.md",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
@@ -14,6 +14,9 @@
     "test": "xo && c8 ava",
     "report": "c8 report",
     "all": "npm run build && npm test && npm run report"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
@@ -29,7 +32,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@actions/cache": "^3.2.1",
-    "@actions/core": "^1.10.0",
+    "@actions/core": "^1.10.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
     "@actions/io": "^1.1.3",
@@ -37,13 +40,13 @@
     "@octokit/auth-app": "^4.0.9",
     "@octokit/request": "^8.1.1",
     "@types/node-fetch": "^2.6.4",
-    "@types/sinon": "^10.0.15",
-    "jssha": "^3.3.0",
+    "@types/sinon": "^17.0.2",
+    "jssha": "^3.3.1",
     "node-fetch": "^2.6.12"
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
-    "@tsconfig/recommended": "^1.0.2",
+    "@tsconfig/node20": "^20.1.2",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^20.4.5",
     "@vercel/ncc": "^0.36.1",
@@ -52,10 +55,10 @@
     "c8": "^7.13.0",
     "js-yaml": "^4.1.0",
     "markdown-toc-gen": "^1.0.1",
-    "sinon": "^15.2.0",
+    "sinon": "^17.0.1",
     "ts-node": "^10.9.1",
-    "ts-pattern": "^4.3.0",
-    "typescript": "^5.1.6",
+    "ts-pattern": "^5.0.5",
+    "typescript": "^5.2.2",
     "xo": "^0.54.2"
   },
   "xo": {

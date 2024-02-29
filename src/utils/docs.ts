@@ -10,10 +10,13 @@ type ActionYaml = {inputs: Record<string, {description: string; default: string 
 
 const actionYaml = yaml.load(fs.readFileSync('action.yml', {encoding: 'utf8'})) as ActionYaml
 
-const inputs = Object.entries(actionYaml.inputs).flatMap(input => ['']
-  .concat(...input[1].description.trimEnd().split('\n').map(line => `    # ${line}`))
-  .concat(input[1].default ? ['    #', `    # Default: ${input[1].default}`] : [])
-  .concat(`    ${input[0]}: ''`),
+const inputs = Object.entries(actionYaml.inputs).flatMap(input =>
+  [
+    '',
+    ...input[1].description.trimEnd().split('\n').map(line => `    # ${line}`),
+    ...(input[1].default ? ['    #', `    # Default: ${input[1].default}`] : []),
+    `    ${input[0]}: ''`,
+  ],
 )
 
 /**
