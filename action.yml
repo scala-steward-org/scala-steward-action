@@ -51,6 +51,11 @@ inputs:
       Url to download the coursier linux CLI from.
     default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     required: false
+  extra-jars:
+    description: |
+      Extra JARs to be added to the classpath of the
+      launched application. Directories accepted too.
+    required: false
   github-api-url:
     description: |
       The URL of the GitHub API, only use this input if

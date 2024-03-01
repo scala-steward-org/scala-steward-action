@@ -23,6 +23,7 @@ test('`Input.all` → returns all inputs', t => {
     .with('scalafix-migrations', () => '.github/scalafix-migrations.conf')
     .with('other-args', () => '--help')
     .with('signing-key', () => '42')
+    .with('extra-jars', () => 'path/to/my/jars')
     .otherwise(() => '')
 
   const booleanInputs = (name: string) => match(name)
@@ -56,6 +57,7 @@ test('`Input.all` → returns all inputs', t => {
       timeout: nonEmpty('60s'),
       ignoreOptsFiles: true,
       extraArgs: nonEmpty('--help'),
+      extraJars: nonEmpty('path/to/my/jars'),
     },
     migrations: {
       scalafix: nonEmpty('.github/scalafix-migrations.conf'),

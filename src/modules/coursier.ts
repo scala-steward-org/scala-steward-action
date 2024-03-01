@@ -65,10 +65,12 @@ export async function install(): Promise<void> {
  *
  * @param app - The application to launch
  * @param arguments_ - The args to pass to the application launcher.
+ * @param extraJars - Extra JARs to be added to the classpath of the launched application. Directories accepted too.
  */
 export async function launch(
   app: string,
   arguments_: Array<string | string[]> = [],
+  extraJars: NonEmptyString | undefined,
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 
@@ -78,6 +80,7 @@ export async function launch(
     '-r',
     'sonatype:snapshots',
     app,
+     ...(extraJars ? ['--extra-jars', extraJars.value] : []),
     '--',
     ...arguments_.flatMap((argument: string | string[]) => (typeof argument === 'string' ? [argument] : argument)),
   ]

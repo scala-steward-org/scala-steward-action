@@ -74,7 +74,7 @@ async function run(): Promise<void> {
       '--do-not-fork',
       '--disable-sandbox',
       inputs.steward.extraArgs?.value.split(' ') ?? [],
-    ])
+    ], inputs.steward.extraJars)
 
     if (files.existsSync(workspace.runSummary_md)) {
       logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
