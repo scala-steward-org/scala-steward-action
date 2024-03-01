@@ -49,7 +49,7 @@
     "@tsconfig/node20": "^20.1.2",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.4.5",
-    "@vercel/ncc": "^0.36.1",
+    "@vercel/ncc": "^0.38.1",
     "all-contributors-cli": "^6.26.1",
     "ava": "^6.1.2",
     "c8": "^9.1.0",
