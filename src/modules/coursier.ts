@@ -70,7 +70,7 @@ export async function install(): Promise<void> {
 export async function launch(
   app: string,
   arguments_: Array<string | string[]> = [],
-  extraJars: NonEmptyString | undefined,
+  extraJars: NonEmptyString | undefined = undefined,
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 
@@ -80,7 +80,7 @@ export async function launch(
     '-r',
     'sonatype:snapshots',
     app,
-     ...(extraJars ? ['--extra-jars', extraJars.value] : []),
+    ...(extraJars ? ['--extra-jars', extraJars.value] : []),
     '--',
     ...arguments_.flatMap((argument: string | string[]) => (typeof argument === 'string' ? [argument] : argument)),
   ]
