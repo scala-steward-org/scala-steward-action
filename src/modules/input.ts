@@ -47,6 +47,7 @@ export class Input {
         timeout: nonEmpty(this.inputs.getInput('timeout')),
         ignoreOptsFiles: this.inputs.getBooleanInput('ignore-opts-files'),
         extraArgs: nonEmpty(this.inputs.getInput('other-args')),
+        extraJars: nonEmpty(this.inputs.getInput('extra-jars')),
       },
       migrations: {
         scalafix: nonEmpty(this.inputs.getInput('scalafix-migrations')),
