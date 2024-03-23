@@ -76,8 +76,8 @@ Create repo secrets for the private key, the app id and the installation ID in t
 
 1. To do so, from the repo's page, click the "Settings" tab. There, select "Secrets" at the sidebar, and click "Actions" at the dropdown menu. Click "New repository secret".
 2. At the "Name" field, enter `APP_PRIVATE_KEY`. Then, open the ".pem" file you downloaded at step (3.3) with a text editor, and copy the contents. Make sure to copy everything, including the first line `-----BEGIN RSA PRIVATE KEY-----` and the last line `-----END RSA PRIVATE KEY-----`. Paste it at the "Value" text area. Click "Add Secret".
-3. Repeat the previous steps (4.1-4.2) to add a secret for the app id you recover on step (3.1). Specify `APP_ID` as the name.
-4. Repeat the previous steps (4.1-4.2) to add a secret for the installation id you recover on step (3.3). Specify `APP_INSTALLATION_ID` as the name.
+3. Repeat the previous steps (4.1) to add a secret for the app id you recover on step (3.1). Specify `APP_ID` as the name.
+4. Repeat the previous steps (4.1) to add a secret for the installation id you recover on step (3.2). Specify `APP_INSTALLATION_ID` as the name.
 
 </details>
 
