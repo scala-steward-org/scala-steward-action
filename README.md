@@ -319,6 +319,20 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
 <br/>
 </details>
 
+<details><summary><b>Add JVM options to the running JVM</b></summary><br/>
+
+If you would like to add JVM options (such as `-Xmx`) to the Scala Steward JVM process please add the following to the main `Launch Scala Steward` step:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  env:
+    JAVA_OPTS: "-XX:+UseG1GC -Xms4G -Xmx4G -Xss2M -XX:MetaspaceSize=512M"
+```
+
+<br/>
+</details>
+
 <details><summary><b>Updating a specific repository</b></summary><br/>
 
 When using the `github-app-*` inputs, Scala Steward will always retrieve the list of repositories to update from the App's installation. You can override this by setting `github-app-auth-only` to `'true'`. This way the action will only use the app credentials to authenticate and will update the repository set on the `github-repository` input (defaults to the current repository).
