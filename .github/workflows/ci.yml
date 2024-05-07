@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project
-        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
@@ -25,21 +25,21 @@ jobs:
 
       - name: Upload artifact with `PR_NUMBER`
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: PR_NUMBER
           path: PR_NUMBER
 
       - name: Upload artifact with `dist` folder
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: dist
           path: dist/
 
       - name: Upload artifact with `covertura.xml`
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: cobertura
           path: coverage/cobertura-coverage.xml
