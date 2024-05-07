@@ -1,6 +1,7 @@
 {
   "name": "scala-steward-action",
   "description": "A GitHub Action to launch Scala Steward in your repository",
+  "type": "module",
   "scripts": {
     "build": "npm run build-pre && npm run build-main && npm run build-post",
     "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
@@ -78,11 +79,12 @@
     "files": [
       "src/**/*.test.ts"
     ],
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm",
+      "--experimental-specifier-resolution=node"
     ]
   },
   "c8": {
