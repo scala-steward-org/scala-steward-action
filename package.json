@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
-    "@tsconfig/node20": "^20.1.2",
+    "@tsconfig/node20": "^20.1.4",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.12.2",
     "@vercel/ncc": "^0.38.1",
