@@ -11,7 +11,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "contributors:check": "all-contributors check",
-    "test": "xo && c8 ava",
+    "test": "xo && NODE_OPTIONS='--loader=ts-node/esm --experimental-specifier-resolution=node' c8 ava",
     "report": "c8 report",
     "all": "npm run build && npm test && npm run report"
   },
@@ -81,11 +81,7 @@
     ],
     "extensions": {
       "ts": "module"
-    },
-    "nodeArguments": [
-      "--loader=ts-node/esm",
-      "--experimental-specifier-resolution=node"
-    ]
+    }
   },
   "c8": {
     "all": true,
