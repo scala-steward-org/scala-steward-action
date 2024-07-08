@@ -5,6 +5,8 @@ A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 <!-- toc -->
 
 - [Installation](#installation)
+  - [Simple workflow using default GitHub Actions App](#simple-workflow-using-default-github-actions-app)
+  - [Workflow with a custom GitHub App to manage multiple repositories](#workflow-with-a-custom-github-app-to-manage-multiple-repositories)
 - [Usage](#usage)
 - [Guides](#guides)
 - [Contributors](#contributors)
@@ -14,6 +16,39 @@ A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 ---
 
 ## Installation
+
+You can use this action for [individual repositories](#simple-workflow-using-default-github-actions-app) or you can configure a repository to [manage many repositories](#workflow-with-a-custom-github-app-to-manage-multiple-repositories).
+
+### Simple workflow using default GitHub Actions App
+
+```yaml
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+name: Scala Steward
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scala-steward:
+    runs-on: ubuntu-22.04
+    name: Scala Steward
+    steps:
+      - name: Scala Steward
+        uses: scala-steward-org/scala-steward-action@v2
+```
+
+See [Usage](#usage)
+
+Note that you won't be able to use any of `github-app-*`, `repos-file`, or `github-repository` inputs as the GitHub Actions App can only possibly write to the current repository.
+
+You will also need to ensure that GitHub Actions has permissions to create and approve pull requests for the [organization](https://docs.github.com/en/organizations/managing-organization-settings/disabling-or-limiting-github-actions-for-your-organization#preventing-github-actions-from-creating-or-approving-pull-requests) or [repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#preventing-github-actions-from-creating-or-approving-pull-requests).
+
+
+### Workflow with a custom GitHub App to manage multiple repositories
 
 To use the Action in your repo, you need to create a GitHub App. Then you need to create a new GitHub Actions workflow file to run this Action. Here is a step-by-step tutorial on how to do it:
 
@@ -230,6 +265,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # 
     # If the provided file is missing the action will fail.
     #
+    # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/repo-specific-configuration.md
     # Default: .github/.scala-steward.conf
     repo-config: ''
 
@@ -469,40 +505,6 @@ When debugging the behaviour of Scala Steward, it can be helpful to run Scala St
 locally, while mimicking the settings used by the Scala Steward GitHub Action, so that
 a debugger can be attached - [the Guardian have notes on how they do that](https://github.com/guardian/scala-steward-public-repos/blob/main/running-locally.md),
 which may provide a helpful example if you need to do that in your own organisation. 
-
-<br/>
-</details>
-
-
-<details><summary><b>Using the default GitHub Action Token (instead of the GitHub App)</b></summary><br/>
-
-If for any reason you want to use the default GitHub Token available in GitHub Actions, you won't be able to use the `github-app-*` inputs. Also beware that if you use the default github-token [no workflows will run](https://docs.github.com/en/free-pro-team@latest/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow) on Scala Steward PRs. If you still want to use it you just need to remove all the `github-app-*` inputs and follow either the `Updating a specific repository` or the `Update specific repositories (listed on a file)` guides to provide a repository to update.
-
-**Example updating the current repository with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-```
-
-**Example updating a specific repository with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-  with:
-    github-repository: owner/repo
-```
-
-**Example updating a list of repositories (from a file) with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-  with:
-    github-repository: owner/repo
-    repos-file: 'repos.md'
-```
 
 <br/>
 </details>
