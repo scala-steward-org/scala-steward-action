@@ -375,7 +375,6 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
 
 ```yaml
  on:
-+  workflow_dispatch:
    schedule:
      - cron: '0 0 * * 0'
  
