@@ -263,7 +263,8 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Location of a `.scala-steward.conf` file with default
     # values.
     # 
-    # If the provided file is missing the action will fail.
+    # If you specify a file and it does not exist in the 
+    # selected branch then this action will fail when it runs.
     #
     # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/repo-specific-configuration.md
     # Default: .github/.scala-steward.conf
