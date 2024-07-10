@@ -293,6 +293,15 @@
       "contributions": [
         "question"
       ]
+    },
+    {
+      "login": "SpecialThing44",
+      "name": "Spencer Perkins",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95900100?v=4",
+      "profile": "https://github.com/SpecialThing44",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 6
