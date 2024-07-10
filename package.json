@@ -7,7 +7,7 @@
     "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
     "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
     "build-post": "ncc build --target es2022 src/action/post.ts && mv dist/index.js dist/post.js",
-    "docs": "ts-node src/utils/docs.ts && markdown-toc-gen update README.md",
+    "docs": "node --loader ts-node/esm src/utils/docs.ts && markdown-toc-gen update README.md",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "contributors:check": "all-contributors check",
