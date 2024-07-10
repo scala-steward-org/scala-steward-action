@@ -5,6 +5,8 @@ A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 <!-- toc -->
 
 - [Installation](#installation)
+  - [Simple workflow using default GitHub Actions App](#simple-workflow-using-default-github-actions-app)
+  - [Workflow with a custom GitHub App to manage multiple repositories](#workflow-with-a-custom-github-app-to-manage-multiple-repositories)
 - [Usage](#usage)
 - [Guides](#guides)
 - [Contributors](#contributors)
@@ -14,6 +16,39 @@ A GitHub Action to launch [Scala Steward](https://github.com/scala-steward-org/s
 ---
 
 ## Installation
+
+You can use this action for [individual repositories](#simple-workflow-using-default-github-actions-app) or you can configure a repository to [manage many repositories](#workflow-with-a-custom-github-app-to-manage-multiple-repositories).
+
+### Simple workflow using default GitHub Actions App
+
+```yaml
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+name: Scala Steward
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scala-steward:
+    runs-on: ubuntu-22.04
+    name: Scala Steward
+    steps:
+      - name: Scala Steward
+        uses: scala-steward-org/scala-steward-action@v2
+```
+
+See [Usage](#usage)
+
+Note that you won't be able to use any of `github-app-*`, `repos-file`, or `github-repository` inputs as the GitHub Actions App can only possibly write to the current repository.
+
+You will also need to ensure that GitHub Actions has permissions to create and approve pull requests for the [organization](https://docs.github.com/en/organizations/managing-organization-settings/disabling-or-limiting-github-actions-for-your-organization#preventing-github-actions-from-creating-or-approving-pull-requests) or [repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#preventing-github-actions-from-creating-or-approving-pull-requests).
+
+
+### Workflow with a custom GitHub App to manage multiple repositories
 
 To use the Action in your repo, you need to create a GitHub App. Then you need to create a new GitHub Actions workflow file to run this Action. Here is a step-by-step tutorial on how to do it:
 
@@ -228,8 +263,10 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Location of a `.scala-steward.conf` file with default
     # values.
     # 
-    # If the provided file is missing the action will fail.
+    # If you specify a file and it does not exist in the 
+    # selected branch then this action will fail when it runs.
     #
+    # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/repo-specific-configuration.md
     # Default: .github/.scala-steward.conf
     repo-config: ''
 
@@ -339,7 +376,6 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
 
 ```yaml
  on:
-+  workflow_dispatch:
    schedule:
      - cron: '0 0 * * 0'
  
@@ -469,40 +505,6 @@ When debugging the behaviour of Scala Steward, it can be helpful to run Scala St
 locally, while mimicking the settings used by the Scala Steward GitHub Action, so that
 a debugger can be attached - [the Guardian have notes on how they do that](https://github.com/guardian/scala-steward-public-repos/blob/main/running-locally.md),
 which may provide a helpful example if you need to do that in your own organisation. 
-
-<br/>
-</details>
-
-
-<details><summary><b>Using the default GitHub Action Token (instead of the GitHub App)</b></summary><br/>
-
-If for any reason you want to use the default GitHub Token available in GitHub Actions, you won't be able to use the `github-app-*` inputs. Also beware that if you use the default github-token [no workflows will run](https://docs.github.com/en/free-pro-team@latest/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow) on Scala Steward PRs. If you still want to use it you just need to remove all the `github-app-*` inputs and follow either the `Updating a specific repository` or the `Update specific repositories (listed on a file)` guides to provide a repository to update.
-
-**Example updating the current repository with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-```
-
-**Example updating a specific repository with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-  with:
-    github-repository: owner/repo
-```
-
-**Example updating a list of repositories (from a file) with the default GitHub Token**
-
-```yaml
-- name: Launch Scala Steward
-  uses: scala-steward-org/scala-steward-action@v2
-  with:
-    github-repository: owner/repo
-    repos-file: 'repos.md'
-```
 
 <br/>
 </details>
@@ -690,17 +692,18 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/michele-pinto-kensu"><img src="https://avatars.githubusercontent.com/u/69146696?v=4?s=100" width="100px;" alt="Michele Pinto"/><br /><sub><b>Michele Pinto</b></sub></a><br /><a href="#ideas-michele-pinto-kensu" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/milanvdm"><img src="https://avatars.githubusercontent.com/u/5628925?v=4?s=100" width="100px;" alt="Milan van der Meer"/><br /><sub><b>Milan van der Meer</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/issues?q=author%3Amilanvdm" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://ca.linkedin.com/in/pboldyrev/"><img src="https://avatars.githubusercontent.com/u/627562?v=4?s=100" width="100px;" alt="Pavel Boldyrev"/><br /><sub><b>Pavel Boldyrev</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=bpg" title="Code">💻</a></td>
-      <td align="center" valign="top" width="16.66%"><a href="https://github.com/spliakos"><img src="https://avatars.githubusercontent.com/u/15560159?v=4?s=100" width="100px;" alt="Stefanos Pliakos"/><br /><sub><b>Stefanos Pliakos</b></sub></a><br /><a href="#ideas-spliakos" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/SpecialThing44"><img src="https://avatars.githubusercontent.com/u/95900100?v=4?s=100" width="100px;" alt="Spencer Perkins"/><br /><sub><b>Spencer Perkins</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=SpecialThing44" title="Documentation">📖</a></td>
     </tr>
     <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/spliakos"><img src="https://avatars.githubusercontent.com/u/15560159?v=4?s=100" width="100px;" alt="Stefanos Pliakos"/><br /><sub><b>Stefanos Pliakos</b></sub></a><br /><a href="#ideas-spliakos" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.exoego.net/"><img src="https://avatars.githubusercontent.com/u/127635?v=4?s=100" width="100px;" alt="TATSUNO Yasuhiro"/><br /><sub><b>TATSUNO Yasuhiro</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=exoego" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://www.nomadblacky.dev/"><img src="https://avatars.githubusercontent.com/u/3215961?v=4?s=100" width="100px;" alt="Takumi Kadowaki"/><br /><sub><b>Takumi Kadowaki</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=NomadBlacky" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="http://victor.sollerhed.se/"><img src="https://avatars.githubusercontent.com/u/62675?v=4?s=100" width="100px;" alt="Victor Sollerhed"/><br /><sub><b>Victor Sollerhed</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=MPV" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/ybasket"><img src="https://avatars.githubusercontent.com/u/2632023?v=4?s=100" width="100px;" alt="Yannick Heiber"/><br /><sub><b>Yannick Heiber</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ybasket" title="Code">💻</a> <a href="https://github.com/scala-steward-org/scala-steward-action/issues?q=author%3Aybasket" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://twitter.com/xuwei_k"><img src="https://avatars.githubusercontent.com/u/389787?v=4?s=100" width="100px;" alt="kenji yoshida"/><br /><sub><b>kenji yoshida</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=xuwei-k" title="Code">💻</a> <a href="#question-xuwei-k" title="Answering Questions">💬</a></td>
-      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt="ryota0624"/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
     </tr>
     <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/ryota0624"><img src="https://avatars.githubusercontent.com/u/11390724?v=4?s=100" width="100px;" alt="ryota0624"/><br /><sub><b>ryota0624</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=ryota0624" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://qiita.com/yokra9"><img src="https://avatars.githubusercontent.com/u/53964890?v=4?s=100" width="100px;" alt="yokra"/><br /><sub><b>yokra</b></sub></a><br /><a href="https://github.com/scala-steward-org/scala-steward-action/commits?author=yokra9" title="Documentation">📖</a></td>
     </tr>
   </tbody>
