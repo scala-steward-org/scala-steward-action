@@ -58,7 +58,7 @@
     "sinon": "^18.0.0",
     "ts-node": "^10.9.2",
     "ts-pattern": "^5.2.0",
-    "typescript": "^5.5.2",
+    "typescript": "^5.5.4",
     "xo": "^0.58.0"
   },
   "xo": {
