@@ -6,7 +6,7 @@ import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
 export type GitHubAppInfo = {
   authOnly: boolean;
   id: NonEmptyString;
-  installation: NonEmptyString | undefined;
+  installation: number | undefined;
   key: NonEmptyString;
 }
 
@@ -172,7 +172,7 @@ export class Input {
   githubAppInfo(): GitHubAppInfo | undefined {
     const authOnly = this.inputs.getBooleanInput('github-app-auth-only')
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
-    const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
+    const installation = Number.parseInt(this.inputs.getInput('github-app-installation-id'), 10)
     const key = nonEmpty(this.inputs.getInput('github-app-key')?.replace(/\\n/g, '\n'))
 
     if (!id && !key) {

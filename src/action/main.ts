@@ -3,7 +3,7 @@ import os from 'os'
 import process from 'process'
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
-import {getOctokit} from '@actions/github'
+import {App} from 'octokit'
 import * as io from '@actions/io'
 import {createAppAuth} from '@octokit/auth-app'
 import {request} from '@octokit/request'
@@ -27,18 +27,27 @@ async function run(): Promise<void> {
     const logger: Logger = core
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
-    const gitHubApiUrl = inputs.github.apiUrl.value
-    const gitHubToken = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation') ?? inputs.github.token.value
-    const octokit = getOctokit(gitHubToken, {baseUrl: gitHubApiUrl})
-    const github = GitHub.from(logger, octokit)
+    const installationOctokit = await getInstallationOctokit(inputs.github.app)
+    if (!installationOctokit) {
+      throw new Error('Failed to get installation Octokit instance')
+    }
+
+    const response = await installationOctokit.rest.apps.getAuthenticated()
+    if (!response.data?.pem) {
+      throw new Error('Failed to get GitHub App PEM')
+    }
+
+    const github = GitHub.from(logger, installationOctokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
-    const user = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'app')
-      .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
-      .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
-      .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
+    const user = await (installationOctokit
+      ? installationOctokit.rest.apps.getAuthenticated().then(
+        async response => response ? github.getAppUser(response?.data?.slug) : github.getAuthUser(),
+      )
+      : github.getAuthUser()
+    )
 
-    await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
+    await workspace.prepare(inputs.steward.repos, response.data.pem, inputs.github.app)
     await workspace.restoreWorkspaceCache()
 
     if (process.env.RUNNER_DEBUG) {
@@ -97,7 +106,7 @@ async function run(): Promise<void> {
  * @param type The type of token to retrieve, either `app` or `installation`.
  * @returns the GitHub App Token for the provided installation.
  */
-async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: string, type: 'app' | 'installation') {
+async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: string) {
   if (!app) {
     return undefined
   }
@@ -110,11 +119,25 @@ async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: stri
     }),
   })
 
-  const response = type === 'app'
-    ? await auth({type: 'app'})
-    : (app.installation ? await auth({type: 'installation', installationId: app.installation.value}) : undefined)
+  const response = app.installation ? await auth({type: 'installation', installationId: app.installation}) : undefined
 
   return response?.token
+}
+
+/**
+ * Retrieves an authenticated Octokit instance for a given GitHub App installation.
+ *
+ * @param appInfo The GitHub App information.
+ * @returns an Authenticated Octokit instance for the provided installation
+ */
+async function getInstallationOctokit(appInfo: GitHubAppInfo | undefined) {
+  if (!appInfo?.installation) {
+    return undefined
+  }
+
+  const app = new App({appId: appInfo.id.value, privateKey: appInfo.key.value})
+
+  return app.getInstallationOctokit(appInfo.installation)
 }
 
 /**

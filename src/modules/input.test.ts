@@ -104,7 +104,7 @@ test('`Input.githubAppInfo()` → returns GitHub App info', t => {
   const file = input.githubAppInfo()
 
   t.deepEqual(file, {
-    authOnly: true, id: nonEmpty('123'), key: nonEmpty('42'), installation: nonEmpty('456'),
+    authOnly: true, id: nonEmpty('123'), key: nonEmpty('42'), installation: 456,
   })
 })
 

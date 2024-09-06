@@ -76,7 +76,7 @@ test('`Workspace.prepare()` → prepares the workspace when using a GitHub App',
   const gitHubAppInfo = {
     authOnly: false,
     id: mandatory('this-is-the-id'),
-    installation: mandatory('this-is-the-installation-id'),
+    installation: 123,
     key: mandatory('this-is-the-key'),
   }
 
@@ -99,7 +99,7 @@ test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth on
   const gitHubAppInfo = {
     authOnly: true,
     id: mandatory('this-is-the-id'),
-    installation: mandatory('this-is-the-installation-id'),
+    installation: 123,
     key: mandatory('this-is-the-key'),
   }
 
@@ -189,4 +189,3 @@ test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
 
   t.deepEqual(calls, expected)
 })
-
