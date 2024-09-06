@@ -111,7 +111,7 @@ export class Workspace {
    * @param token The GitHub Token used to authenticate into GitHub.
    * @param gitHubAppInfo The GitHub App information as provided by the user.
    */
-  async prepare(reposList: string, token: string, gitHubAppInfo: GitHubAppInfo | undefined): Promise<void> {
+  async prepare(reposList: string, token: () => Promise<string>, gitHubAppInfo: GitHubAppInfo | undefined): Promise<void> {
     try {
       await this.files.mkdirP(this.directory)
 
@@ -122,7 +122,12 @@ export class Workspace {
         this.files.writeFileSync(this.repos_md.value, reposList)
       }
 
-      this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token}'`)
+      await this.writeAskPass(token)
+      setInterval(async () => {
+        await this.writeAskPass(token)
+        this.logger.info('✓ GitHub Token refreshed')
+      }, 1000 * 60 * 50)
+
       this.files.chmodSync(this.askpass_sh.value, 0o755)
 
       this.logger.info('✓ Scala Steward workspace created')
@@ -137,6 +142,16 @@ export class Workspace {
    */
   async remove(): Promise<void> {
     await this.files.rmRF(this.directory)
+  }
+
+  /**
+   * Writes a GitHub Token to the git-ask-pass file
+   *
+   * @param fetchToken - A function that returns a Promise resolving to a new token string.
+   */
+  async writeAskPass(fetchToken: () => Promise<string>): Promise<void> {
+    const token = await fetchToken()
+    this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token}'`)
   }
 
   /**

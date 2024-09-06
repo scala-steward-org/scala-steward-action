@@ -58,7 +58,7 @@ test.after(() => {
 test('`Workspace.prepare()` → prepares the workspace', async t => {
   const {workspace, calls} = fixture()
 
-  await workspace.prepare('- owner/repo1\n- owner/repo2', '123', undefined)
+  await workspace.prepare('- owner/repo1\n- owner/repo2', async () => '123', undefined)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
@@ -80,7 +80,7 @@ test('`Workspace.prepare()` → prepares the workspace when using a GitHub App',
     key: mandatory('this-is-the-key'),
   }
 
-  await workspace.prepare('this will not be used', '123', gitHubAppInfo)
+  await workspace.prepare('this will not be used', async () => '123', gitHubAppInfo)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
@@ -103,13 +103,25 @@ test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth on
     key: mandatory('this-is-the-key'),
   }
 
-  await workspace.prepare('- owner/repo', '123', gitHubAppInfo)
+  await workspace.prepare('- owner/repo', async () => '123', gitHubAppInfo)
 
   const expected: string[] = [
     'mkdirP("/home/scala-steward")',
     'writeFileSync("/home/scala-steward/repos.md", "- owner/repo")',
     'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
     'chmodSync("/home/scala-steward/askpass.sh", 493)',
+  ]
+
+  t.deepEqual(calls, expected)
+})
+
+test('`Workspace.writeAskPass()` → writes a token to the askpass.sh', async t => {
+  const {workspace, calls} = fixture()
+
+  await workspace.writeAskPass(async () => '123')
+
+  const expected: string[] = [
+    'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
   ]
 
   t.deepEqual(calls, expected)
@@ -189,4 +201,3 @@ test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
 
   t.deepEqual(calls, expected)
 })
-
