@@ -51,30 +51,34 @@ async function run(): Promise<void> {
       ? `org.scala-steward:scala-steward-core_2.13:${inputs.steward.version.value}`
       : 'scala-steward'
 
-    await coursier.launch(app, [
-      argument('--workspace', workspace.workspace),
-      argument('--repos-file', workspace.repos_md),
-      argument('--git-ask-pass', workspace.askpass_sh),
-      argument('--git-author-email', inputs.commits.author.email ?? user.email()),
-      argument('--git-author-name', inputs.commits.author.name ?? user.name()),
-      argument('--forge-login', user.login()),
-      argument('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
-      argument('--process-timeout', inputs.steward.timeout),
-      argument('--forge-api-host', inputs.github.apiUrl),
-      argument('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
-      argument('--sign-commits', inputs.commits.sign.enabled),
-      argument('--git-author-signing-key', inputs.commits.sign.key),
-      argument('--cache-ttl', inputs.steward.cacheTtl),
-      argument('--max-buffer-size', inputs.steward.maxBufferSize),
-      argument('--scalafix-migrations', inputs.migrations.scalafix),
-      argument('--artifact-migrations', inputs.migrations.artifacts),
-      argument('--repo-config', inputs.steward.defaultConfiguration),
-      argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
-      argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
-      '--do-not-fork',
-      '--disable-sandbox',
-      inputs.steward.extraArgs?.value.split(' ') ?? [],
-    ], inputs.steward.extraJars)
+    try {
+      await coursier.launch(app, [
+        argument('--workspace', workspace.workspace),
+        argument('--repos-file', workspace.repos_md),
+        argument('--git-ask-pass', workspace.askpass_sh),
+        argument('--git-author-email', inputs.commits.author.email ?? user.email()),
+        argument('--git-author-name', inputs.commits.author.name ?? user.name()),
+        argument('--forge-login', user.login()),
+        argument('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
+        argument('--process-timeout', inputs.steward.timeout),
+        argument('--forge-api-host', inputs.github.apiUrl),
+        argument('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
+        argument('--sign-commits', inputs.commits.sign.enabled),
+        argument('--git-author-signing-key', inputs.commits.sign.key),
+        argument('--cache-ttl', inputs.steward.cacheTtl),
+        argument('--max-buffer-size', inputs.steward.maxBufferSize),
+        argument('--scalafix-migrations', inputs.migrations.scalafix),
+        argument('--artifact-migrations', inputs.migrations.artifacts),
+        argument('--repo-config', inputs.steward.defaultConfiguration),
+        argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
+        argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
+        '--do-not-fork',
+        '--disable-sandbox',
+        inputs.steward.extraArgs?.value.split(' ') ?? [],
+      ], inputs.steward.extraJars)
+    } finally {
+      await workspace.saveWorkspaceCache()
+    }
 
     if (files.existsSync(workspace.runSummary_md)) {
       logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
@@ -82,8 +86,6 @@ async function run(): Promise<void> {
       const summaryMarkdown = files.readFileSync(workspace.runSummary_md, 'utf8')
       await core.summary.addRaw(summaryMarkdown).write()
     }
-
-    await workspace.saveWorkspaceCache()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }
