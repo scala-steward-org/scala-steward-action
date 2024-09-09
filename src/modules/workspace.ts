@@ -24,6 +24,8 @@ export class Workspace {
   readonly askpass_sh: NonEmptyString
   readonly runSummary_md: string
 
+  private intervalId: NodeJS.Timeout | undefined
+
   constructor(
     private readonly logger: Logger,
     private readonly files: Files,
@@ -123,7 +125,7 @@ export class Workspace {
       }
 
       await this.writeAskPass(token)
-      setInterval(async () => {
+      this.intervalId = setInterval(async () => {
         await this.writeAskPass(token)
         this.logger.info('✓ GitHub Token refreshed')
       }, 1000 * 60 * 50)
@@ -152,6 +154,15 @@ export class Workspace {
   async writeAskPass(fetchToken: () => Promise<string>): Promise<void> {
     const token = await fetchToken()
     this.files.writeFileSync(this.askpass_sh.value, `#!/bin/sh\n\necho '${token}'`)
+  }
+
+  /**
+   * Cancels the token refresh if it is currently scheduled.
+   */
+  async cancelTokenRefresh(): Promise<void> {
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
+    }
   }
 
   /**
