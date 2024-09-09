@@ -28,8 +28,8 @@ async function run(): Promise<void> {
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
     const gitHubApiUrl = inputs.github.apiUrl.value
-    const gitHubToken = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation') ?? inputs.github.token.value
-    const octokit = getOctokit(gitHubToken, {baseUrl: gitHubApiUrl})
+    const gitHubToken = async () => await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation') ?? inputs.github.token.value
+    const octokit = getOctokit(await gitHubToken(), {baseUrl: gitHubApiUrl})
     const github = GitHub.from(logger, octokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
@@ -114,7 +114,7 @@ async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: stri
 
   const response = type === 'app'
     ? await auth({type: 'app'})
-    : (app.installation ? await auth({type: 'installation', installationId: app.installation.value}) : undefined)
+    : (app.installation ? await auth({type: 'installation', installationId: app.installation.value, refresh: true}) : undefined)
 
   return response?.token
 }
