@@ -78,6 +78,7 @@ async function run(): Promise<void> {
       ], inputs.steward.extraJars)
     } finally {
       await workspace.saveWorkspaceCache()
+      await workspace.cancelTokenRefresh()
     }
 
     if (files.existsSync(workspace.runSummary_md)) {
