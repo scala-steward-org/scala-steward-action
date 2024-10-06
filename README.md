@@ -34,9 +34,11 @@ permissions:
 
 jobs:
   scala-steward:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Scala Steward
     steps:
+      - name: Install sbt
+        uses: sbt/setup-sbt@v1
       - name: Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
 ```
@@ -129,9 +131,11 @@ name: Launch Scala Steward
 
 jobs:
   scala-steward:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Launch Scala Steward
     steps:
+      - name: Install sbt
+        uses: sbt/setup-sbt@v1
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:
@@ -329,6 +333,8 @@ You can manually trigger workflow runs using the [workflow_dispatch](https://doc
      runs-on: ubuntu-latest
      name: Launch Scala Steward
      steps:
+       - name: Install sbt
+         uses: sbt/setup-sbt@v1
        - name: Launch Scala Steward
          uses: scala-steward-org/scala-steward-action@v2
          with:
@@ -386,6 +392,8 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
      runs-on: ubuntu-latest
      name: Launch Scala Steward
      steps:
+       - name: Install sbt
+         uses: sbt/setup-sbt@v1
        - name: Launch Scala Steward
          uses: scala-steward-org/scala-steward-action@v2
          with:
