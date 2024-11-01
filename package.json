@@ -57,7 +57,7 @@
     "markdown-toc-gen": "^1.0.1",
     "sinon": "^19.0.2",
     "ts-node": "^10.9.2",
-    "ts-pattern": "^5.4.0",
+    "ts-pattern": "^5.5.0",
     "typescript": "^5.6.2",
     "xo": "^0.59.3"
   },
