@@ -76,16 +76,16 @@ async function run(): Promise<void> {
         '--disable-sandbox',
         inputs.steward.extraArgs?.value.split(' ') ?? [],
       ], inputs.steward.extraJars)
+
+      if (files.existsSync(workspace.runSummary_md)) {
+        logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
+
+        const summaryMarkdown = files.readFileSync(workspace.runSummary_md, 'utf8')
+        await core.summary.addRaw(summaryMarkdown).write()
+      }
     } finally {
-      await workspace.saveWorkspaceCache()
+      await workspace.purgeTempFilesAndSaveCache()
       await workspace.cancelTokenRefresh()
-    }
-
-    if (files.existsSync(workspace.runSummary_md)) {
-      logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
-
-      const summaryMarkdown = files.readFileSync(workspace.runSummary_md, 'utf8')
-      await core.summary.addRaw(summaryMarkdown).write()
     }
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)

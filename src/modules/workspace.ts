@@ -74,7 +74,7 @@ export class Workspace {
    *
    * @param {string} workspace - the Scala Steward workspace directory
    */
-  async saveWorkspaceCache(): Promise<void> {
+  async purgeTempFilesAndSaveCache(): Promise<void> {
     try {
       this.logger.startGroup('Saving workspace to cache...')
 
