@@ -48,7 +48,7 @@
     "@ava/typescript": "^5.0.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.8.6",
     "@vercel/ncc": "^0.38.2",
     "all-contributors-cli": "^6.26.1",
     "ava": "^6.2.0",
@@ -57,8 +57,8 @@
     "markdown-toc-gen": "^1.0.1",
     "sinon": "^19.0.2",
     "ts-node": "^10.9.2",
-    "ts-pattern": "^5.4.0",
-    "typescript": "^5.6.2",
+    "ts-pattern": "^5.5.0",
+    "typescript": "^5.6.3",
     "xo": "^0.59.3"
   },
   "xo": {
