@@ -187,7 +187,7 @@ test('`Workspace.restoreWorkspaceCache()` → generates different hash for diffe
 test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
   const {workspace, calls} = fixture('- owner/repo')
 
-  await workspace.saveWorkspaceCache()
+  await workspace.purgeTempFilesAndSaveCache()
 
   const now = Date.now()
 
