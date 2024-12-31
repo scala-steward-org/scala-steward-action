@@ -7,7 +7,7 @@ export class NonEmptyString {
 }
 
 /**
- * Creates a `NonEmptyString` from a `string`. Returns `undefined` if the string is emtpy.
+ * Creates a `NonEmptyString` from a `string`. Returns `undefined` if the string is empty.
  */
 export function nonEmpty(string: string): NonEmptyString | undefined {
   return NonEmptyString.from(string)
