@@ -724,5 +724,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-[github-app-personal]: https://github.com/settings/apps/new?name=scala-steward&description=Github%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
-[github-app-organization]: https://github.com/organizations/my_org/settings/apps/new?name=scala-steward&description=Github%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
+[github-app-personal]: https://github.com/settings/apps/new?name=scala-steward&description=GitHub%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
+[github-app-organization]: https://github.com/organizations/my_org/settings/apps/new?name=scala-steward&description=GitHub%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
