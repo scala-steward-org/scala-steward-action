@@ -454,7 +454,7 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
 
 <details><summary><b>Update one or more specific branches</b></summary><br/>
 
-> **Important!** This input is only used when using the `github-repository` input (see the "Updating a specific repository" guide). For cases where the `repos-file` input is used (see the "Update specific repositories (listed on a file)" guide), you should follow the instructions [here](https://github.com/scala-steward-org/scala-steward/blob/main/docs/faq.md#can-scala-steward-update-multiple-branches-in-a-repository).
+> **Important!** This input is only used when using the `github-repository` input (see the "Updating a specific repository" guide). For cases where the `repos-file` input is used (see the "Update specific repositories (listed on a file)" guide), you should follow the [instructions to update multiple branches in a repository](https://github.com/scala-steward-org/scala-steward/blob/main/docs/faq.md#can-scala-steward-update-multiple-branches-in-a-repository).
 
 > **This input won't have any effect when using a GitHub App for listing the repositories to update.**
 
