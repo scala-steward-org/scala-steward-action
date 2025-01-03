@@ -5,7 +5,7 @@ import {HealthCheck} from '../modules/healthcheck'
 import * as mill from '../modules/mill'
 
 /**
- * Runs the action pre-requisites code. In order it will do the following:
+ * Runs the action prerequisites code. In order it will do the following:
  *
  * - Check connection with Maven Central
  * - Install Coursier

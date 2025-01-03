@@ -454,7 +454,7 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
 
 <details><summary><b>Update one or more specific branches</b></summary><br/>
 
-> **Important!** This input is only used when using the `github-repository` input (see the "Updating a specific repository" guide). For cases where the `repos-file` input is used (see the "Update specific repositories (listed on a file)" guide), you should follow the instructions [here](https://github.com/scala-steward-org/scala-steward/blob/main/docs/faq.md#can-scala-steward-update-multiple-branches-in-a-repository).
+> **Important!** This input is only used when using the `github-repository` input (see the "Updating a specific repository" guide). For cases where the `repos-file` input is used (see the "Update specific repositories (listed on a file)" guide), you should follow the [instructions to update multiple branches in a repository](https://github.com/scala-steward-org/scala-steward/blob/main/docs/faq.md#can-scala-steward-update-multiple-branches-in-a-repository).
 
 > **This input won't have any effect when using a GitHub App for listing the repositories to update.**
 
@@ -724,5 +724,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-[github-app-personal]: https://github.com/settings/apps/new?name=scala-steward&description=Github%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
-[github-app-organization]: https://github.com/organizations/my_org/settings/apps/new?name=scala-steward&description=Github%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
+[github-app-personal]: https://github.com/settings/apps/new?name=scala-steward&description=GitHub%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
+[github-app-organization]: https://github.com/organizations/my_org/settings/apps/new?name=scala-steward&description=GitHub%20App%20to%20facilitate%20running%20Scala%20Steward%20against%20my%20repositories&url=https://github.com/scala-steward-org/scala-steward&public=false&webhook_active=false&pull_requests=write&contents=write
