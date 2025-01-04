@@ -10,7 +10,7 @@ import {type NonEmptyString} from '../core/types'
  * Installs `coursier` and add its executable to the `PATH`.
  *
  * Once coursier is installed, installs `scalafmt`
- * `scalafix` and `scala-cli` tools.
+ * `scalafix`, `sbt` and `scala-cli` tools.
  *
  * Throws error if the installation fails.
  */
@@ -32,7 +32,7 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scalafix', 'scala-cli', '--install-dir', binary],
+      ['install', 'scalafmt', 'scalafix', 'scala-cli', 'sbt', '--install-dir', binary],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -50,6 +50,8 @@ export async function install(): Promise<void> {
     const scalafixVersion = await execute('cs', 'launch', 'scalafix', '--', '--version')
 
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
+
+    core.info('✓ SBT installed')
 
     core.info('✓ scala-cli installed')
   } catch (error: unknown) {
