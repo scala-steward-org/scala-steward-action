@@ -48,7 +48,7 @@
     "@ava/typescript": "^5.0.0",
     "@tsconfig/node20": "^20.1.5",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.15.29",
     "@vercel/ncc": "^0.38.3",
     "all-contributors-cli": "^6.26.1",
     "ava": "^6.2.0",
