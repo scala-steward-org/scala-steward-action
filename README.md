@@ -347,7 +347,7 @@ If you would like to specify a specific Java version (e.g Java 11) please add th
 
 ```yaml
 - name: Set up JDK 11
-  uses: actions/setup-java@v3
+  uses: actions/setup-java@v5
   with:
     java-version: 11
     distribution: temurin
@@ -425,7 +425,7 @@ When using the `github-app-*` inputs, Scala Steward will always retrieve the lis
 3. Provide it to the action using `repos-file`:
 ```yaml
 - name: Checkout repository so `repos.md` is available
-  uses: actions/checkout@v2
+  uses: actions/checkout@v5
 
 - name: Launch Scala Steward
   uses: scala-steward-org/scala-steward-action@v2
