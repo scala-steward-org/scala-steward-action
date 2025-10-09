@@ -19,7 +19,6 @@ export async function install(): Promise<void> {
     if (cachedPath) {
       core.addPath(cachedPath)
     } else {
-      // DOWNLOAD_URL="https://repo1.maven.org/maven2/com/lihaoyi/mill-dist${ARTIFACT_SUFFIX}/${MILL_VERSION}/mill-dist${ARTIFACT_SUFFIX}-${MILL_VERSION}.${DOWNLOAD_EXT}"
       const artifactSuffix = getArtifactSuffix()
       const downloadExtension = 'exe'
       const millUrl = `https://repo1.maven.org/maven2/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
