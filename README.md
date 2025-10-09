@@ -187,7 +187,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     cache-ttl: ''
 
     # Size of the buffer for the output of an external process
-    # in lines. The default is 16384.
+    # in lines.
     #
     # Default: 16384
     max-buffer-size: ''
@@ -197,14 +197,10 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     coursier-cli-url: ''
 
-    # Extra JARs to be added to the classpath of the
-    # launched application. Directories accepted too.
-    extra-jars: ''
-
     # The URL of the GitHub API, only use this input if
     # you are using GitHub Enterprise.
     #
-    # Default: ${{ github.api_url }}
+    # Default: https://api.github.com
     github-api-url: ''
 
     # If set to `true` the GitHub App information will
@@ -269,9 +265,8 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # 
     # If you specify a file and it does not exist in the 
     # selected branch then this action will fail when it runs.
-    # 
-    # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/repo-specific-configuration.md
     #
+    # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/repo-specific-configuration.md
     # Default: .github/.scala-steward.conf
     repo-config: ''
 
