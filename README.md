@@ -257,7 +257,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Steward will still respect the version specified in
     # your repository while updating it.
     #
-    # Default: 0.12.5
+    # Default: 0.12.16
     mill-version: ''
 
     # Other Scala Steward arguments not yet supported by
