@@ -116,7 +116,7 @@ inputs:
       just affect the global `mill` executable. Scala 
       Steward will still respect the version specified in
       your repository while updating it.
-    default: "0.12.5"
+    default: "1.0.6"
     required: false
   other-args:
     description: |
