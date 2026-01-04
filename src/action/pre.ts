@@ -2,7 +2,6 @@ import * as core from '@actions/core'
 import fetch from 'node-fetch'
 import * as coursier from '../modules/coursier'
 import {HealthCheck} from '../modules/healthcheck'
-import * as mill from '../modules/mill'
 
 /**
  * Runs the action prerequisites code. In order it will do the following:
@@ -19,7 +18,6 @@ async function run(): Promise<void> {
     await healthCheck.mavenCentral()
 
     await coursier.install()
-    await mill.install()
   } catch (error: unknown) {
     core.setFailed(` ✕ ${(error as Error).message}`)
   }

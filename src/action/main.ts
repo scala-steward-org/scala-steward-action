@@ -14,6 +14,7 @@ import * as coursier from '../modules/coursier'
 import {GitHub} from '../modules/github'
 import {Input, type GitHubAppInfo} from '../modules/input'
 import {Workspace} from '../modules/workspace'
+import * as mill from '../modules/mill'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -40,6 +41,8 @@ async function run(): Promise<void> {
 
     await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
+
+    await mill.install()
 
     if (process.env.RUNNER_DEBUG) {
       core.debug('🐛 Debug mode activated for Scala Steward')
