@@ -1,5 +1,7 @@
 import * as os from 'os'
 import * as path from 'path'
+import * as fs from 'fs'
+import * as process from 'process'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
@@ -12,7 +14,11 @@ import * as exec from '@actions/exec'
  */
 export async function install(): Promise<void> {
   try {
-    const millVersion = core.getInput('mill-version')
+    const millVersion = detectMillVersion()
+
+    if (!millVersion) {
+      return
+    }
 
     const cachedPath = tc.find('mill', millVersion)
 
@@ -37,6 +43,82 @@ export async function install(): Promise<void> {
   } catch (error: unknown) {
     core.error((error as Error).message)
     throw new Error('Unable to install Mill')
+  }
+}
+
+/**
+ * Detects Mill version from repository configuration files.
+ */
+export function detectMillVersion(): string | undefined {
+  const repoRoot = process.cwd()
+
+  // Check .mill-version
+  if (fileExists(path.join(repoRoot, '.mill-version'))) {
+    return readFirstLine(path.join(repoRoot, '.mill-version'))
+  }
+
+  // Check .config/mill-version
+  if (fileExists(path.join(repoRoot, '.config/mill-version'))) {
+    return readFirstLine(path.join(repoRoot, '.config/mill-version'))
+  }
+
+  // Check build.mill.yaml
+  if (fileExists(path.join(repoRoot, 'build.mill.yaml'))) {
+    const version = extractFromYaml(path.join(repoRoot, 'build.mill.yaml'), 'mill-version')
+    if (version) {
+      return version
+    }
+  }
+
+  // Check build scripts
+  for (const script of ['build.mill', 'build.mill.scala', 'build.sc']) {
+    const scriptPath = path.join(repoRoot, script)
+    if (fileExists(scriptPath)) {
+      const version = extractFromScript(scriptPath, 'mill-version')
+      if (version) {
+        return version
+      }
+    }
+  }
+
+  core.debug('No Mill version detected, is this a Mill project?')
+  return undefined
+}
+
+export function extractFromYaml(filePath: string, key: string): string | undefined {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    const match = /mill-version:\s*([^\n#]+)/.exec(content)
+    return match?.[1]?.trim()
+  } catch {
+    return undefined
+  }
+}
+
+export function extractFromScript(filePath: string, key: string): string | undefined {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    const match = /\/\/\s*\|.*mill-version\s*=\s*([^\n#]+)/.exec(content)
+    return match?.[1]?.trim().replaceAll(/['"]|,$/g, '')
+  } catch {
+    return undefined
+  }
+}
+
+export function fileExists(filePath: string): boolean {
+  try {
+    return fs.existsSync(filePath)
+  } catch {
+    return false
+  }
+}
+
+export function readFirstLine(filePath: string): string | undefined {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    return content.split('\n')[0].trim()
+  } catch {
+    return undefined
   }
 }
 
@@ -103,7 +185,7 @@ function getDownloadUrl(millVersion: string): string {
     millUrl = `https://repo1.maven.org/maven2/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
   } else {
     const millVersionTag = millVersion.replace(/([^-]+)(-M\d+)?(-.*)?/, '$1$2')
-    millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
+    millUrl = `https://github.com/com-lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
   }
 
   return millUrl
