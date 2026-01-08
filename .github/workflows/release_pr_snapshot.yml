@@ -12,7 +12,7 @@ jobs:
     if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download PR_NUMBER
-        uses: dawidd6/action-download-artifact@ac66b43f0e6a346234dd65d4d0c8fbb31cb316e5 # v11
+        uses: dawidd6/action-download-artifact@0bd50d53a6d7fb5cb921e607957e9cc12b4ce392 # v12
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: PR_NUMBER
@@ -33,7 +33,7 @@ jobs:
         run: gh pr checkout ${{ steps.extract-pr-number.outputs.PR_NUMBER }}
 
       - name: Download dist folder
-        uses: dawidd6/action-download-artifact@ac66b43f0e6a346234dd65d4d0c8fbb31cb316e5 # v11
+        uses: dawidd6/action-download-artifact@0bd50d53a6d7fb5cb921e607957e9cc12b4ce392 # v12
         with:
           run_id: ${{github.event.workflow_run.id }}
           name: dist
