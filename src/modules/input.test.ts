@@ -29,6 +29,7 @@ test('`Input.all` → returns all inputs', t => {
   const booleanInputs = (name: string) => match(name)
     .with('ignore-opts-files', () => true)
     .with('sign-commits', () => true)
+    .with('do-not-fork', () => true)
     .otherwise(() => false)
 
   const files: Files = {
@@ -58,6 +59,7 @@ test('`Input.all` → returns all inputs', t => {
       ignoreOptsFiles: true,
       extraArgs: nonEmpty('--help'),
       extraJars: nonEmpty('path/to/my/jars'),
+      doNotFork: true,
     },
     migrations: {
       scalafix: nonEmpty('.github/scalafix-migrations.conf'),
