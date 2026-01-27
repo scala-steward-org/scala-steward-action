@@ -16,7 +16,7 @@
     "all": "npm run build && npm test && npm run report"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "repository": {
     "type": "git",
