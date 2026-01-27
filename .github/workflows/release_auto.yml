@@ -49,6 +49,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: master
+          ssh-key: ${{ secrets.GIT_DEPLOY_KEY }}
 
       - name: Run `npm install`
         run: npm install
