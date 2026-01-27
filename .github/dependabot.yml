@@ -4,7 +4,21 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-  - package-ecosystem: npm
+    allow:
+      - dependency-type: "all"
+    groups:
+      actions:
+        patterns:
+          - "*"
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: monthly
+      interval: "monthly"
+    allow:
+      - dependency-type: "all"
+    ignore:
+      - dependency-name: "xo"
+    groups:
+      deps:
+        patterns:
+          - "*"

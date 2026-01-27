@@ -16,7 +16,7 @@
     "all": "npm run build && npm test && npm run report"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "repository": {
     "type": "git",
@@ -31,34 +31,34 @@
   "author": "alejandrohdezma",
   "license": "Apache-2.0",
   "dependencies": {
-    "@actions/cache": "^4.0.5",
-    "@actions/core": "^1.11.1",
-    "@actions/exec": "^1.1.1",
-    "@actions/github": "^6.0.0",
-    "@actions/io": "^1.1.3",
-    "@actions/tool-cache": "^2.0.2",
-    "@octokit/auth-app": "^7.1.4",
-    "@octokit/request": "^10.0.3",
-    "@types/node-fetch": "^2.6.11",
-    "@types/sinon": "^17.0.4",
+    "@actions/cache": "^5.0.3",
+    "@actions/core": "^2.0.2",
+    "@actions/exec": "^2.0.0",
+    "@actions/github": "^7.0.0",
+    "@actions/io": "^2.0.0",
+    "@actions/tool-cache": "^3.0.0",
+    "@octokit/auth-app": "^8.1.2",
+    "@octokit/request": "^10.0.7",
+    "@types/node-fetch": "^2.6.13",
+    "@types/sinon": "^21.0.0",
     "jssha": "^3.3.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@ava/typescript": "^5.0.0",
-    "@tsconfig/node20": "^20.1.5",
+    "@ava/typescript": "^6.0.0",
+    "@tsconfig/node20": "^20.1.8",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.14",
-    "@vercel/ncc": "^0.38.3",
+    "@types/node": "^25.0.10",
+    "@vercel/ncc": "^0.38.4",
     "all-contributors-cli": "^6.26.1",
-    "ava": "^6.2.0",
+    "ava": "^6.4.1",
     "c8": "^10.1.3",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "markdown-toc-gen": "^1.2.0",
-    "sinon": "^20.0.0",
+    "sinon": "^21.0.1",
     "ts-node": "^10.9.2",
-    "ts-pattern": "^5.7.0",
-    "typescript": "^5.9.2",
+    "ts-pattern": "^5.9.0",
+    "typescript": "^5.9.3",
     "xo": "^0.60.0"
   },
   "xo": {
