@@ -72,7 +72,7 @@ async function run(): Promise<void> {
         argument('--repo-config', inputs.steward.defaultConfiguration),
         argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
         argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
-        '--do-not-fork',
+        inputs.steward.doNotFork ? '--do-not-fork' : [],
         '--disable-sandbox',
         inputs.steward.extraArgs?.value.split(' ') ?? [],
       ], inputs.steward.extraJars)
