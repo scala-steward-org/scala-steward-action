@@ -13,6 +13,7 @@ import {nonEmpty, NonEmptyString} from '../core/types'
 import * as coursier from '../modules/coursier'
 import {GitHub} from '../modules/github'
 import {Input, type GitHubAppInfo} from '../modules/input'
+import {scalaVersion} from '../core/scala-steward'
 import {Workspace} from '../modules/workspace'
 
 /**
@@ -48,7 +49,7 @@ async function run(): Promise<void> {
     }
 
     const app = inputs.steward.version
-      ? `org.scala-steward:scala-steward-core_3:${inputs.steward.version.value}`
+      ? `org.scala-steward:scala-steward-core_${scalaVersion(inputs.steward.version.value)}:${inputs.steward.version.value}`
       : 'scala-steward'
 
     try {
