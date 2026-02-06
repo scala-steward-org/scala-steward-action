@@ -37,7 +37,7 @@ async function run(): Promise<void> {
     const user = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'app')
       .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
       .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
-      .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
+      .then(async response => response?.data?.slug ? github.getAppUser(response.data.slug) : github.getAuthUser())
 
     await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
