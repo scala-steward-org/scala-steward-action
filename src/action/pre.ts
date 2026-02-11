@@ -5,9 +5,7 @@ import * as coursier from '../modules/coursier'
 import * as mill from '../modules/mill'
 import {HealthCheck} from '../modules/healthcheck'
 
-if (!globalThis.ReadableStream) {
-  globalThis.ReadableStream = ReadableStream as any
-}
+globalThis.ReadableStream ??= ReadableStream
 
 /**
  * Runs the action prerequisites code. In order it will do the following:
