@@ -46,6 +46,10 @@ inputs:
       in lines. The default is 16384.
     default: "16384"
     required: false
+  mill-wrapper-url:
+    description: |
+      Url to download the mill wrapper script from.
+    required: false
   coursier-cli-url:
     description: |
       Url to download the coursier linux CLI from.
@@ -117,12 +121,10 @@ inputs:
     required: false
   mill-version:
     description: |
-      Mill version to install. Take into account this will
-      just affect the global `mill` executable. Scala 
-      Steward will still respect the version specified in
-      your repository while updating it.
-    default: "1.0.6"
+      Mill projects automatically detect the correct version
+    default: ""
     required: false
+    deprecationMessage: "This input is no longer used and will be removed in a future version."
   other-args:
     description: |
       Other Scala Steward arguments not yet supported by
@@ -184,7 +186,7 @@ inputs:
     required: false
 
 runs:
-  using: node24
+  using: node20
   pre: dist/pre.js
   main: dist/main.js
   post: dist/post.js
