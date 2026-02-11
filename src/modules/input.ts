@@ -48,6 +48,7 @@ export class Input {
         ignoreOptsFiles: this.inputs.getBooleanInput('ignore-opts-files'),
         extraArgs: nonEmpty(this.inputs.getInput('other-args')),
         extraJars: nonEmpty(this.inputs.getInput('extra-jars')),
+        doNotFork: this.inputs.getBooleanInput('do-not-fork'),
       },
       migrations: {
         scalafix: nonEmpty(this.inputs.getInput('scalafix-migrations')),

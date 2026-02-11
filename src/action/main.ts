@@ -13,6 +13,7 @@ import {nonEmpty, NonEmptyString} from '../core/types'
 import * as coursier from '../modules/coursier'
 import {GitHub} from '../modules/github'
 import {Input, type GitHubAppInfo} from '../modules/input'
+import {scalaVersion} from '../core/scala-steward'
 import {Workspace} from '../modules/workspace'
 
 /**
@@ -36,7 +37,7 @@ async function run(): Promise<void> {
     const user = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'app')
       .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
       .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
-      .then(async response => response ? github.getAppUser(response.data.slug) : github.getAuthUser())
+      .then(async response => response?.data?.slug ? github.getAppUser(response.data.slug) : github.getAuthUser())
 
     await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
@@ -48,7 +49,7 @@ async function run(): Promise<void> {
     }
 
     const app = inputs.steward.version
-      ? `org.scala-steward:scala-steward-core_2.13:${inputs.steward.version.value}`
+      ? `org.scala-steward:scala-steward-core_${scalaVersion(inputs.steward.version.value)}:${inputs.steward.version.value}`
       : 'scala-steward'
 
     try {
@@ -72,7 +73,7 @@ async function run(): Promise<void> {
         argument('--repo-config', inputs.steward.defaultConfiguration),
         argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
         argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
-        '--do-not-fork',
+        inputs.steward.doNotFork ? '--do-not-fork' : [],
         '--disable-sandbox',
         inputs.steward.extraArgs?.value.split(' ') ?? [],
       ], inputs.steward.extraJars)
