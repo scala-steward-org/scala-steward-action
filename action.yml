@@ -186,7 +186,7 @@ inputs:
     required: false
 
 runs:
-  using: node24
+  using: node20
   pre: dist/pre.js
   main: dist/main.js
   post: dist/post.js
