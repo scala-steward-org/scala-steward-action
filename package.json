@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "npm run build-pre && npm run build-main && npm run build-post",
-    "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js",
+    "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js && rm -f dist/mill",
     "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
-    "build-post": "ncc build --target es2022 src/action/post.ts && mv dist/index.js dist/post.js",
+    "build-post": "ncc build --target es2022 src/action/post.ts && mv dist/index.js dist/post.js && rm -f dist/mill",
     "docs": "node --loader ts-node/esm src/utils/docs.ts && markdown-toc-gen update README.md",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",

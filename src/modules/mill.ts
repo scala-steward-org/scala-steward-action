@@ -39,9 +39,11 @@ export async function install(wrapperUrl?: string): Promise<void> {
 
 /**
  * Gets the path to the embedded mill binary in the repository.
+ * Mill is at repo root; when bundled in dist/, use one level up.
  */
 export function getBundledMillPath(): string {
-  return path.resolve(__dirname, '..', '..', 'mill')
+  const relativePath = __dirname.endsWith('dist') ? ['..', 'mill'] : ['..', '..', 'mill']
+  return path.resolve(__dirname, ...relativePath)
 }
 
 /**

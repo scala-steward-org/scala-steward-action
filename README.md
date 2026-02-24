@@ -261,6 +261,12 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: true
     ignore-opts-files: ''
 
+    # Deprecated. This input is no longer used.
+    # Mill is installed from the embedded binary or mill-wrapper-url.
+    #
+    # Default: 1.0.6
+    mill-version: ''
+
     # Other Scala Steward arguments not yet supported by
     # this action as a separate argument.
     other-args: ''

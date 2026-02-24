@@ -120,6 +120,13 @@ inputs:
       or `.sbtopts`) when found on repositories or not.
     default: "true"
     required: false
+  mill-version:
+    description: |
+      Deprecated. This input is no longer used.
+      Mill is installed from the embedded binary or mill-wrapper-url.
+    default: "1.0.6"
+    required: false
+    deprecated: true
   other-args:
     description: |
       Other Scala Steward arguments not yet supported by
