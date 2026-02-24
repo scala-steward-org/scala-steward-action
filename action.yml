@@ -46,6 +46,11 @@ inputs:
       in lines. The default is 16384.
     default: "16384"
     required: false
+  mill-wrapper-url:
+    description: |
+      URL to download the mill wrapper script from.
+      If not provided, uses the embedded mill binary.
+    required: false
   coursier-cli-url:
     description: |
       Url to download the coursier linux CLI from.
@@ -114,14 +119,6 @@ inputs:
       Whether to ignore "opts" files (such as `.jvmopts`
       or `.sbtopts`) when found on repositories or not.
     default: "true"
-    required: false
-  mill-version:
-    description: |
-      Mill version to install. Take into account this will
-      just affect the global `mill` executable. Scala 
-      Steward will still respect the version specified in
-      your repository while updating it.
-    default: "1.0.6"
     required: false
   other-args:
     description: |

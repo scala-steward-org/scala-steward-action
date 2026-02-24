@@ -192,6 +192,10 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: 16384
     max-buffer-size: ''
 
+    # URL to download the mill wrapper script from.
+    # If not provided, uses the embedded mill binary.
+    mill-wrapper-url: ''
+
     # Url to download the coursier linux CLI from.
     #
     # Default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
@@ -256,14 +260,6 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     #
     # Default: true
     ignore-opts-files: ''
-
-    # Mill version to install. Take into account this will
-    # just affect the global `mill` executable. Scala 
-    # Steward will still respect the version specified in
-    # your repository while updating it.
-    #
-    # Default: 1.0.6
-    mill-version: ''
 
     # Other Scala Steward arguments not yet supported by
     # this action as a separate argument.
