@@ -7,17 +7,24 @@ import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
 import {createAppAuth} from '@octokit/auth-app'
 import {request} from '@octokit/request'
+import fetch from 'node-fetch'
 import {type Files} from '../core/files'
 import {type Logger} from '../core/logger'
 import {nonEmpty, NonEmptyString} from '../core/types'
 import * as coursier from '../modules/coursier'
 import {GitHub} from '../modules/github'
+import {HealthCheck} from '../modules/healthcheck'
 import {Input, type GitHubAppInfo} from '../modules/input'
+import * as mill from '../modules/mill'
 import {scalaVersion} from '../core/scala-steward'
 import {Workspace} from '../modules/workspace'
 
 /**
  * Runs the action main code. In order it will do the following:
+ * - Check connection with Maven Central
+ * - Install Coursier
+ * - Install Scalafmt, Scalafix, SBT and scala-cli
+ * - Install Mill
  * - Recover user inputs
  * - Get authenticated user data from provided GitHub Token
  * - Prepare Scala Steward's workspace
@@ -25,6 +32,12 @@ import {Workspace} from '../modules/workspace'
  */
 async function run(): Promise<void> {
   try {
+    const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
+    await healthCheck.mavenCentral()
+
+    await coursier.install()
+    await mill.install()
+
     const logger: Logger = core
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
