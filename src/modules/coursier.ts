@@ -80,7 +80,7 @@ export async function launch(
     'launch',
     '--contrib',
     '-r',
-    'sonatype:snapshots',
+    'central:maven-snapshots',
     app,
     ...(extraJars ? ['--extra-jars', extraJars.value] : []),
     '--',
