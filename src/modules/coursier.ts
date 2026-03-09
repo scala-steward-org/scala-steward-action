@@ -17,8 +17,10 @@ import {type NonEmptyString} from '../core/types'
 export async function install(): Promise<void> {
   try {
     const coursierUrl = core.getInput('coursier-cli-url')
+    const scalafixDependency = core.getInput('scalafix-dependency')
 
     core.debug(`Installing coursier from ${coursierUrl}`)
+    core.debug(`Installing scalafix ${scalafixDependency}`)
 
     const binary = path.join(os.homedir(), 'bin')
     await io.mkdirP(binary)
@@ -32,7 +34,18 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scalafix', 'scala-cli', 'sbt', '--install-dir', binary],
+      ['install', 'scalafmt', 'scala-cli', 'sbt', '--install-dir', binary],
+      {
+        silent: true,
+        listeners: {stdline: core.debug, errline: core.debug},
+      },
+    )
+
+    const scalafixBinaryPath = path.join(binary, 'scalafix')
+
+    await exec.exec(
+      'cs',
+      ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', scalafixBinaryPath],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -47,7 +60,7 @@ export async function install(): Promise<void> {
 
     core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
 
-    const scalafixVersion = await execute('cs', 'launch', 'scalafix', '--', '--version')
+    const scalafixVersion = await execute(scalafixBinaryPath, '--version')
 
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
 

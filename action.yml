@@ -165,6 +165,9 @@ inputs:
 
       See https://github.com/scala-steward-org/scala-steward/blob/main/docs/scalafix-migrations.md
     required: false
+  scalafix-dependency:
+    default: "ch.epfl.scala:scalafix-cli_2.13.18:0.14.6"
+    required: false
   sign-commits:
     description: |
       Whether to sign commits or not.
