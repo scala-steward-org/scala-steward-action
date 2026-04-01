@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
           ref: master
 
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: "24"
 
@@ -35,7 +35,7 @@ jobs:
         run: npm run build
 
       - name: Release new version
-        uses: int128/release-typescript-action@f1bc11909bceca31a58c9c9c4607ab1805c74312 # v1.51.0
+        uses: int128/release-typescript-action@b1e2398ac73057788cd789c84db4d62067323fb7 # v1.57.0
         with:
           major-version: 2
 
