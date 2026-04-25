@@ -11,13 +11,13 @@ function fixture(repos_md = '') {
   const calls: string[] = []
 
   const files: Files = {
-    async chmodSync(path, mode) {
+    chmodSync(path, mode) {
       calls.push(`chmodSync("${path}", ${mode})`)
     },
     async mkdirP(path) {
       calls.push(`mkdirP("${path}")`)
     },
-    async writeFileSync(path, content) {
+    writeFileSync(path, content) {
       calls.push(`writeFileSync("${path}", "${content}")`)
     },
     existsSync: path => fail(`existsSync(${path}) should not be called`),

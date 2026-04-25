@@ -125,9 +125,11 @@ export class Workspace {
       }
 
       await this.writeAskPass(token)
-      this.intervalId = setInterval(async () => {
-        await this.writeAskPass(token)
-        this.logger.info('✓ GitHub Token refreshed')
+      this.intervalId = setInterval(() => {
+        void (async () => {
+          await this.writeAskPass(token)
+          this.logger.info('✓ GitHub Token refreshed')
+        })()
       }, 1000 * 60 * 50)
 
       this.files.chmodSync(this.askpass_sh.value, 0o755)
