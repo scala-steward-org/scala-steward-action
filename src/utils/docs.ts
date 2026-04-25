@@ -16,8 +16,7 @@ const inputs = Object.entries(actionYaml.inputs).flatMap(input =>
     ...input[1].description.trimEnd().split('\n').map(line => `    # ${line}`),
     ...(input[1].default ? ['    #', `    # Default: ${input[1].default}`] : []),
     `    ${input[0]}: ''`,
-  ],
-)
+  ])
 
 /**
  * Update `README.md`

@@ -6,7 +6,8 @@ import {HealthCheck} from './healthcheck.js'
 test('`HealthCheck.mavenCentral()` → does not fail if connected to Maven Central', async t => {
   const client: HttpClient = {
     run: async (url: string) => url === 'https://repo1.maven.org/maven2/'
-      ? {ok: true, status: 200} : {ok: false, status: 404},
+      ? {ok: true, status: 200}
+      : {ok: false, status: 404},
   }
 
   const healthCheck = HealthCheck.from(Logger.noOp, client)

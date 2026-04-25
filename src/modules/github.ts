@@ -29,7 +29,8 @@ export class GitHub {
   constructor(
     private readonly logger: Logger,
     private readonly github: GitHubClient,
-  ) {}
+  ) {
+}
 
   /**
    * Returns the login, email and name of the authenticated user.
@@ -93,7 +94,7 @@ type AuthUser = {
 export type GitHubClient = {
   rest: {
     users: {
-      getAuthenticated: () => Promise<{data: {login: string; email: string | null; name: string | null}}>;
+      getAuthenticated: () => Promise<{data: {login: string; email: string | undefined; name: string | undefined}}>;
       getByUsername: (parameters?: {username: string}) => Promise<unknown>;
     };
   };

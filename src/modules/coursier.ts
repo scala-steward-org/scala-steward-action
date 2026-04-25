@@ -85,7 +85,7 @@ export async function install(): Promise<void> {
 export async function launch(
   app: string,
   arguments_: Array<string | string[]> = [],
-  extraJars: NonEmptyString | undefined = undefined,
+  extraJars?: NonEmptyString,
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 
