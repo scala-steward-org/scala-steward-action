@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import {type Logger} from '../core/logger.js'
 import {mandatory, type NonEmptyString} from '../core/types.js'
 
@@ -29,8 +28,7 @@ export class GitHub {
   constructor(
     private readonly logger: Logger,
     private readonly github: GitHubClient,
-  ) {
-}
+  ) {}
 
   /**
    * Returns the login, email and name of the authenticated user.
@@ -69,6 +67,7 @@ export class GitHub {
       const response = await this.github.rest.users.getByUsername({username: slug + '[bot]'})
 
       // Workaround until https://github.com/github/rest-api-description/issues/288 is fixed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       const {login, id} = (response as {data: {login: string; id: string}}).data
 
       this.logger.info('✓ GitHub App information retrieved from GitHub')
@@ -94,7 +93,8 @@ type AuthUser = {
 export type GitHubClient = {
   rest: {
     users: {
-      getAuthenticated: () => Promise<{data: {login: string; email: string | undefined; name: string | undefined}}>;
+      // eslint-disable-next-line @typescript-eslint/no-restricted-types
+      getAuthenticated: () => Promise<{data: {login: string; email: string | null; name: string | null}}>;
       getByUsername: (parameters?: {username: string}) => Promise<unknown>;
     };
   };
