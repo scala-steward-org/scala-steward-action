@@ -1,7 +1,7 @@
 import test from 'ava'
-import {type HttpClient} from '../core/http'
-import {Logger} from '../core/logger'
-import {HealthCheck} from './healthcheck'
+import {type HttpClient} from '../core/http.js'
+import {Logger} from '../core/logger.js'
+import {HealthCheck} from './healthcheck.js'
 
 test('`HealthCheck.mavenCentral()` → does not fail if connected to Maven Central', async t => {
   const client: HttpClient = {

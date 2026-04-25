@@ -1,7 +1,7 @@
 
-import {type Files} from '../core/files'
-import {type Logger} from '../core/logger'
-import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
+import {type Files} from '../core/files.js'
+import {type Logger} from '../core/logger.js'
+import {mandatory, nonEmpty, type NonEmptyString} from '../core/types.js'
 
 export type GitHubAppInfo = {
   authOnly: boolean;

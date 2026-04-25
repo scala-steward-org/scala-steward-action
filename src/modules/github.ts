@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import {type Logger} from '../core/logger'
-import {mandatory, type NonEmptyString} from '../core/types'
+import {type Logger} from '../core/logger.js'
+import {mandatory, type NonEmptyString} from '../core/types.js'
 
 const emailErrorMessage
   = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account has the email '
-  + 'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
+    + 'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
 
 const nameErrorMessage
   = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account has a valid name '
-  + 'set in its profile or use the `author-name` input to provide one.'
+    + 'set in its profile or use the `author-name` input to provide one.'
 
 export class GitHub {
   static from(

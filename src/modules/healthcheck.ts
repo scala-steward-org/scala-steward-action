@@ -1,5 +1,5 @@
-import {type Logger} from '../core/logger'
-import {type HttpClient} from '../core/http'
+import {type Logger} from '../core/logger.js'
+import {type HttpClient} from '../core/http.js'
 
 export class HealthCheck {
   static from(logger: Logger, httpClient: HttpClient) {

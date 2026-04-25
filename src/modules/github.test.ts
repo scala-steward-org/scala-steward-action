@@ -1,7 +1,7 @@
 import {fail} from 'assert'
 import test from 'ava'
-import {Logger} from '../core/logger'
-import {GitHub, type GitHubClient} from './github'
+import {Logger} from '../core/logger.js'
+import {GitHub, type GitHubClient} from './github.js'
 
 test('`GitHub.getAuthUser()` → returns every auth user component', async t => {
   const client: GitHubClient = {

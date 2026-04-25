@@ -1,11 +1,11 @@
 import path from 'path'
 import jsSHA from 'jssha/dist/sha256'
-import {type ActionCache} from '../core/cache'
-import {type Files} from '../core/files'
-import {type Logger} from '../core/logger'
-import {type OSInfo} from '../core/os'
-import {mandatory, type NonEmptyString} from '../core/types'
-import {type GitHubAppInfo} from './input'
+import {type ActionCache} from '../core/cache.js'
+import {type Files} from '../core/files.js'
+import {type Logger} from '../core/logger.js'
+import {type OSInfo} from '../core/os.js'
+import {mandatory, type NonEmptyString} from '../core/types.js'
+import {type GitHubAppInfo} from './input.js'
 
 export class Workspace {
   static from(

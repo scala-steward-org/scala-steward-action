@@ -4,7 +4,7 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
-import {type NonEmptyString} from '../core/types'
+import {type NonEmptyString} from '../core/types.js'
 
 /**
  * Installs `coursier` and add its executable to the `PATH`.

@@ -3,11 +3,11 @@ import os from 'os'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as cache from '@actions/cache'
-import * as coursier from '../modules/coursier'
-import * as mill from '../modules/mill'
-import {type Logger} from '../core/logger'
-import {Workspace} from '../modules/workspace'
-import {type Files} from '../core/files'
+import * as coursier from '../modules/coursier.js'
+import * as mill from '../modules/mill.js'
+import {type Logger} from '../core/logger.js'
+import {Workspace} from '../modules/workspace.js'
+import {type Files} from '../core/files.js'
 
 /**
  * Performs a cleanup of all the artifacts/folders created by this action.

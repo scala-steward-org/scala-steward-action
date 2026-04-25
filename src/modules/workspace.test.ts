@@ -1,11 +1,11 @@
 import {fail} from 'assert'
 import test from 'ava'
 import * as sinon from 'sinon'
-import {type ActionCache} from '../core/cache'
-import {type Files} from '../core/files'
-import {Logger} from '../core/logger'
-import {mandatory} from '../core/types'
-import {Workspace} from './workspace'
+import {type ActionCache} from '../core/cache.js'
+import {type Files} from '../core/files.js'
+import {Logger} from '../core/logger.js'
+import {mandatory} from '../core/types.js'
+import {Workspace} from './workspace.js'
 
 function fixture(repos_md = '') {
   const calls: string[] = []
