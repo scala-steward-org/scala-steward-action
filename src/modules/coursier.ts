@@ -22,7 +22,7 @@ export async function install(): Promise<void> {
     core.debug(`Installing coursier from ${coursierUrl}`)
     core.debug(`Installing scalafix ${scalafixDependency}`)
 
-    const binary = path.join(os.homedir(), 'bin')
+    const binary = path.join(os.homedir(), '.local', 'bin')
     await io.mkdirP(binary)
 
     const zip = await tc.downloadTool(coursierUrl, path.join(binary, 'cs.gz'))
