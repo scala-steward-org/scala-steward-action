@@ -1,4 +1,4 @@
-import {fail} from 'assert'
+import {fail} from 'node:assert'
 import test from 'ava'
 import {Logger} from '../core/logger.js'
 import {GitHub, type GitHubClient} from './github.js'

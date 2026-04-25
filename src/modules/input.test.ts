@@ -1,4 +1,4 @@
-import {fail} from 'assert'
+import {fail} from 'node:assert'
 import test from 'ava'
 import {match} from 'ts-pattern'
 import {type Files} from '../core/files.js'

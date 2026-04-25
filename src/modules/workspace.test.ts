@@ -1,4 +1,4 @@
-import {fail} from 'assert'
+import {fail} from 'node:assert'
 import test from 'ava'
 import * as sinon from 'sinon'
 import {type ActionCache} from '../core/cache.js'
