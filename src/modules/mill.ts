@@ -57,20 +57,20 @@ function getDownloadUrl(millVersion: string): string {
   let downloadSuffix: string
   let downloadFromMaven: boolean
 
-  if (/^0\.0\.\d+$/.test(millVersion)
-    || /^0\.1\.\d+$/.test(millVersion)
-    || /^0\.2\.\d+$/.test(millVersion)
-    || /^0\.3\.\d+$/.test(millVersion)
-    || /^0\.4\.\d+$/.test(millVersion)) {
+  if (/^0\.0\.\d+$/v.test(millVersion)
+    || /^0\.1\.\d+$/v.test(millVersion)
+    || /^0\.2\.\d+$/v.test(millVersion)
+    || /^0\.3\.\d+$/v.test(millVersion)
+    || /^0\.4\.\d+$/v.test(millVersion)) {
     downloadSuffix = ''
     downloadFromMaven = false
-  } else if (/^0\.5\.\d+$/.test(millVersion)
-    || /^0\.6\.\d+$/.test(millVersion)
-    || /^0\.7\.\d+$/.test(millVersion)
-    || /^0\.8\.\d+$/.test(millVersion)
-    || /^0\.9\.\d+$/.test(millVersion)
-    || /^0\.10\.\d+$/.test(millVersion)
-    || /^0\.11\.0-M-[A-Za-z\d]+$/.test(millVersion)) {
+  } else if (/^0\.5\.\d+$/v.test(millVersion)
+    || /^0\.6\.\d+$/v.test(millVersion)
+    || /^0\.7\.\d+$/v.test(millVersion)
+    || /^0\.8\.\d+$/v.test(millVersion)
+    || /^0\.9\.\d+$/v.test(millVersion)
+    || /^0\.10\.\d+$/v.test(millVersion)
+    || /^0\.11\.0-M-[A-Za-z\d]+$/v.test(millVersion)) {
     downloadSuffix = '-assembly'
     downloadFromMaven = false
   } else {
@@ -91,9 +91,9 @@ function getDownloadUrl(millVersion: string): string {
     || millVersion === '0.12.10'
     || millVersion === '0.12.11') {
     downloadExtension = 'jar'
-  } else if (/^0\.12\.[A-Za-z\d]+$/.test(millVersion)) { // 0.12.*
+  } else if (/^0\.12\.[A-Za-z\d]+$/v.test(millVersion)) { // 0.12.*
     downloadExtension = 'exe'
-  } else if (/^0\.\d+\.\d+(-[A-Za-z\d.-]+)?$/.test(millVersion)) { // 0.*
+  } else if (/^0\.\d+\.\d+(-[A-Za-z\d.\-]+)?$/v.test(millVersion)) { // 0.*
     downloadExtension = 'jar'
   } else {
     downloadExtension = 'exe'
@@ -102,7 +102,7 @@ function getDownloadUrl(millVersion: string): string {
   if (downloadFromMaven) {
     millUrl = `https://repo1.maven.org/maven2/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
   } else {
-    const millVersionTag = millVersion.replace(/([^-]+)(-M\d+)?(-.*)?/, '$1$2')
+    const millVersionTag = millVersion.replace(/([^\-]+)(-M\d+)?(-.*)?/v, '$1$2')
     millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
   }
 

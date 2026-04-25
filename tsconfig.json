@@ -3,6 +3,7 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "module": "es2022",
+    "target": "es2024",
     "moduleResolution": "bundler",
     "rootDir": "./src"
   }

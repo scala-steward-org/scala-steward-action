@@ -58,7 +58,7 @@ export async function install(): Promise<void> {
 
     const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
 
-    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
+    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /v, '').trim()}`)
 
     const scalafixVersion = await execute(scalafixBinaryPath, '--version')
 
