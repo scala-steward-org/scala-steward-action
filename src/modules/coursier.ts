@@ -68,8 +68,8 @@ export async function install(): Promise<void> {
 
     core.info('✓ scala-cli installed')
   } catch (error: unknown) {
-    core.debug((error as Error).message)
-    throw new Error('Unable to install coursier or managed tools')
+    core.debug(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install coursier or managed tools', {cause: error})
   }
 }
 

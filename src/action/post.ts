@@ -27,7 +27,7 @@ async function run(): Promise<void> {
     await mill.remove()
     core.info('🗑 Mill binary removed')
   } catch (error: unknown) {
-    core.warning((error as Error).message)
+    core.warning(error instanceof Error ? error.message : String(error))
   }
 }
 

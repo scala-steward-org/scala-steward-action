@@ -52,7 +52,7 @@ export class GitHub {
         name: () => mandatory(name ?? '', nameErrorMessage),
       }
     } catch (error: unknown) {
-      this.logger.debug(`- User information retrieve failed. Error: ${(error as Error).message}`)
+      this.logger.debug(`- User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`)
       return this.defaultUser
     }
   }
@@ -79,7 +79,7 @@ export class GitHub {
         name: () => mandatory(login),
       }
     } catch (error: unknown) {
-      this.logger.debug(`- GitHub App User information retrieve failed. Error: ${(error as Error).message}`)
+      this.logger.debug(`- GitHub App User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`)
       return this.defaultUser
     }
   }

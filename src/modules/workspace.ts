@@ -63,7 +63,7 @@ export class Workspace {
 
       this.logger.endGroup()
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
+      this.logger.debug(error instanceof Error ? error.message : String(error))
       this.logger.warning('Unable to restore workspace from cache')
       this.logger.endGroup()
     }
@@ -92,7 +92,7 @@ export class Workspace {
       this.logger.info('Scala Steward workspace contents saved to cache')
       this.logger.endGroup()
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
+      this.logger.debug(error instanceof Error ? error.message : String(error))
       this.logger.warning('Unable to save workspace to cache')
       this.logger.endGroup()
     }
@@ -134,8 +134,8 @@ export class Workspace {
 
       this.logger.info('✓ Scala Steward workspace created')
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
-      throw new Error('Unable to create Scala Steward workspace')
+      this.logger.debug(error instanceof Error ? error.message : String(error))
+      throw new Error('Unable to create Scala Steward workspace', {cause: error})
     }
   }
 

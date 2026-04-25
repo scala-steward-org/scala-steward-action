@@ -102,7 +102,7 @@ async function run(): Promise<void> {
       await workspace.cancelTokenRefresh()
     }
   } catch (error: unknown) {
-    core.setFailed(` ✕ ${(error as Error).message}`)
+    core.setFailed(` ✕ ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 

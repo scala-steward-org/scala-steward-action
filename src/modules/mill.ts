@@ -35,8 +35,8 @@ export async function install(): Promise<void> {
 
     core.info(`✓ Mill installed, version: ${millVersion}`)
   } catch (error: unknown) {
-    core.error((error as Error).message)
-    throw new Error('Unable to install Mill')
+    core.error(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install Mill', {cause: error})
   }
 }
 
