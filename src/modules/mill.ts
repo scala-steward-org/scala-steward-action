@@ -5,37 +5,72 @@ import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
 
+type MillDependencies = {
+  getInput(name: string): string;
+  find(toolName: string, versionSpec: string): string;
+  addPath(inputPath: string): void;
+  debug(message: string): void;
+  info(message: string): void;
+  error(message: string): void;
+  homedir(): string;
+  platform(): NodeJS.Platform;
+  arch(): string;
+  mkdirP(path: string): Promise<void>;
+  downloadTool(url: string, destination?: string): Promise<string>;
+  exec(commandLine: string, arguments_?: string[], options?: exec.ExecOptions): Promise<number>;
+  cacheFile(sourceFile: string, targetFile: string, tool: string, version: string): Promise<string>;
+}
+
 /**
  * Installs `Mill` and add its executable to the `PATH`.
  *
  * Throws error if the installation fails.
  */
 export async function install(): Promise<void> {
-  try {
-    const millVersion = core.getInput('mill-version')
+  return installWith({
+    getInput: core.getInput,
+    find: tc.find,
+    addPath: core.addPath,
+    debug: core.debug,
+    info: core.info,
+    error: core.error,
+    homedir: os.homedir,
+    platform: os.platform,
+    arch: os.arch,
+    mkdirP: io.mkdirP,
+    downloadTool: tc.downloadTool,
+    exec: exec.exec,
+    cacheFile: tc.cacheFile,
+  })
+}
 
-    const cachedPath = tc.find('mill', millVersion)
+export async function installWith(dependencies: MillDependencies): Promise<void> {
+  try {
+    const millVersion = dependencies.getInput('mill-version')
+
+    const cachedPath = dependencies.find('mill', millVersion)
 
     if (cachedPath) {
-      core.addPath(cachedPath)
+      dependencies.addPath(cachedPath)
     } else {
-      const millUrl = getDownloadUrl(millVersion)
+      const millUrl = getDownloadUrl(millVersion, dependencies.platform(), dependencies.arch())
 
-      core.debug(`Attempting to install Mill from ${millUrl}`)
+      dependencies.debug(`Attempting to install Mill from ${millUrl}`)
 
-      const binary = path.join(os.homedir(), 'bin')
-      await io.mkdirP(binary)
+      const binary = path.join(dependencies.homedir(), 'bin')
+      await dependencies.mkdirP(binary)
 
-      const mill = await tc.downloadTool(millUrl, path.join(binary, 'mill'))
+      const mill = await dependencies.downloadTool(millUrl, path.join(binary, 'mill'))
 
-      await exec.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
+      await dependencies.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
 
-      await tc.cacheFile(mill, 'mill', 'mill', millVersion)
+      await dependencies.cacheFile(mill, 'mill', 'mill', millVersion)
+      dependencies.addPath(binary)
     }
 
-    core.info(`✓ Mill installed, version: ${millVersion}`)
+    dependencies.info(`✓ Mill installed, version: ${millVersion}`)
   } catch (error: unknown) {
-    core.error((error as Error).message)
+    dependencies.error((error as Error).message)
     throw new Error('Unable to install Mill')
   }
 }
@@ -50,8 +85,8 @@ export async function remove(): Promise<void> {
 /**
   * It dublicates logic from 'mill' bash bootstrap script.
   */
-function getDownloadUrl(millVersion: string): string {
-  const artifactSuffix = getArtifactSuffix()
+function getDownloadUrl(millVersion: string, platform: NodeJS.Platform, arch: string): string {
+  const artifactSuffix = getArtifactSuffix(platform, arch)
   let millUrl: string
   let downloadExtension: string
   let downloadSuffix: string
@@ -109,10 +144,7 @@ function getDownloadUrl(millVersion: string): string {
   return millUrl
 }
 
-function getArtifactSuffix(): string {
-  const platform = os.platform() // 'linux', 'darwin', 'win32'
-  const arch = os.arch() // 'x64', 'arm64', etc.
-
+function getArtifactSuffix(platform: NodeJS.Platform, arch: string): string {
   let suffix = ''
 
   if (platform === 'linux') {
