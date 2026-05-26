@@ -51,6 +51,12 @@ inputs:
       Url to download the coursier linux CLI from.
     default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     required: false
+  health-check-url:
+    description: |
+      URL used to check connectivity with a maven mirror before
+      running Scala Steward.
+    default: https://repo1.maven.org/maven2/
+    required: false
   do-not-fork:
     description: |
       Whether to not push the update branches to a fork.
