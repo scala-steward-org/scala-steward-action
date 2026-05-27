@@ -57,6 +57,23 @@ inputs:
       running Scala Steward.
     default: https://repo1.maven.org/maven2/
     required: false
+  health-check-auth-token:
+    description: |
+      Optional token for authenticating with the health check
+      URL. When provided, it will be sent as an Authorization
+      header with the request. The format of the header depends
+      on the `health-check-auth-type` input.
+    required: false
+  health-check-auth-type:
+    description: |
+      The type of authentication to use with the health check
+      URL. Supported values are `bearer` and `basic`.
+
+      When set to `bearer`, sends `Authorization: Bearer <token>`.
+      When set to `basic`, sends `Authorization: Basic <token>`
+      (the token should be a base64-encoded `user:password` string for `basic`).
+    default: bearer
+    required: false
   do-not-fork:
     description: |
       Whether to not push the update branches to a fork.

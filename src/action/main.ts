@@ -13,7 +13,7 @@ import {type Logger} from '../core/logger'
 import {nonEmpty, NonEmptyString} from '../core/types'
 import * as coursier from '../modules/coursier'
 import {GitHub} from '../modules/github'
-import {HealthCheck} from '../modules/healthcheck'
+import {HealthCheck, type HealthCheckAuth, type AuthType} from '../modules/healthcheck'
 import {Input, type GitHubAppInfo} from '../modules/input'
 import * as mill from '../modules/mill'
 import {scalaVersion} from '../core/scala-steward'
@@ -32,7 +32,12 @@ import {Workspace} from '../modules/workspace'
  */
 async function run(): Promise<void> {
   try {
-    const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
+    const healthCheckAuthToken = core.getInput('health-check-auth-token')
+    const healthCheckAuthType = core.getInput('health-check-auth-type') as AuthType
+    const healthCheckAuth: HealthCheckAuth | undefined = healthCheckAuthToken
+      ? {token: healthCheckAuthToken, type: healthCheckAuthType}
+      : undefined
+    const healthCheck: HealthCheck = HealthCheck.from(core, {run: async (url, options) => fetch(url, options)}, healthCheckAuth)
     const healthCheckUrl = core.getInput('health-check-url')
     await healthCheck.url(healthCheckUrl)
 
