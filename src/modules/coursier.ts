@@ -6,6 +6,7 @@ import * as io from '@actions/io'
 import * as exec from '@actions/exec'
 import {type NonEmptyString} from '../core/types'
 import {execute} from '../core/exec'
+import {type ConnectivityProbe} from './healthcheck'
 
 /**
  * Downloads the `coursier` CLI binary and adds it to the `PATH`.
@@ -92,6 +93,23 @@ export async function install(): Promise<void> {
     core.debug((error as Error).message)
     throw new Error('Unable to install managed tools')
   }
+}
+
+/**
+ * A `ConnectivityProbe` that uses `cs resolve` to verify the configured
+ * Maven repositories are reachable. Returns `true` if metadata for a
+ * well-known artifact (`org.scala-lang:scala-library`) can be resolved,
+ * `false` otherwise. Assumes `cs` is already on the `PATH` (call
+ * `selfInstall()` first).
+ */
+export const connectivityProbe: ConnectivityProbe = async () => {
+  const code = await exec.exec(
+    'cs',
+    ['resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12'],
+    {silent: true, ignoreReturnCode: true, listeners: {stdline: core.debug, errline: core.debug}},
+  )
+
+  return code === 0
 }
 
 /**
