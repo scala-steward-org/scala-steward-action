@@ -21,8 +21,8 @@ import {Workspace} from '../modules/workspace'
 
 /**
  * Runs the action main code. In order it will do the following:
+ * - Install the Coursier CLI
  * - Check connection with Maven Central
- * - Install Coursier
  * - Install Scalafmt, Scalafix, SBT and scala-cli
  * - Install Mill
  * - Recover user inputs
@@ -32,6 +32,8 @@ import {Workspace} from '../modules/workspace'
  */
 async function run(): Promise<void> {
   try {
+    await coursier.selfInstall()
+
     const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
     await healthCheck.mavenCentral()
 
