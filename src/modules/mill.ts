@@ -4,6 +4,7 @@ import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
+import {execute} from '../core/exec'
 
 /**
  * Installs `Mill` and add its executable to the `PATH`.
@@ -26,7 +27,14 @@ export async function install(): Promise<void> {
       const binary = path.join(os.homedir(), 'bin')
       await io.mkdirP(binary)
 
-      const mill = await tc.downloadTool(millUrl, path.join(binary, 'mill'))
+      let mill: string
+
+      if (millUrl.startsWith('https://github.com/')) {
+        mill = await tc.downloadTool(millUrl, path.join(binary, 'mill'))
+      } else {
+        mill = await execute('cs', 'get', millUrl).then(output => output.trim())
+        await io.cp(mill, path.join(binary, 'mill'))
+      }
 
       await exec.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
 
@@ -100,7 +108,8 @@ function getDownloadUrl(millVersion: string): string {
   }
 
   if (downloadFromMaven) {
-    millUrl = `https://repo1.maven.org/maven2/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
+    const repo = core.getInput('mill-repository').replace(/\/+$/, '')
+    millUrl = `${repo}/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
   } else {
     const millVersionTag = millVersion.replace(/([^-]+)(-M\d+)?(-.*)?/, '$1$2')
     millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
