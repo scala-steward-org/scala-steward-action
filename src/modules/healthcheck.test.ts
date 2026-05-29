@@ -1,28 +1,32 @@
 import test from 'ava'
-import {type HttpClient} from '../core/http.js'
 import {Logger} from '../core/logger.js'
-import {HealthCheck} from './healthcheck.js'
+import {HealthCheck, type ConnectivityProbe} from './healthcheck.js'
 
-test('`HealthCheck.mavenCentral()` → does not fail if connected to Maven Central', async t => {
-  const client: HttpClient = {
-    run: async (url: string) => url === 'https://repo1.maven.org/maven2/'
-      ? {ok: true, status: 200}
-      : {ok: false, status: 404},
-  }
+test('`HealthCheck.check()` → does not fail if probe returns true', async t => {
+  const probe: ConnectivityProbe = async () => true
 
-  const healthCheck = HealthCheck.from(Logger.noOp, client)
+  const healthCheck = HealthCheck.from(Logger.noOp, probe)
 
-  await t.notThrowsAsync(async () => healthCheck.mavenCentral())
+  await t.notThrowsAsync(async () => healthCheck.check())
 })
 
-test('`HealthCheck.mavenCentral()` → fails if not connected to Maven Central', async t => {
-  const client: HttpClient = {
-    run: async () => ({ok: false, status: 404}),
-  }
+test('`HealthCheck.check()` → fails if probe returns false', async t => {
+  const probe: ConnectivityProbe = async () => false
 
-  const healthCheck = HealthCheck.from(Logger.noOp, client)
+  const healthCheck = HealthCheck.from(Logger.noOp, probe)
 
-  const expected = 'Unable to connect to Maven Central'
+  await t.throwsAsync(async () => healthCheck.check(), {
+    instanceOf: Error,
+    message: /Unable to connect to the configured Maven repositories\./v,
+  })
+})
 
-  await t.throwsAsync(async () => healthCheck.mavenCentral(), {instanceOf: Error, message: expected})
+test('`HealthCheck.check()` → error message mentions COURSIER_REPOSITORIES and COURSIER_CREDENTIALS', async t => {
+  const probe: ConnectivityProbe = async () => false
+
+  const healthCheck = HealthCheck.from(Logger.noOp, probe)
+
+  await t.throwsAsync(async () => healthCheck.check(), {
+    message: /COURSIER_REPOSITORIES.*COURSIER_CREDENTIALS/v,
+  })
 })

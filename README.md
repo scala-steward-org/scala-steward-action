@@ -197,6 +197,14 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     coursier-cli-url: ''
 
+    # Maven repository to download Mill distribution artifacts from
+    # when the requested Mill version ships from Maven (Mill 0.12.x
+    # and newer). Set this to a Maven mirror URL (without a trailing
+    # slash) if your runner is rate-limited by Maven Central.
+    #
+    # Default: https://repo1.maven.org/maven2
+    mill-repository: ''
+
     # Whether to not push the update branches to a fork.
     #
     # Default: true
@@ -328,6 +336,32 @@ When it launches it will send PR to update all the repos selected in step (2.2).
 <!-- end usage -->
 
 ## Guides
+
+<details><summary><b>Using a Maven mirror (e.g. when rate-limited by Maven Central)</b></summary><br/>
+
+The action runs everything except the Mill download through [Coursier](https://get-coursier.io), so it honours Coursier's standard configuration env vars. Set them on the step (or job) to point at your mirror — no action input changes required for the health check, scalafmt/sbt/scala-cli install, or the Scala Steward launch:
+
+```yaml
+- name: Launch Scala Steward
+  uses: scala-steward-org/scala-steward-action@v2
+  env:
+    # Mirror Maven Central via your private repository. Use `|` to
+    # list multiple repositories. See https://get-coursier.io/docs/other-repositories
+    COURSIER_REPOSITORIES: https://my-mirror.example.com/maven
+    # Optional Basic-auth credentials for the mirror. Format:
+    # "host(realm) user:password" or "host user:password". See
+    # https://get-coursier.io/docs/other-credentials
+    COURSIER_CREDENTIALS: ${{ secrets.COURSIER_CREDENTIALS }}
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    # For Mill 0.12.x and newer, set the Maven repository explicitly
+    # because the .exe artefact doesn't fit Coursier's coordinate
+    # model. COURSIER_CREDENTIALS still applies to the request.
+    mill-repository: https://my-mirror.example.com/maven
+```
+
+<br/>
+</details>
 
 <details><summary><b>Manually triggering a run</b></summary><br/>
 

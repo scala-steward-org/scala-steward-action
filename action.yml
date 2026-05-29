@@ -51,6 +51,14 @@ inputs:
       Url to download the coursier linux CLI from.
     default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
     required: false
+  mill-repository:
+    description: |
+      Maven repository to download Mill distribution artifacts from
+      when the requested Mill version ships from Maven (Mill 0.12.x
+      and newer). Set this to a Maven mirror URL (without a trailing
+      slash) if your runner is rate-limited by Maven Central.
+    default: https://repo1.maven.org/maven2
+    required: false
   do-not-fork:
     description: |
       Whether to not push the update branches to a fork.

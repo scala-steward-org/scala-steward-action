@@ -7,7 +7,6 @@ import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
 import {createAppAuth} from '@octokit/auth-app'
 import {request} from '@octokit/request'
-import fetch from 'node-fetch'
 import {type Files} from '../core/files.js'
 import {type Logger} from '../core/logger.js'
 import {nonEmpty, NonEmptyString} from '../core/types.js'
@@ -21,8 +20,8 @@ import {Workspace} from '../modules/workspace.js'
 
 /**
  * Runs the action main code. In order it will do the following:
- * - Check connection with Maven Central
- * - Install Coursier
+ * - Install the Coursier CLI
+ * - Check connectivity to the configured Maven repositories using Coursier
  * - Install Scalafmt, Scalafix, SBT and scala-cli
  * - Install Mill
  * - Recover user inputs
@@ -32,8 +31,10 @@ import {Workspace} from '../modules/workspace.js'
  */
 async function run(): Promise<void> {
   try {
-    const healthCheck: HealthCheck = HealthCheck.from(core, {run: async url => fetch(url)})
-    await healthCheck.mavenCentral()
+    await coursier.selfInstall()
+
+    const healthCheck: HealthCheck = HealthCheck.from(core, coursier.connectivityProbe)
+    await healthCheck.check()
 
     await coursier.install()
     await mill.install()
