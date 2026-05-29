@@ -1,12 +1,12 @@
-import * as path from 'path'
-import * as os from 'os'
+import * as path from 'node:path'
+import * as os from 'node:os'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
-import {type NonEmptyString} from '../core/types'
-import {execute} from '../core/exec'
-import {type ConnectivityProbe} from './healthcheck'
+import {type NonEmptyString} from '../core/types.js'
+import {execute} from '../core/exec.js'
+import {type ConnectivityProbe} from './healthcheck.js'
 
 /**
  * Downloads the `coursier` CLI binary and adds it to the `PATH`.
@@ -37,8 +37,8 @@ export async function selfInstall(): Promise<void> {
 
     core.info(`✓ Coursier installed, version: ${coursierVersion.trim()}`)
   } catch (error: unknown) {
-    core.debug((error as Error).message)
-    throw new Error('Unable to install coursier')
+    core.debug(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install coursier', {cause: error})
   }
 }
 
@@ -80,7 +80,7 @@ export async function install(): Promise<void> {
 
     const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
 
-    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
+    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /v, '').trim()}`)
 
     const scalafixVersion = await execute(scalafixBinaryPath, '--version')
 
@@ -90,8 +90,8 @@ export async function install(): Promise<void> {
 
     core.info('✓ scala-cli installed')
   } catch (error: unknown) {
-    core.debug((error as Error).message)
-    throw new Error('Unable to install managed tools')
+    core.debug(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install managed tools', {cause: error})
   }
 }
 
@@ -124,7 +124,7 @@ export const connectivityProbe: ConnectivityProbe = async () => {
 export async function launch(
   app: string,
   arguments_: Array<string | string[]> = [],
-  extraJars: NonEmptyString | undefined = undefined,
+  extraJars?: NonEmptyString,
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 

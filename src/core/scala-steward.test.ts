@@ -1,5 +1,5 @@
 import test from 'ava'
-import {scalaVersion} from './scala-steward'
+import {scalaVersion} from './scala-steward.js'
 
 test('`scalaVersion` → returns `2.13` for versions older than 0.33.0', t => {
   t.is(scalaVersion('0.30.2'), '2.13')

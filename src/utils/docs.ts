@@ -1,6 +1,6 @@
 // Copy inputs from `action.yml` into `README.md`
 
-import * as fs from 'fs'
+import * as fs from 'node:fs'
 import * as yaml from 'js-yaml'
 
 /**
@@ -8,6 +8,7 @@ import * as yaml from 'js-yaml'
  */
 type ActionYaml = {inputs: Record<string, {description: string; default: string | undefined}>}
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
 const actionYaml = yaml.load(fs.readFileSync('action.yml', {encoding: 'utf8'})) as ActionYaml
 
 const inputs = Object.entries(actionYaml.inputs).flatMap(input =>
@@ -16,8 +17,7 @@ const inputs = Object.entries(actionYaml.inputs).flatMap(input =>
     ...input[1].description.trimEnd().split('\n').map(line => `    # ${line}`),
     ...(input[1].default ? ['    #', `    # Default: ${input[1].default}`] : []),
     `    ${input[0]}: ''`,
-  ],
-)
+  ])
 
 /**
  * Update `README.md`

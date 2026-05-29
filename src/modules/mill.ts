@@ -1,10 +1,10 @@
-import * as os from 'os'
-import * as path from 'path'
+import * as os from 'node:os'
+import * as path from 'node:path'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
-import {execute} from '../core/exec'
+import {execute} from '../core/exec.js'
 
 /**
  * Installs `Mill` and add its executable to the `PATH`.
@@ -43,8 +43,8 @@ export async function install(): Promise<void> {
 
     core.info(`✓ Mill installed, version: ${millVersion}`)
   } catch (error: unknown) {
-    core.error((error as Error).message)
-    throw new Error('Unable to install Mill')
+    core.error(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install Mill', {cause: error})
   }
 }
 
@@ -65,20 +65,20 @@ function getDownloadUrl(millVersion: string): string {
   let downloadSuffix: string
   let downloadFromMaven: boolean
 
-  if (/^0\.0\.\d+$/.test(millVersion)
-     || /^0\.1\.\d+$/.test(millVersion)
-     || /^0\.2\.\d+$/.test(millVersion)
-     || /^0\.3\.\d+$/.test(millVersion)
-     || /^0\.4\.\d+$/.test(millVersion)) {
+  if (/^0\.0\.\d+$/v.test(millVersion)
+    || /^0\.1\.\d+$/v.test(millVersion)
+    || /^0\.2\.\d+$/v.test(millVersion)
+    || /^0\.3\.\d+$/v.test(millVersion)
+    || /^0\.4\.\d+$/v.test(millVersion)) {
     downloadSuffix = ''
     downloadFromMaven = false
-  } else if (/^0\.5\.\d+$/.test(millVersion)
-          || /^0\.6\.\d+$/.test(millVersion)
-          || /^0\.7\.\d+$/.test(millVersion)
-          || /^0\.8\.\d+$/.test(millVersion)
-          || /^0\.9\.\d+$/.test(millVersion)
-          || /^0\.10\.\d+$/.test(millVersion)
-          || /^0\.11\.0-M-[A-Za-z\d]+$/.test(millVersion)) {
+  } else if (/^0\.5\.\d+$/v.test(millVersion)
+    || /^0\.6\.\d+$/v.test(millVersion)
+    || /^0\.7\.\d+$/v.test(millVersion)
+    || /^0\.8\.\d+$/v.test(millVersion)
+    || /^0\.9\.\d+$/v.test(millVersion)
+    || /^0\.10\.\d+$/v.test(millVersion)
+    || /^0\.11\.0-M-[A-Za-z\d]+$/v.test(millVersion)) {
     downloadSuffix = '-assembly'
     downloadFromMaven = false
   } else {
@@ -87,31 +87,31 @@ function getDownloadUrl(millVersion: string): string {
   }
 
   if (millVersion === '0.12.0'
-     || millVersion === '0.12.1'
-     || millVersion === '0.12.2'
-     || millVersion === '0.12.3'
-     || millVersion === '0.12.4'
-     || millVersion === '0.12.5'
-     || millVersion === '0.12.6'
-     || millVersion === '0.12.7'
-     || millVersion === '0.12.8'
-     || millVersion === '0.12.9'
-     || millVersion === '0.12.10'
-     || millVersion === '0.12.11') {
+    || millVersion === '0.12.1'
+    || millVersion === '0.12.2'
+    || millVersion === '0.12.3'
+    || millVersion === '0.12.4'
+    || millVersion === '0.12.5'
+    || millVersion === '0.12.6'
+    || millVersion === '0.12.7'
+    || millVersion === '0.12.8'
+    || millVersion === '0.12.9'
+    || millVersion === '0.12.10'
+    || millVersion === '0.12.11') {
     downloadExtension = 'jar'
-  } else if (/^0\.12\.[A-Za-z\d]+$/.test(millVersion)) { // 0.12.*
+  } else if (/^0\.12\.[A-Za-z\d]+$/v.test(millVersion)) { // 0.12.*
     downloadExtension = 'exe'
-  } else if (/^0\.\d+\.\d+(-[A-Za-z\d.-]+)?$/.test(millVersion)) { // 0.*
+  } else if (/^0\.\d+\.\d+(-[A-Za-z\d.\-]+)?$/v.test(millVersion)) { // 0.*
     downloadExtension = 'jar'
   } else {
     downloadExtension = 'exe'
   }
 
   if (downloadFromMaven) {
-    const repo = core.getInput('mill-repository').replace(/\/+$/, '')
+    const repo = core.getInput('mill-repository').replace(/\/+$/v, '')
     millUrl = `${repo}/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
   } else {
-    const millVersionTag = millVersion.replace(/([^-]+)(-M\d+)?(-.*)?/, '$1$2')
+    const millVersionTag = millVersion.replace(/([^\-]+)(-M\d+)?(-.*)?/v, '$1$2')
     millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
   }
 

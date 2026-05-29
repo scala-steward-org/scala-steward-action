@@ -1,7 +1,7 @@
 
-import {type Files} from '../core/files'
-import {type Logger} from '../core/logger'
-import {mandatory, nonEmpty, type NonEmptyString} from '../core/types'
+import {type Files} from '../core/files.js'
+import {type Logger} from '../core/logger.js'
+import {mandatory, nonEmpty, type NonEmptyString} from '../core/types.js'
 
 export type GitHubAppInfo = {
   authOnly: boolean;
@@ -174,7 +174,7 @@ export class Input {
     const authOnly = this.inputs.getBooleanInput('github-app-auth-only')
     const id = nonEmpty(this.inputs.getInput('github-app-id'))
     const installation = nonEmpty(this.inputs.getInput('github-app-installation-id'))
-    const key = nonEmpty(this.inputs.getInput('github-app-key')?.replace(/\\n/g, '\n'))
+    const key = nonEmpty(this.inputs.getInput('github-app-key')?.replaceAll(String.raw`\n`, '\n'))
 
     if (!id && !key) {
       return undefined

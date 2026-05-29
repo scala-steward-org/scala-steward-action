@@ -1,10 +1,10 @@
-import {fail} from 'assert'
+import {fail} from 'node:assert'
 import test from 'ava'
 import {match} from 'ts-pattern'
-import {type Files} from '../core/files'
-import {Logger} from '../core/logger'
-import {nonEmpty} from '../core/types'
-import {Input} from './input'
+import {type Files} from '../core/files.js'
+import {Logger} from '../core/logger.js'
+import {nonEmpty} from '../core/types.js'
+import {Input} from './input.js'
 
 test('`Input.all` → returns all inputs', t => {
   const inputs = (name: string) => match(name)

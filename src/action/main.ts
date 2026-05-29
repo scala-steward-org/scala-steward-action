@@ -1,22 +1,22 @@
-import fs from 'fs'
-import os from 'os'
-import process from 'process'
+import fs from 'node:fs'
+import os from 'node:os'
+import process from 'node:process'
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import {getOctokit} from '@actions/github'
 import * as io from '@actions/io'
 import {createAppAuth} from '@octokit/auth-app'
 import {request} from '@octokit/request'
-import {type Files} from '../core/files'
-import {type Logger} from '../core/logger'
-import {nonEmpty, NonEmptyString} from '../core/types'
-import * as coursier from '../modules/coursier'
-import {GitHub} from '../modules/github'
-import {HealthCheck} from '../modules/healthcheck'
-import {Input, type GitHubAppInfo} from '../modules/input'
-import * as mill from '../modules/mill'
-import {scalaVersion} from '../core/scala-steward'
-import {Workspace} from '../modules/workspace'
+import {type Files} from '../core/files.js'
+import {type Logger} from '../core/logger.js'
+import {nonEmpty, NonEmptyString} from '../core/types.js'
+import * as coursier from '../modules/coursier.js'
+import {GitHub} from '../modules/github.js'
+import {HealthCheck} from '../modules/healthcheck.js'
+import {Input, type GitHubAppInfo} from '../modules/input.js'
+import * as mill from '../modules/mill.js'
+import {scalaVersion} from '../core/scala-steward.js'
+import {Workspace} from '../modules/workspace.js'
 
 /**
  * Runs the action main code. In order it will do the following:
@@ -103,7 +103,7 @@ async function run(): Promise<void> {
       await workspace.cancelTokenRefresh()
     }
   } catch (error: unknown) {
-    core.setFailed(` ✕ ${(error as Error).message}`)
+    core.setFailed(` ✕ ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 

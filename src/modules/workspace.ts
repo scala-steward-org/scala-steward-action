@@ -1,11 +1,11 @@
-import path from 'path'
+import path from 'node:path'
 import jsSHA from 'jssha/dist/sha256'
-import {type ActionCache} from '../core/cache'
-import {type Files} from '../core/files'
-import {type Logger} from '../core/logger'
-import {type OSInfo} from '../core/os'
-import {mandatory, type NonEmptyString} from '../core/types'
-import {type GitHubAppInfo} from './input'
+import {type ActionCache} from '../core/cache.js'
+import {type Files} from '../core/files.js'
+import {type Logger} from '../core/logger.js'
+import {type OSInfo} from '../core/os.js'
+import {mandatory, type NonEmptyString} from '../core/types.js'
+import {type GitHubAppInfo} from './input.js'
 
 export class Workspace {
   static from(
@@ -63,7 +63,7 @@ export class Workspace {
 
       this.logger.endGroup()
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
+      this.logger.debug(error instanceof Error ? error.message : String(error))
       this.logger.warning('Unable to restore workspace from cache')
       this.logger.endGroup()
     }
@@ -92,7 +92,7 @@ export class Workspace {
       this.logger.info('Scala Steward workspace contents saved to cache')
       this.logger.endGroup()
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
+      this.logger.debug(error instanceof Error ? error.message : String(error))
       this.logger.warning('Unable to save workspace to cache')
       this.logger.endGroup()
     }
@@ -125,17 +125,19 @@ export class Workspace {
       }
 
       await this.writeAskPass(token)
-      this.intervalId = setInterval(async () => {
-        await this.writeAskPass(token)
-        this.logger.info('✓ GitHub Token refreshed')
+      this.intervalId = setInterval(() => {
+        void (async () => {
+          await this.writeAskPass(token)
+          this.logger.info('✓ GitHub Token refreshed')
+        })()
       }, 1000 * 60 * 50)
 
       this.files.chmodSync(this.askpass_sh.value, 0o755)
 
       this.logger.info('✓ Scala Steward workspace created')
     } catch (error: unknown) {
-      this.logger.debug((error as Error).message)
-      throw new Error('Unable to create Scala Steward workspace')
+      this.logger.debug(error instanceof Error ? error.message : String(error))
+      throw new Error('Unable to create Scala Steward workspace', {cause: error})
     }
   }
 
@@ -173,7 +175,7 @@ export class Workspace {
    * @returns {string} the file content's hash
    */
   private hashFile(file: string): string {
-    // eslint-disable-next-line unicorn/text-encoding-identifier-case
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case, new-cap
     const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
     sha.update(this.files.readFileSync(file, 'utf8'))
     return sha.getHash('HEX').slice(0, 8)

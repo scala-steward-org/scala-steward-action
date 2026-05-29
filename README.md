@@ -311,6 +311,13 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # See https://github.com/scala-steward-org/scala-steward/blob/main/docs/scalafix-migrations.md
     scalafix-migrations: ''
 
+    # Coursier dependency coordinates of the `scalafix-cli` artifact used to bootstrap
+    # the Scalafix executable. Override this if you need a Scalafix version with
+    # different runtime requirements (for example a JDK version) than the default.
+    #
+    # Default: ch.epfl.scala:scalafix-cli_2.13.18:0.14.6
+    scalafix-dependency: ''
+
     # Whether to sign commits or not.
     #
     # Default: false

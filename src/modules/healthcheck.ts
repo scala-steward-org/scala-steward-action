@@ -1,4 +1,4 @@
-import {type Logger} from '../core/logger'
+import {type Logger} from '../core/logger.js'
 
 /**
  * Returns `true` if the configured Maven repositories are reachable.
@@ -20,12 +20,10 @@ export class HealthCheck {
     const success = await this.probe()
 
     if (!success) {
-      throw new Error(
-        'Unable to connect to the configured Maven repositories. '
-          + 'Set the COURSIER_REPOSITORIES and COURSIER_CREDENTIALS environment '
-          + 'variables to point Coursier at a reachable mirror if you are being '
-          + 'rate-limited by Maven Central.',
-      )
+      throw new Error('Unable to connect to the configured Maven repositories. '
+        + 'Set the COURSIER_REPOSITORIES and COURSIER_CREDENTIALS environment '
+        + 'variables to point Coursier at a reachable mirror if you are being '
+        + 'rate-limited by Maven Central.')
     }
 
     this.logger.info('✓ Connected to the configured Maven repositories')

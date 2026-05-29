@@ -1,23 +1,23 @@
-import {fail} from 'assert'
+import {fail} from 'node:assert'
 import test from 'ava'
 import * as sinon from 'sinon'
-import {type ActionCache} from '../core/cache'
-import {type Files} from '../core/files'
-import {Logger} from '../core/logger'
-import {mandatory} from '../core/types'
-import {Workspace} from './workspace'
+import {type ActionCache} from '../core/cache.js'
+import {type Files} from '../core/files.js'
+import {Logger} from '../core/logger.js'
+import {mandatory} from '../core/types.js'
+import {Workspace} from './workspace.js'
 
 function fixture(repos_md = '') {
   const calls: string[] = []
 
   const files: Files = {
-    async chmodSync(path, mode) {
+    chmodSync(path, mode) {
       calls.push(`chmodSync("${path}", ${mode})`)
     },
     async mkdirP(path) {
       calls.push(`mkdirP("${path}")`)
     },
-    async writeFileSync(path, content) {
+    writeFileSync(path, content) {
       calls.push(`writeFileSync("${path}", "${content}")`)
     },
     existsSync: path => fail(`existsSync(${path}) should not be called`),
