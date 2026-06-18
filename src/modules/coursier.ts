@@ -60,9 +60,9 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scala-cli', 'sbt', '--install-dir', binary],
+      ['install', 'scalafmt', 'scala-cli', 'sbt:1.12.11', '--install-dir', binary],
       {
-        silent: true,
+        silent: false,
         listeners: {stdline: core.debug, errline: core.debug},
       },
     )
