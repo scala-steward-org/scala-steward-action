@@ -315,7 +315,7 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # the Scalafix executable. Override this if you need a Scalafix version with
     # different runtime requirements (for example a JDK version) than the default.
     #
-    # Default: ch.epfl.scala:scalafix-cli_2.13.18:0.14.6
+    # Default: ch.epfl.scala:scalafix-cli_2.13.18:0.14.7
     scalafix-dependency: ''
 
     # Whether to sign commits or not.
