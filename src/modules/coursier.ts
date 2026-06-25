@@ -51,6 +51,9 @@ export async function selfInstall(): Promise<void> {
  */
 export async function install(): Promise<void> {
   try {
+    const scalafmtInputVersion = core.getInput('scalafmt-version')
+    const scalaCliInputVersion = core.getInput('scala-cli-version')
+    const sbtInputVersion = core.getInput('sbt-version')
     const scalafixDependency = core.getInput('scalafix-dependency')
 
     core.debug(`Installing scalafix ${scalafixDependency}`)
@@ -60,7 +63,14 @@ export async function install(): Promise<void> {
 
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scala-cli', 'sbt', '--install-dir', binary],
+      [
+        'install',
+        versionedApp('scalafmt', scalafmtInputVersion),
+        versionedApp('scala-cli', scalaCliInputVersion),
+        versionedApp('sbt', sbtInputVersion),
+        '--install-dir',
+        binary,
+      ],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
@@ -93,6 +103,10 @@ export async function install(): Promise<void> {
     core.debug(error instanceof Error ? error.message : String(error))
     throw new Error('Unable to install managed tools', {cause: error})
   }
+}
+
+export function versionedApp(app: string, version: string): string {
+  return version ? `${app}:${version}` : app
 }
 
 /**
@@ -163,4 +177,3 @@ export async function remove(): Promise<void> {
     listeners: {stdline: core.info, errline: core.debug},
   })
 }
-

@@ -164,6 +164,11 @@ inputs:
       Scala Steward version to use. If not provided it
       will use the last one published.
     required: false
+  scalafmt-version:
+    description: |
+      Scalafmt version to install. If not provided, Coursier
+      will install the default version from its app descriptor.
+    required: false
   scalafix-migrations:
     description: |
       Scalafix rules for version updates to run after
@@ -179,6 +184,16 @@ inputs:
       the Scalafix executable. Override this if you need a Scalafix version with
       different runtime requirements (for example a JDK version) than the default.
     default: "ch.epfl.scala:scalafix-cli_2.13.18:0.14.6"
+    required: false
+  scala-cli-version:
+    description: |
+      scala-cli version to install. If not provided, Coursier
+      will install the default version from its app descriptor.
+    required: false
+  sbt-version:
+    description: |
+      sbt version to install. If not provided, Coursier will
+      install the default version from its app descriptor.
     required: false
   sign-commits:
     description: |

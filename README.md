@@ -303,6 +303,10 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # will use the last one published.
     scala-steward-version: ''
 
+    # Scalafmt version to install. If not provided, Coursier
+    # will install the default version from its app descriptor.
+    scalafmt-version: ''
+
     # Scalafix rules for version updates to run after
     # certain updates.
     # 
@@ -317,6 +321,14 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     #
     # Default: ch.epfl.scala:scalafix-cli_2.13.18:0.14.6
     scalafix-dependency: ''
+
+    # scala-cli version to install. If not provided, Coursier
+    # will install the default version from its app descriptor.
+    scala-cli-version: ''
+
+    # sbt version to install. If not provided, Coursier will
+    # install the default version from its app descriptor.
+    sbt-version: ''
 
     # Whether to sign commits or not.
     #
