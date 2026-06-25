@@ -167,7 +167,7 @@ inputs:
   scalafmt-version:
     description: |
       Scalafmt version to install. If not provided, Coursier
-      will install the default version from its app descriptor.
+      will install the version selected by its app descriptor.
     required: false
   scalafix-migrations:
     description: |
@@ -188,12 +188,12 @@ inputs:
   scala-cli-version:
     description: |
       scala-cli version to install. If not provided, Coursier
-      will install the default version from its app descriptor.
+      will install the version selected by its app descriptor.
     required: false
   sbt-version:
     description: |
       sbt version to install. If not provided, Coursier will
-      install the default version from its app descriptor.
+      install the version selected by its app descriptor.
     required: false
   sign-commits:
     description: |
