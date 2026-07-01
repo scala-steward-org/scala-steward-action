@@ -47,6 +47,11 @@ export async function selfInstall(): Promise<void> {
  * `coursier`. Assumes `selfInstall()` has already put `cs` on the
  * `PATH`.
  *
+ * Uses `cs bootstrap` instead of `cs install` because `cs install`
+ * ignores COURSIER_REPOSITORIES when the app descriptor specifies its
+ * own repositories (see https://github.com/coursier/coursier/issues/2832).
+ * `cs bootstrap` with explicit Maven coordinates respects the env var.
+ *
  * Throws error if the installation fails.
  */
 export async function install(): Promise<void> {
@@ -56,44 +61,56 @@ export async function install(): Promise<void> {
     const sbtInputVersion = core.getInput('sbt-version')
     const scalafixDependency = core.getInput('scalafix-dependency')
 
-    core.debug(`Installing scalafix ${scalafixDependency}`)
-
     const binary = path.join(os.homedir(), '.local', 'bin')
     await io.mkdirP(binary)
 
+    const scalafmtVersion = scalafmtInputVersion || 'latest.stable'
+    core.debug(`Installing scalafmt ${scalafmtVersion}`)
     await exec.exec(
       'cs',
-      [
-        'install',
-        versionedApp('scalafmt', scalafmtInputVersion),
-        versionedApp('scala-cli', scalaCliInputVersion),
-        versionedApp('sbt', sbtInputVersion),
-        '--install-dir',
-        binary,
-      ],
+      ['bootstrap', `org.scalameta:scalafmt-cli_2.13:${scalafmtVersion}`, '--main', 'org.scalafmt.cli.Cli', '-o', path.join(binary, 'scalafmt')],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
       },
     )
 
-    const scalafixBinaryPath = path.join(binary, 'scalafix')
-
+    core.debug(`Installing scalafix ${scalafixDependency}`)
     await exec.exec(
       'cs',
-      ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', scalafixBinaryPath],
+      ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', path.join(binary, 'scalafix')],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
       },
     )
 
-    const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
+    const sbtVersion = sbtInputVersion || 'latest.stable'
+    core.debug(`Installing sbt ${sbtVersion}`)
+    await exec.exec(
+      'cs',
+      ['bootstrap', `org.scala-sbt:sbt-launch:${sbtVersion}`, '--main', 'xsbt.boot.Boot', '-o', path.join(binary, 'sbt')],
+      {
+        silent: true,
+        listeners: {stdline: core.debug, errline: core.debug},
+      },
+    )
 
-    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /v, '').trim()}`)
+    const scalaCliVersion = scalaCliInputVersion || 'latest.stable'
+    core.debug(`Installing scala-cli ${scalaCliVersion}`)
+    await exec.exec(
+      'cs',
+      ['bootstrap', `org.virtuslab.scala-cli:cli_3:${scalaCliVersion}`, '--main', 'scala.cli.ScalaCli', '-o', path.join(binary, 'scala-cli')],
+      {
+        silent: true,
+        listeners: {stdline: core.debug, errline: core.debug},
+      },
+    )
 
-    const scalafixVersion = await execute(scalafixBinaryPath, '--version')
+    const scalafmtOut = await execute(path.join(binary, 'scalafmt'), '--version')
+    core.info(`✓ Scalafmt installed, version: ${scalafmtOut.replace(/^scalafmt /v, '').trim()}`)
 
+    const scalafixVersion = await execute(path.join(binary, 'scalafix'), '--version')
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
 
     core.info('✓ SBT installed')
@@ -105,9 +122,6 @@ export async function install(): Promise<void> {
   }
 }
 
-export function versionedApp(app: string, version: string): string {
-  return version ? `${app}:${version}` : app
-}
 
 /**
  * A `ConnectivityProbe` that uses `cs resolve` to verify the configured
