@@ -10,7 +10,13 @@ export class HealthCheck {
     return new HealthCheck(logger, probe)
   }
 
-  constructor(private readonly logger: Logger, private readonly probe: ConnectivityProbe) {}
+  private readonly logger: Logger
+  private readonly probe: ConnectivityProbe
+
+  constructor(logger: Logger, probe: ConnectivityProbe) {
+    this.logger = logger
+    this.probe = probe
+  }
 
   /**
    * Checks connectivity to the configured Maven repositories. Throws if

@@ -25,10 +25,16 @@ export class GitHub {
     name: () => mandatory('github-actions[bot]'),
   }
 
+  private readonly logger: Logger
+  private readonly github: GitHubClient
+
   constructor(
-    private readonly logger: Logger,
-    private readonly github: GitHubClient,
-  ) {}
+    logger: Logger,
+    github: GitHubClient,
+  ) {
+    this.logger = logger
+    this.github = github
+  }
 
   /**
    * Returns the login, email and name of the authenticated user.

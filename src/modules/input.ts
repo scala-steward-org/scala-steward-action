@@ -10,23 +10,36 @@ export type GitHubAppInfo = {
   key: NonEmptyString;
 }
 
+export type ActionInputs = {
+  getInput: (name: string) => string;
+  getBooleanInput: (name: string) => boolean;
+}
+
 /**
  * Retrieves (and sanitize) inputs.
  */
 export class Input {
   static from(
-    inputs: {getInput: (name: string) => string; getBooleanInput: (name: string) => boolean},
+    inputs: ActionInputs,
     files: Files,
     logger: Logger,
   ) {
     return new Input(inputs, files, logger)
   }
 
+  private readonly inputs: ActionInputs
+  private readonly files: Files
+  private readonly logger: Logger
+
   constructor(
-    private readonly inputs: {getInput: (name: string) => string; getBooleanInput: (name: string) => boolean},
-    private readonly files: Files,
-    private readonly logger: Logger,
-  ) {}
+    inputs: ActionInputs,
+    files: Files,
+    logger: Logger,
+  ) {
+    this.inputs = inputs
+    this.files = files
+    this.logger = logger
+  }
 
   /**
    * Returns every input for this action.

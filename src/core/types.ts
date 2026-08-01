@@ -3,7 +3,11 @@ export class NonEmptyString {
     return (string === '') ? undefined : new NonEmptyString(string)
   }
 
-  private constructor(readonly value: string) {}
+  readonly value: string
+
+  private constructor(value: string) {
+    this.value = value
+  }
 }
 
 /**

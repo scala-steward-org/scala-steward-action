@@ -26,12 +26,22 @@ export class Workspace {
 
   private intervalId: NodeJS.Timeout | undefined
 
+  private readonly logger: Logger
+  private readonly files: Files
+  private readonly os: OSInfo
+  private readonly cache: ActionCache
+
   constructor(
-    private readonly logger: Logger,
-    private readonly files: Files,
-    private readonly os: OSInfo,
-    private readonly cache: ActionCache,
+    logger: Logger,
+    files: Files,
+    os: OSInfo,
+    cache: ActionCache,
   ) {
+    this.logger = logger
+    this.files = files
+    this.os = os
+    this.cache = cache
+
     this.directory = path.join(this.os.homedir(), 'scala-steward')
     this.workspace = mandatory(path.join(this.directory, 'workspace'))
     this.repos_md = mandatory(path.join(this.directory, 'repos.md'))
