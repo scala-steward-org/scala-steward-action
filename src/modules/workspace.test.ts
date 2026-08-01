@@ -1,6 +1,6 @@
-import {fail} from 'node:assert'
-import test from 'ava'
-import * as sinon from 'sinon'
+import {
+  afterAll, beforeAll, expect, test, vi,
+} from 'vitest'
 import {type ActionCache} from '../core/cache.js'
 import {type Files} from '../core/files.js'
 import {Logger} from '../core/logger.js'
@@ -20,7 +20,7 @@ function fixture(repos_md = '') {
     writeFileSync(path, content) {
       calls.push(`writeFileSync("${path}", "${content}")`)
     },
-    existsSync: path => fail(`existsSync(${path}) should not be called`),
+    existsSync: path => expect.unreachable(`existsSync(${path}) should not be called`),
     async rmRF(path) {
       calls.push(`rmRF("${path}")`)
     },
@@ -47,15 +47,15 @@ function fixture(repos_md = '') {
   return {workspace, calls}
 }
 
-test.before(() => {
-  sinon.useFakeTimers()
+beforeAll(() => {
+  vi.useFakeTimers()
 })
 
-test.after(() => {
-  sinon.restore()
+afterAll(() => {
+  vi.useRealTimers()
 })
 
-test('`Workspace.prepare()` → prepares the workspace', async t => {
+test('`Workspace.prepare()` → prepares the workspace', async () => {
   const {workspace, calls} = fixture()
 
   await workspace.prepare('- owner/repo1\n- owner/repo2', async () => '123', undefined)
@@ -67,10 +67,10 @@ test('`Workspace.prepare()` → prepares the workspace', async t => {
     'chmodSync("/home/scala-steward/askpass.sh", 493)',
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.prepare()` → prepares the workspace when using a GitHub App', async t => {
+test('`Workspace.prepare()` → prepares the workspace when using a GitHub App', async () => {
   const {workspace, calls} = fixture()
 
   const gitHubAppInfo = {
@@ -90,10 +90,10 @@ test('`Workspace.prepare()` → prepares the workspace when using a GitHub App',
     'chmodSync("/home/scala-steward/askpass.sh", 493)',
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth only"', async t => {
+test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth only"', async () => {
   const {workspace, calls} = fixture()
 
   const gitHubAppInfo = {
@@ -112,10 +112,10 @@ test('`Workspace.prepare()` → uses the repos input when GitHub App is "auth on
     'chmodSync("/home/scala-steward/askpass.sh", 493)',
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.writeAskPass()` → writes a token to the askpass.sh', async t => {
+test('`Workspace.writeAskPass()` → writes a token to the askpass.sh', async () => {
   const {workspace, calls} = fixture()
 
   await workspace.writeAskPass(async () => '123')
@@ -124,10 +124,10 @@ test('`Workspace.writeAskPass()` → writes a token to the askpass.sh', async t 
     'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.remove()` → removes the workspace', async t => {
+test('`Workspace.remove()` → removes the workspace', async () => {
   const {workspace, calls} = fixture()
 
   await workspace.remove()
@@ -136,10 +136,10 @@ test('`Workspace.remove()` → removes the workspace', async t => {
     'rmRF("/home/scala-steward")',
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.restoreWorkspaceCache()` → tries to restore the workspace cache', async t => {
+test('`Workspace.restoreWorkspaceCache()` → tries to restore the workspace cache', async () => {
   const {workspace, calls} = fixture('- owner/repo')
 
   await workspace.restoreWorkspaceCache()
@@ -151,10 +151,10 @@ test('`Workspace.restoreWorkspaceCache()` → tries to restore the workspace cac
     `restoreCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}", [scala-steward-acc000fd,scala-steward-])`,
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.restoreWorkspaceCache()` → generates same hash for same contents', async t => {
+test('`Workspace.restoreWorkspaceCache()` → generates same hash for same contents', async () => {
   const {workspace, calls} = fixture('- owner/repo')
 
   await workspace.restoreWorkspaceCache()
@@ -166,10 +166,10 @@ test('`Workspace.restoreWorkspaceCache()` → generates same hash for same conte
     `restoreCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}", [scala-steward-acc000fd,scala-steward-])`,
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.restoreWorkspaceCache()` → generates different hash for different contents', async t => {
+test('`Workspace.restoreWorkspaceCache()` → generates different hash for different contents', async () => {
   const {workspace, calls} = fixture('- owner/repo1')
 
   await workspace.restoreWorkspaceCache()
@@ -181,10 +181,10 @@ test('`Workspace.restoreWorkspaceCache()` → generates different hash for diffe
     `restoreCache([/home/scala-steward/workspace], "scala-steward-fe470d28-${now}", [scala-steward-fe470d28,scala-steward-])`,
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })
 
-test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
+test('`Workspace.saveWorkspaceCache()` → saves cache', async () => {
   const {workspace, calls} = fixture('- owner/repo')
 
   await workspace.purgeTempFilesAndSaveCache()
@@ -199,5 +199,5 @@ test('`Workspace.saveWorkspaceCache()` → saves cache', async t => {
     `saveCache([/home/scala-steward/workspace], "scala-steward-acc000fd-${now}")`,
   ]
 
-  t.deepEqual(calls, expected)
+  expect(calls).toStrictEqual(expected)
 })

@@ -1,13 +1,12 @@
-import {fail} from 'node:assert'
-import test from 'ava'
+import {expect, test} from 'vitest'
 import {Logger} from '../core/logger.js'
 import {GitHub, type GitHubClient} from './github.js'
 
-test('`GitHub.getAuthUser()` → returns every auth user component', async t => {
+test('`GitHub.getAuthUser()` → returns every auth user component', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
-        getByUsername: async () => fail('This should not be called'),
+        getByUsername: async () => expect.unreachable('This should not be called'),
         getAuthenticated: async () => ({data: {login: 'alejandrohdezma', email: 'alex@example.com', name: 'Alex'}}),
       },
     },
@@ -17,16 +16,16 @@ test('`GitHub.getAuthUser()` → returns every auth user component', async t => 
 
   const user = await input.getAuthUser()
 
-  t.is(user.login().value, 'alejandrohdezma')
-  t.is(user.email().value, 'alex@example.com')
-  t.is(user.name().value, 'Alex')
+  expect(user.login().value).toBe('alejandrohdezma')
+  expect(user.email().value).toBe('alex@example.com')
+  expect(user.name().value).toBe('Alex')
 })
 
-test('`GitHub.getAuthUser()` → throws error on any empty component', async t => {
+test('`GitHub.getAuthUser()` → throws error on any empty component', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
-        getByUsername: async () => fail('This should not be called'),
+        getByUsername: async () => expect.unreachable('This should not be called'),
         getAuthenticated: async () => ({data: {login: '', email: '', name: ''}}),
       },
     },
@@ -38,27 +37,27 @@ test('`GitHub.getAuthUser()` → throws error on any empty component', async t =
 
   {
     const expected = 'Unable to retrieve user information from GitHub'
-    t.throws(() => user.login().value, {instanceOf: Error, message: expected})
+    expect(() => user.login().value).toThrow(new Error(expected))
   }
 
   {
     const expected = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account '
       + 'has the email privacy feature disabled for at least one email or use the `author-email` input to provide one.'
-    t.throws(() => user.email().value, {instanceOf: Error, message: expected})
+    expect(() => user.email().value).toThrow(new Error(expected))
   }
 
   {
     const expected = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account '
       + 'has a valid name set in its profile or use the `author-name` input to provide one.'
-    t.throws(() => user.name().value, {instanceOf: Error, message: expected})
+    expect(() => user.name().value).toThrow(new Error(expected))
   }
 })
 
-test('`GitHub.getAuthUser()` → throws error on any null component', async t => {
+test('`GitHub.getAuthUser()` → throws error on any null component', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
-        getByUsername: async () => fail('This should not be called'),
+        getByUsername: async () => expect.unreachable('This should not be called'),
         getAuthenticated: async () => ({data: {login: 'alex', email: null, name: null}}),
       },
     },
@@ -71,22 +70,22 @@ test('`GitHub.getAuthUser()` → throws error on any null component', async t =>
   {
     const expected = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account '
       + 'has the email privacy feature disabled for at least one email or use the `author-email` input to provide one.'
-    t.throws(() => user.email().value, {instanceOf: Error, message: expected})
+    expect(() => user.email().value).toThrow(new Error(expected))
   }
 
   {
     const expected = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account '
       + 'has a valid name set in its profile or use the `author-name` input to provide one.'
-    t.throws(() => user.name().value, {instanceOf: Error, message: expected})
+    expect(() => user.name().value).toThrow(new Error(expected))
   }
 })
 
-test('`GitHub.getAppUser()` → returns every auth user component', async t => {
+test('`GitHub.getAppUser()` → returns every auth user component', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
         getByUsername: async () => ({data: {login: 'my-app[bot]', id: 123}}),
-        getAuthenticated: async () => fail('This should not be called'),
+        getAuthenticated: async () => expect.unreachable('This should not be called'),
       },
     },
   }
@@ -95,17 +94,17 @@ test('`GitHub.getAppUser()` → returns every auth user component', async t => {
 
   const user = await input.getAppUser('the-slug')
 
-  t.is(user.login().value, 'my-app[bot]')
-  t.is(user.email().value, '123+my-app[bot]@users.noreply.github.com')
-  t.is(user.name().value, 'my-app[bot]')
+  expect(user.login().value).toBe('my-app[bot]')
+  expect(user.email().value).toBe('123+my-app[bot]@users.noreply.github.com')
+  expect(user.name().value).toBe('my-app[bot]')
 })
 
-test('`GitHub.getAppUser()` → returns default user if slug is empty', async t => {
+test('`GitHub.getAppUser()` → returns default user if slug is empty', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
         getByUsername: async () => ({data: {login: 'my-app[bot]', id: 123}}),
-        getAuthenticated: async () => fail('This should not be called'),
+        getAuthenticated: async () => expect.unreachable('This should not be called'),
       },
     },
   }
@@ -114,17 +113,17 @@ test('`GitHub.getAppUser()` → returns default user if slug is empty', async t 
 
   const user = await input.getAppUser(undefined)
 
-  t.is(user.login().value, 'github-actions[bot]')
-  t.is(user.email().value, '41898282+github-actions[bot]@users.noreply.github.com')
-  t.is(user.name().value, 'github-actions[bot]')
+  expect(user.login().value).toBe('github-actions[bot]')
+  expect(user.email().value).toBe('41898282+github-actions[bot]@users.noreply.github.com')
+  expect(user.name().value).toBe('github-actions[bot]')
 })
 
-test('`GitHub.getAppUser()` → returns default user if failed to obtain bot user', async t => {
+test('`GitHub.getAppUser()` → returns default user if failed to obtain bot user', async () => {
   const client: GitHubClient = {
     rest: {
       users: {
-        getByUsername: async () => fail('BOOM!'),
-        getAuthenticated: async () => fail('This should not be called'),
+        getByUsername: async () => expect.unreachable('BOOM!'),
+        getAuthenticated: async () => expect.unreachable('This should not be called'),
       },
     },
   }
@@ -133,7 +132,7 @@ test('`GitHub.getAppUser()` → returns default user if failed to obtain bot use
 
   const user = await input.getAppUser(undefined)
 
-  t.is(user.login().value, 'github-actions[bot]')
-  t.is(user.email().value, '41898282+github-actions[bot]@users.noreply.github.com')
-  t.is(user.name().value, 'github-actions[bot]')
+  expect(user.login().value).toBe('github-actions[bot]')
+  expect(user.email().value).toBe('41898282+github-actions[bot]@users.noreply.github.com')
+  expect(user.name().value).toBe('github-actions[bot]')
 })
