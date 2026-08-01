@@ -1,5 +1,5 @@
+import {createHash} from 'node:crypto'
 import path from 'node:path'
-import jsSHA from 'jssha/dist/sha256'
 import {type ActionCache} from '../core/cache.js'
 import {type Files} from '../core/files.js'
 import {type Logger} from '../core/logger.js'
@@ -175,9 +175,7 @@ export class Workspace {
    * @returns {string} the file content's hash
    */
   private hashFile(file: string): string {
-    // eslint-disable-next-line unicorn/text-encoding-identifier-case, new-cap
-    const sha = new jsSHA('SHA-256', 'TEXT', {encoding: 'UTF8'})
-    sha.update(this.files.readFileSync(file, 'utf8'))
-    return sha.getHash('HEX').slice(0, 8)
+    const contents = this.files.readFileSync(file, 'utf8')
+    return createHash('sha256').update(contents, 'utf8').digest('hex').slice(0, 8)
   }
 }
