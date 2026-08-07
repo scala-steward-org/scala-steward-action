@@ -109,4 +109,4 @@ lib/**/*
 coverage
 
 # Mill binary should only be at repo root, not in dist
-dist/mill
+mill
