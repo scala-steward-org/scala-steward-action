@@ -1,6 +1,11 @@
-import {existsSync, readFileSync} from 'node:fs'
+import {execFileSync} from 'node:child_process'
+import {
+  existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+} from 'node:fs'
 import {readFile, writeFile} from 'node:fs/promises'
 import * as os from 'node:os'
+import {join} from 'node:path'
+import process from 'node:process'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as io from '@actions/io'
@@ -16,7 +21,8 @@ vi.mock('node:fs/promises', () => ({
   readFile: vi.fn(),
   writeFile: vi.fn(),
 }))
-vi.mock('node:os', () => ({
+vi.mock('node:os', async importOriginal => ({
+  ...await importOriginal<typeof os>(),
   homedir: vi.fn(),
 }))
 vi.mock('@actions/core')
@@ -163,4 +169,69 @@ test('`remove()` → deletes the Mill wrapper from the binary directory', async 
   await remove()
 
   expect(vi.mocked(io.rmRF).mock.calls[0]?.[0]).toBe('/home/runner/bin/mill')
+})
+
+/**
+ * Runs a wrapper script in dry-run mode inside `dir` and returns the
+ * download URL it resolved. The wrapper exits before downloading and
+ * prints the URL and the target path instead.
+ */
+function dryRun(script: string, dir: string, env: Record<string, string>): string {
+  const output = execFileSync('sh', [script], {
+    cwd: dir,
+    env: {
+      PATH: process.env.PATH ?? '/usr/bin:/bin',
+      HOME: dir,
+      MILL_TEST_DRY_RUN_LAUNCHER_SCRIPT: '1',
+      MILL_FINAL_DOWNLOAD_FOLDER: dir,
+      MILL_OUTPUT_DIR: dir,
+      ...env,
+    },
+    encoding: 'utf8',
+  })
+
+  return output.trim().split('\n')[0] ?? ''
+}
+
+/** Uses 0.12.5 since its URL does not depend on the platform the test runs on. */
+test('embedded wrapper dry run → resolves a version to its Maven Central URL', () => {
+  const dir = mkdtempSync(join(os.tmpdir(), 'mill-wrapper-'))
+
+  try {
+    const url = dryRun(getBundledMillPath(), dir, {MILL_VERSION: '0.12.5'})
+
+    expect(url).toBe(`${maven}/com/lihaoyi/mill-dist/0.12.5/mill-dist-0.12.5.jar`)
+  } finally {
+    rmSync(dir, {recursive: true, force: true})
+  }
+})
+
+test('embedded wrapper dry run → detects the version from `.mill-version`', () => {
+  const dir = mkdtempSync(join(os.tmpdir(), 'mill-wrapper-'))
+
+  try {
+    writeFileSync(join(dir, '.mill-version'), '0.12.5\n')
+
+    const url = dryRun(getBundledMillPath(), dir, {})
+
+    expect(url).toBe(`${maven}/com/lihaoyi/mill-dist/0.12.5/mill-dist-0.12.5.jar`)
+  } finally {
+    rmSync(dir, {recursive: true, force: true})
+  }
+})
+
+test('embedded wrapper dry run → downloads from the mirror after the rewrite', () => {
+  const dir = mkdtempSync(join(os.tmpdir(), 'mill-wrapper-'))
+
+  try {
+    const rewritten = withMavenRepository(readFileSync(getBundledMillPath(), 'utf8'), 'https://mirror.example.com/maven')
+    const script = join(dir, 'mill')
+    writeFileSync(script, rewritten)
+
+    const url = dryRun(script, dir, {MILL_VERSION: '0.12.5'})
+
+    expect(url).toBe('https://mirror.example.com/maven/com/lihaoyi/mill-dist/0.12.5/mill-dist-0.12.5.jar')
+  } finally {
+    rmSync(dir, {recursive: true, force: true})
+  }
 })
