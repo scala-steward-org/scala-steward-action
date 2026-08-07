@@ -18,7 +18,7 @@ export type Logger = {
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Logger = {
   noOp: {
-    info() {}, debug() {}, error() {}, warning() {}, startGroup() {}, endGroup() {},
+    info() {/* empty */}, debug() {/* empty */}, error() {/* empty */}, warning() {/* empty */}, startGroup() {/* empty */}, endGroup() {/* empty */},
   },
 
 }

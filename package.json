@@ -3,17 +3,15 @@
   "description": "A GitHub Action to launch Scala Steward in your repository",
   "type": "module",
   "scripts": {
-    "build": "npm run build-pre && npm run build-main && npm run build-post",
-    "build-pre": "ncc build --target es2022 src/action/pre.ts && mv dist/index.js dist/pre.js && rm -f dist/mill",
-    "build-main": "ncc build --target es2022 src/action/main.ts && mv dist/index.js dist/main.js",
-    "build-post": "ncc build --target es2022 src/action/post.ts && mv dist/index.js dist/post.js && rm -f dist/mill",
-    "docs": "node --loader ts-node/esm src/utils/docs.ts && markdown-toc-gen update README.md",
+    "build": "npm run build-main && npm run build-post",
+    "build-main": "ncc build --target es2024 src/action/main.ts && mv dist/index.js dist/main.js && rm -f dist/mill",
+    "build-post": "ncc build --target es2024 src/action/post.ts && mv dist/index.js dist/post.js && rm -f dist/mill",
+    "docs": "node src/utils/docs.ts && markdown-toc-gen update README.md",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "contributors:check": "all-contributors check",
-    "test": "xo && NODE_OPTIONS='--loader=ts-node/esm --experimental-specifier-resolution=node' c8 ava",
-    "report": "c8 report",
-    "all": "npm run build && npm test && npm run report"
+    "test": "xo && vitest run --coverage",
+    "all": "npm run build && npm test"
   },
   "engines": {
     "node": ">=24"
@@ -32,69 +30,41 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@actions/cache": "^6.0.0",
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@actions/exec": "^3.0.0",
-    "@actions/github": "^9.0.0",
+    "@actions/github": "^9.1.1",
     "@actions/io": "^3.0.2",
     "@actions/tool-cache": "^4.0.0",
     "@octokit/auth-app": "^8.2.0",
-    "@octokit/request": "^10.0.7",
-    "@types/node-fetch": "^2.6.13",
-    "@types/sinon": "^21.0.0",
-    "jssha": "^3.3.1",
-    "node-fetch": "^3.3.2"
+    "@octokit/request": "^10.0.8"
   },
   "devDependencies": {
-    "@ava/typescript": "^6.0.0",
-    "@tsconfig/node20": "^20.1.9",
+    "@tsconfig/node24": "^24.0.4",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^25.2.1",
+    "@types/node": "^24.13.3",
     "@vercel/ncc": "^0.38.4",
+    "@vitest/coverage-v8": "^4.1.10",
     "all-contributors-cli": "^6.26.1",
-    "ava": "^6.4.1",
-    "c8": "^10.1.3",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^4.3.0",
     "markdown-toc-gen": "^1.2.0",
-    "sinon": "^21.0.1",
-    "ts-node": "^10.9.2",
     "ts-pattern": "^5.9.0",
-    "typescript": "^5.9.3",
-    "xo": "^0.60.0"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10",
+    "xo": "^2.0.2"
   },
   "xo": {
     "space": true,
     "semicolon": false,
     "rules": {
-      "new-cap": 0,
-      "ava/no-ignored-test-files": 0,
-      "n/file-extension-in-import": 0,
-      "node/prefer-global/process": 0,
-      "import/extensions": 0,
       "@typescript-eslint/naming-convention": 0,
-      "@typescript-eslint/no-empty-function": 0,
-      "unicorn/prefer-node-protocol": 0
+      "@stylistic/curly-newline": [
+        "error",
+        {
+          "multiline": true,
+          "minElements": 1,
+          "consistent": true
+        }
+      ]
     }
-  },
-  "ava": {
-    "files": [
-      "src/**/*.test.ts"
-    ],
-    "extensions": {
-      "ts": "module"
-    }
-  },
-  "c8": {
-    "all": true,
-    "src": "src",
-    "exclude": [
-      "src/core/!(types.ts)",
-      "src/action",
-      "src/**/*.test.ts",
-      "src/utils"
-    ],
-    "reporter": [
-      "text",
-      "cobertura"
-    ]
   }
 }

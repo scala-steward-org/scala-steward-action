@@ -1,8 +1,8 @@
-import {existsSync} from 'fs'
-import test from 'ava'
-import {getBundledMillPath} from './mill'
+import {existsSync} from 'node:fs'
+import {expect, test} from 'vitest'
+import {getBundledMillPath} from './mill.js'
 
-test('`getBundledMillPath()` → returns path where mill binary exists', t => {
+test('`getBundledMillPath()` → returns path where mill binary exists', () => {
   const millPath = getBundledMillPath()
-  t.true(existsSync(millPath))
+  expect(existsSync(millPath)).toBe(true)
 })

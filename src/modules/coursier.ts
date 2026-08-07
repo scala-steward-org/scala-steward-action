@@ -1,53 +1,98 @@
-import * as path from 'path'
-import * as os from 'os'
+import * as path from 'node:path'
+import * as os from 'node:os'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import * as exec from '@actions/exec'
-import {type NonEmptyString} from '../core/types'
+import {type NonEmptyString} from '../core/types.js'
+import {execute} from '../core/exec.js'
+import {type ConnectivityProbe} from './healthcheck.js'
 
 /**
- * Installs `coursier` and add its executable to the `PATH`.
+ * Downloads the `coursier` CLI binary and adds it to the `PATH`.
  *
- * Once coursier is installed, installs `scalafmt`
- * `scalafix`, `sbt` and `scala-cli` tools.
+ * Splitting this out from `install()` lets callers run it before
+ * the health check so `cs` is available on the `PATH` for the
+ * connectivity probe.
  *
- * Throws error if the installation fails.
+ * Throws error if the download fails.
  */
-export async function install(): Promise<void> {
+export async function selfInstall(): Promise<void> {
   try {
     const coursierUrl = core.getInput('coursier-cli-url')
 
     core.debug(`Installing coursier from ${coursierUrl}`)
 
-    const binary = path.join(os.homedir(), 'bin')
+    const binary = path.join(os.homedir(), '.local', 'bin')
     await io.mkdirP(binary)
 
     const zip = await tc.downloadTool(coursierUrl, path.join(binary, 'cs.gz'))
 
-    await exec.exec('gzip', ['-d', zip], {silent: true})
+    await exec.exec('gzip', ['-df', zip], {silent: true})
     await exec.exec('chmod', ['+x', path.join(binary, 'cs')], {silent: true})
 
     core.addPath(binary)
 
+    const coursierVersion = await execute('cs', 'version')
+
+    core.info(`✓ Coursier installed, version: ${coursierVersion.trim()}`)
+  } catch (error: unknown) {
+    core.debug(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install coursier', {cause: error})
+  }
+}
+
+/**
+ * Installs `scalafmt`, `scalafix`, `sbt` and `scala-cli` using
+ * `coursier`. Assumes `selfInstall()` has already put `cs` on the
+ * `PATH`.
+ *
+ * Throws error if the installation fails.
+ */
+export async function install(): Promise<void> {
+  try {
+    const scalafmtInputVersion = core.getInput('scalafmt-version')
+    const scalaCliInputVersion = core.getInput('scala-cli-version')
+    const sbtInputVersion = core.getInput('sbt-version')
+    const scalafixDependency = core.getInput('scalafix-dependency')
+
+    core.debug(`Installing scalafix ${scalafixDependency}`)
+
+    const binary = path.join(os.homedir(), '.local', 'bin')
+    await io.mkdirP(binary)
+
     await exec.exec(
       'cs',
-      ['install', 'scalafmt', 'scalafix', 'scala-cli', 'sbt', '--install-dir', binary],
+      [
+        'install',
+        versionedApp('scalafmt', scalafmtInputVersion),
+        versionedApp('scala-cli', scalaCliInputVersion),
+        versionedApp('sbt', sbtInputVersion),
+        '--install-dir',
+        binary,
+      ],
       {
         silent: true,
         listeners: {stdline: core.debug, errline: core.debug},
       },
     )
 
-    const coursierVersion = await execute('cs', 'version')
+    const scalafixBinaryPath = path.join(binary, 'scalafix')
 
-    core.info(`✓ Coursier installed, version: ${coursierVersion.trim()}`)
+    await exec.exec(
+      'cs',
+      ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', scalafixBinaryPath],
+      {
+        silent: true,
+        listeners: {stdline: core.debug, errline: core.debug},
+      },
+    )
 
     const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
 
-    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /, '').trim()}`)
+    core.info(`✓ Scalafmt installed, version: ${scalafmtVersion.replace(/^scalafmt /v, '').trim()}`)
 
-    const scalafixVersion = await execute('cs', 'launch', 'scalafix', '--', '--version')
+    const scalafixVersion = await execute(scalafixBinaryPath, '--version')
 
     core.info(`✓ Scalafix installed, version: ${scalafixVersion.trim()}`)
 
@@ -55,9 +100,30 @@ export async function install(): Promise<void> {
 
     core.info('✓ scala-cli installed')
   } catch (error: unknown) {
-    core.debug((error as Error).message)
-    throw new Error('Unable to install coursier or managed tools')
+    core.debug(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install managed tools', {cause: error})
   }
+}
+
+export function versionedApp(app: string, version: string): string {
+  return version ? `${app}:${version}` : app
+}
+
+/**
+ * A `ConnectivityProbe` that uses `cs resolve` to verify the configured
+ * Maven repositories are reachable. Returns `true` if metadata for a
+ * well-known artifact (`org.scala-lang:scala-library`) can be resolved,
+ * `false` otherwise. Assumes `cs` is already on the `PATH` (call
+ * `selfInstall()` first).
+ */
+export const connectivityProbe: ConnectivityProbe = async () => {
+  const code = await exec.exec(
+    'cs',
+    ['resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12'],
+    {silent: true, ignoreReturnCode: true, listeners: {stdline: core.debug, errline: core.debug}},
+  )
+
+  return code === 0
 }
 
 /**
@@ -72,7 +138,7 @@ export async function install(): Promise<void> {
 export async function launch(
   app: string,
   arguments_: Array<string | string[]> = [],
-  extraJars: NonEmptyString | undefined = undefined,
+  extraJars?: NonEmptyString,
 ): Promise<void> {
   core.startGroup(`Launching ${app}`)
 
@@ -80,7 +146,7 @@ export async function launch(
     'launch',
     '--contrib',
     '-r',
-    'sonatype:snapshots',
+    'central:maven-snapshots',
     app,
     ...(extraJars ? ['--extra-jars', extraJars.value] : []),
     '--',
@@ -110,27 +176,4 @@ export async function remove(): Promise<void> {
     ignoreReturnCode: true,
     listeners: {stdline: core.info, errline: core.debug},
   })
-}
-
-/**
- * Executes a tool and returns its output.
- */
-async function execute(tool: string, ...arguments_: string[]): Promise<string> {
-  let output = ''
-
-  const code = await exec.exec(tool, arguments_, {
-    silent: true,
-    ignoreReturnCode: true,
-    listeners: {
-      stdout(data) {
-        (output += data.toString())
-      }, errline: core.debug,
-    },
-  })
-
-  if (code !== 0) {
-    throw new Error(`There was an error while executing '${tool} ${arguments_.join(' ')}'`)
-  }
-
-  return output
 }

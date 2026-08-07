@@ -1,6 +1,6 @@
-import * as os from 'os'
-import * as path from 'path'
-import {fileURLToPath} from 'url'
+import * as os from 'node:os'
+import * as path from 'node:path'
+import {fileURLToPath} from 'node:url'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
@@ -32,8 +32,8 @@ export async function install(wrapperUrl?: string): Promise<void> {
     core.addPath(binary)
     core.info('✓ Mill wrapper installed')
   } catch (error: unknown) {
-    core.error((error as Error).message)
-    throw new Error('Unable to install Mill wrapper')
+    core.error(error instanceof Error ? error.message : String(error))
+    throw new Error('Unable to install Mill wrapper', {cause: error})
   }
 }
 
