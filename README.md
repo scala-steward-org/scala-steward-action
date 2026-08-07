@@ -205,6 +205,9 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # when the requested Mill version ships from Maven (Mill 0.12.x
     # and newer). Set this to a Maven mirror URL (without a trailing
     # slash) if your runner is rate-limited by Maven Central.
+    # It is applied by rewriting the Maven Central URL inside the
+    # embedded mill wrapper. It is ignored when mill-wrapper-url
+    # is set.
     #
     # Default: https://repo1.maven.org/maven2
     mill-repository: ''
