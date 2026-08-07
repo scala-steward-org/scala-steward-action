@@ -1,143 +1,90 @@
+import {readFile, writeFile} from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
+import {fileURLToPath} from 'node:url'
 import * as core from '@actions/core'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
 import * as exec from '@actions/exec'
-import {execute} from '../core/exec.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const mavenCentral = 'https://repo1.maven.org/maven2'
 
 /**
- * Installs `Mill` and add its executable to the `PATH`.
+ * Installs `Mill` wrapper and add its executable to the `PATH`.
  *
+ * If wrapperUrl is provided, downloads from that URL.
+ * Otherwise, uses the embedded mill binary in the repository and
+ * honours the `mill-repository` input by rewriting the Maven Central
+ * URL inside the wrapper.
+ * Mill is always added to PATH.
  * Throws error if the installation fails.
  */
-export async function install(): Promise<void> {
+export async function install(wrapperUrl?: string): Promise<void> {
   try {
-    const millVersion = core.getInput('mill-version')
+    const binary = path.join(os.homedir(), 'bin')
+    await io.mkdirP(binary)
 
-    const cachedPath = tc.find('mill', millVersion)
+    const millPath = path.join(binary, 'mill')
 
-    if (cachedPath) {
-      core.addPath(cachedPath)
+    if (wrapperUrl) {
+      await tc.downloadTool(wrapperUrl, millPath)
     } else {
-      const millUrl = getDownloadUrl(millVersion)
+      await io.cp(getBundledMillPath(), millPath)
 
-      core.debug(`Attempting to install Mill from ${millUrl}`)
+      const repository = core.getInput('mill-repository')
 
-      const binary = path.join(os.homedir(), 'bin')
-      await io.mkdirP(binary)
+      if (repository) {
+        const wrapper = await readFile(millPath, 'utf8')
+        const rewritten = withMavenRepository(wrapper, repository)
 
-      let mill: string
-
-      if (millUrl.startsWith('https://github.com/')) {
-        mill = await tc.downloadTool(millUrl, path.join(binary, 'mill'))
-      } else {
-        mill = await execute('cs', 'get', millUrl).then(output => output.trim())
-        await io.cp(mill, path.join(binary, 'mill'))
+        if (rewritten !== wrapper) {
+          await writeFile(millPath, rewritten)
+        }
       }
-
-      await exec.exec('chmod', ['+x', mill], {silent: true, ignoreReturnCode: true})
-
-      await tc.cacheFile(mill, 'mill', 'mill', millVersion)
     }
 
-    core.info(`✓ Mill installed, version: ${millVersion}`)
+    await exec.exec('chmod', ['+x', millPath], {silent: true, ignoreReturnCode: true})
+
+    core.addPath(binary)
+    core.info('✓ Mill wrapper installed')
   } catch (error: unknown) {
     core.error(error instanceof Error ? error.message : String(error))
-    throw new Error('Unable to install Mill', {cause: error})
+    throw new Error('Unable to install Mill wrapper', {cause: error})
   }
+}
+
+/**
+ * Rewrites the Maven Central URL in the wrapper script with the
+ * given Maven repository. Trailing slashes are stripped from it.
+ *
+ * The repository is substituted into a shell script that later runs,
+ * so anything but a plain https URL is rejected to keep shell
+ * metacharacters out of it.
+ */
+export function withMavenRepository(wrapper: string, repository: string): string {
+  const stripped = repository.replace(/\/+$/v, '')
+
+  if (!/^https?:\/\/[\w.~:\/@%+\-]+$/v.test(stripped)) {
+    throw new Error(`Invalid mill-repository URL "${repository}"`)
+  }
+
+  return wrapper.replaceAll(mavenCentral, stripped)
+}
+
+/**
+ * Gets the path to the embedded mill binary in the repository.
+ * Mill is at repo root; when bundled in dist/, use one level up.
+ */
+export function getBundledMillPath(): string {
+  const relativePath = __dirname.endsWith('dist') ? ['..', 'mill'] : ['..', '..', 'mill']
+  return path.resolve(__dirname, ...relativePath)
 }
 
 /**
  * Removes Mill binary
  */
 export async function remove(): Promise<void> {
-  await io.rmRF(path.join(path.join(os.homedir(), 'bin'), 'mill'))
-}
-
-/**
-  * It dublicates logic from 'mill' bash bootstrap script.
-  */
-function getDownloadUrl(millVersion: string): string {
-  const artifactSuffix = getArtifactSuffix()
-  let millUrl: string
-  let downloadExtension: string
-  let downloadSuffix: string
-  let downloadFromMaven: boolean
-
-  if (/^0\.0\.\d+$/v.test(millVersion)
-    || /^0\.1\.\d+$/v.test(millVersion)
-    || /^0\.2\.\d+$/v.test(millVersion)
-    || /^0\.3\.\d+$/v.test(millVersion)
-    || /^0\.4\.\d+$/v.test(millVersion)) {
-    downloadSuffix = ''
-    downloadFromMaven = false
-  } else if (/^0\.5\.\d+$/v.test(millVersion)
-    || /^0\.6\.\d+$/v.test(millVersion)
-    || /^0\.7\.\d+$/v.test(millVersion)
-    || /^0\.8\.\d+$/v.test(millVersion)
-    || /^0\.9\.\d+$/v.test(millVersion)
-    || /^0\.10\.\d+$/v.test(millVersion)
-    || /^0\.11\.0-M-[A-Za-z\d]+$/v.test(millVersion)) {
-    downloadSuffix = '-assembly'
-    downloadFromMaven = false
-  } else {
-    downloadSuffix = '-assembly'
-    downloadFromMaven = true
-  }
-
-  if (millVersion === '0.12.0'
-    || millVersion === '0.12.1'
-    || millVersion === '0.12.2'
-    || millVersion === '0.12.3'
-    || millVersion === '0.12.4'
-    || millVersion === '0.12.5'
-    || millVersion === '0.12.6'
-    || millVersion === '0.12.7'
-    || millVersion === '0.12.8'
-    || millVersion === '0.12.9'
-    || millVersion === '0.12.10'
-    || millVersion === '0.12.11') {
-    downloadExtension = 'jar'
-  } else if (/^0\.12\.[A-Za-z\d]+$/v.test(millVersion)) { // 0.12.*
-    downloadExtension = 'exe'
-  } else if (/^0\.\d+\.\d+(-[A-Za-z\d.\-]+)?$/v.test(millVersion)) { // 0.*
-    downloadExtension = 'jar'
-  } else {
-    downloadExtension = 'exe'
-  }
-
-  if (downloadFromMaven) {
-    const repo = core.getInput('mill-repository').replace(/\/+$/v, '')
-    millUrl = `${repo}/com/lihaoyi/mill-dist${artifactSuffix}/${millVersion}/mill-dist${artifactSuffix}-${millVersion}.${downloadExtension}`
-  } else {
-    const millVersionTag = millVersion.replace(/([^\-]+)(-M\d+)?(-.*)?/v, '$1$2')
-    millUrl = `https://github.com/lihaoyi/mill/releases/download/${millVersionTag}/${millVersion}${downloadSuffix}`
-  }
-
-  return millUrl
-}
-
-function getArtifactSuffix(): string {
-  const platform = os.platform() // 'linux', 'darwin', 'win32'
-  const arch = os.arch() // 'x64', 'arm64', etc.
-
-  let suffix = ''
-
-  if (platform === 'linux') {
-    suffix = arch === 'arm64'
-      ? '-native-linux-aarch64'
-      : '-native-linux-amd64'
-  } else if (platform === 'darwin') {
-    suffix = arch === 'arm64'
-      ? '-native-mac-aarch64'
-      : '-native-mac-amd64'
-  }
-
-  if (suffix === '') {
-    core.error('This native mill launcher supports only Linux and macOS.')
-    throw new Error('Unable to detect Mill artifact suffix')
-  } else {
-    return suffix
-  }
+  await io.rmRF(path.join(os.homedir(), 'bin', 'mill'))
 }

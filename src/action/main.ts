@@ -37,7 +37,7 @@ async function run(): Promise<void> {
     await healthCheck.check()
 
     await coursier.install()
-    await mill.install()
+    await mill.install(core.getInput('mill-wrapper-url') || undefined)
 
     const logger: Logger = core
     const files: Files = {...fs, ...io}

@@ -192,6 +192,10 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: 16384
     max-buffer-size: ''
 
+    # URL to download the mill wrapper script from.
+    # If not provided, uses the embedded mill binary.
+    mill-wrapper-url: ''
+
     # Url to download the coursier linux CLI from.
     #
     # Default: https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz
@@ -201,6 +205,9 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # when the requested Mill version ships from Maven (Mill 0.12.x
     # and newer). Set this to a Maven mirror URL (without a trailing
     # slash) if your runner is rate-limited by Maven Central.
+    # It is applied by rewriting the Maven Central URL inside the
+    # embedded mill wrapper. It is ignored when mill-wrapper-url
+    # is set.
     #
     # Default: https://repo1.maven.org/maven2
     mill-repository: ''
@@ -265,10 +272,8 @@ When it launches it will send PR to update all the repos selected in step (2.2).
     # Default: true
     ignore-opts-files: ''
 
-    # Mill version to install. Take into account this will
-    # just affect the global `mill` executable. Scala 
-    # Steward will still respect the version specified in
-    # your repository while updating it.
+    # Deprecated. This input is no longer used.
+    # Mill is installed from the embedded binary or mill-wrapper-url.
     #
     # Default: 1.0.6
     mill-version: ''
