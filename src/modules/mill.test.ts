@@ -1,6 +1,40 @@
 import {existsSync, readFileSync} from 'node:fs'
-import {expect, test} from 'vitest'
-import {getBundledMillPath, withMavenRepository} from './mill.js'
+import {readFile, writeFile} from 'node:fs/promises'
+import * as os from 'node:os'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
+import * as io from '@actions/io'
+import * as tc from '@actions/tool-cache'
+import {
+  beforeEach, expect, test, vi,
+} from 'vitest'
+import {
+  getBundledMillPath, install, remove, withMavenRepository,
+} from './mill.js'
+
+vi.mock('node:fs/promises', () => ({
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+}))
+vi.mock('node:os', () => ({
+  homedir: vi.fn(),
+}))
+vi.mock('@actions/core')
+vi.mock('@actions/exec')
+vi.mock('@actions/io')
+vi.mock('@actions/tool-cache')
+
+const maven = 'https://repo1.maven.org/maven2'
+
+/** Defaults to a runner with no mill-repository override. */
+function setup({millRepository = ''}: {millRepository?: string} = {}) {
+  vi.mocked(core.getInput).mockImplementation(name => name === 'mill-repository' ? millRepository : '')
+  vi.mocked(os.homedir).mockReturnValue('/home/runner')
+}
+
+beforeEach(() => {
+  vi.resetAllMocks()
+})
 
 test('`getBundledMillPath()` → returns path where mill binary exists', () => {
   const millPath = getBundledMillPath()
@@ -10,15 +44,98 @@ test('`getBundledMillPath()` → returns path where mill binary exists', () => {
 test('`withMavenRepository()` → replaces the Maven Central URL in the embedded wrapper', () => {
   const wrapper = readFileSync(getBundledMillPath(), 'utf8')
 
-  const rewritten = withMavenRepository(wrapper, 'https://nexus.example.com/maven-public/')
+  const rewritten = withMavenRepository(wrapper, 'https://nexus.example.com/maven-public')
 
-  expect(wrapper).toContain('https://repo1.maven.org/maven2')
-  expect(rewritten).not.toContain('https://repo1.maven.org/maven2')
+  expect(wrapper).toContain(maven)
+  expect(rewritten).not.toContain(maven)
   expect(rewritten).toContain('https://nexus.example.com/maven-public/com/lihaoyi/mill-dist')
+})
+
+test('`withMavenRepository()` → strips trailing slashes off the repository', () => {
+  const rewritten = withMavenRepository(`URL="${maven}/com/lihaoyi/mill-dist"`, 'https://mirror.example.com/maven///')
+
+  expect(rewritten).toBe('URL="https://mirror.example.com/maven/com/lihaoyi/mill-dist"')
 })
 
 test('`withMavenRepository()` → keeps the wrapper unchanged for Maven Central', () => {
   const wrapper = readFileSync(getBundledMillPath(), 'utf8')
 
-  expect(withMavenRepository(wrapper, 'https://repo1.maven.org/maven2')).toBe(wrapper)
+  expect(withMavenRepository(wrapper, maven)).toBe(wrapper)
+})
+
+test('`install()` → copies the bundled wrapper into the binary directory', async () => {
+  setup()
+
+  await install()
+
+  expect(vi.mocked(io.mkdirP).mock.calls[0]?.[0]).toBe('/home/runner/bin')
+  expect(vi.mocked(io.cp).mock.calls[0]).toStrictEqual([getBundledMillPath(), '/home/runner/bin/mill'])
+  expect(vi.mocked(tc.downloadTool)).not.toHaveBeenCalled()
+})
+
+test('`install()` → downloads the wrapper from `mill-wrapper-url` and ignores `mill-repository`', async () => {
+  setup({millRepository: 'https://mirror.example.com/maven'})
+
+  await install('https://example.com/mill')
+
+  expect(vi.mocked(tc.downloadTool).mock.calls[0]).toStrictEqual(['https://example.com/mill', '/home/runner/bin/mill'])
+  expect(vi.mocked(io.cp)).not.toHaveBeenCalled()
+  expect(vi.mocked(readFile)).not.toHaveBeenCalled()
+  expect(vi.mocked(writeFile)).not.toHaveBeenCalled()
+})
+
+test('`install()` → rewrites the wrapper when `mill-repository` is a mirror', async () => {
+  setup({millRepository: 'https://mirror.example.com/maven'})
+  vi.mocked(readFile).mockResolvedValue(`URL="${maven}/com/lihaoyi/mill-dist"`)
+
+  await install()
+
+  expect(vi.mocked(writeFile).mock.calls[0]).toStrictEqual([
+    '/home/runner/bin/mill', 'URL="https://mirror.example.com/maven/com/lihaoyi/mill-dist"',
+  ])
+})
+
+test('`install()` → skips the rewrite when `mill-repository` is Maven Central', async () => {
+  setup({millRepository: maven})
+  vi.mocked(readFile).mockResolvedValue(`URL="${maven}/com/lihaoyi/mill-dist"`)
+
+  await install()
+
+  expect(vi.mocked(writeFile)).not.toHaveBeenCalled()
+})
+
+test('`install()` → makes the wrapper executable and adds it to the PATH', async () => {
+  setup()
+
+  await install()
+
+  expect(vi.mocked(exec.exec).mock.calls[0]?.[0]).toBe('chmod')
+  expect(vi.mocked(exec.exec).mock.calls[0]?.[1]).toStrictEqual(['+x', '/home/runner/bin/mill'])
+  expect(vi.mocked(core.addPath).mock.calls[0]?.[0]).toBe('/home/runner/bin')
+})
+
+test('`install()` → keeps the original failure as the cause', async () => {
+  setup()
+
+  const cause = new Error('disk full')
+  vi.mocked(io.cp).mockRejectedValue(cause)
+
+  await expect(install()).rejects.toThrow(new Error('Unable to install Mill wrapper'))
+  await expect(install()).rejects.toHaveProperty('cause', cause)
+})
+
+test('`install()` → survives a rejection that is not an Error', async () => {
+  setup()
+  vi.mocked(io.cp).mockRejectedValue('copy exploded')
+
+  await expect(install()).rejects.toThrow(new Error('Unable to install Mill wrapper'))
+  expect(vi.mocked(core.error)).toHaveBeenCalledWith('copy exploded')
+})
+
+test('`remove()` → deletes the Mill wrapper from the binary directory', async () => {
+  vi.mocked(os.homedir).mockReturnValue('/home/runner')
+
+  await remove()
+
+  expect(vi.mocked(io.rmRF).mock.calls[0]?.[0]).toBe('/home/runner/bin/mill')
 })
