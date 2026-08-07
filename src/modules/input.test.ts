@@ -386,3 +386,39 @@ test('`Input.defaultRepoConf()` → throws error if provided non-default file do
 
   expect(() => input.defaultRepoConf()).toThrow(new Error(expected))
 })
+
+test('`Input.defaultRepoConf()` → returns undefined without touching the disk if the input is empty', () => {
+  const inputs = (name: string) => match(name).otherwise(() => '')
+
+  const files: Files = {
+    chmodSync: () => expect.unreachable('Should not be called'),
+    rmRF: () => expect.unreachable('Should not be called'),
+    mkdirP: () => expect.unreachable('Should not be called'),
+    existsSync: () => expect.unreachable('Should not be called'),
+    writeFileSync: () => expect.unreachable('Should not be called'),
+    readFileSync: () => expect.unreachable('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
+
+  expect(input.defaultRepoConf()).toBe(undefined)
+})
+
+test('`Input.githubRepository()` → throws error if the input is empty', () => {
+  const inputs = (name: string) => match(name).otherwise(() => '')
+
+  const files: Files = {
+    chmodSync: () => expect.unreachable('Should not be called'),
+    rmRF: () => expect.unreachable('Should not be called'),
+    mkdirP: () => expect.unreachable('Should not be called'),
+    existsSync: () => expect.unreachable('Should not be called'),
+    writeFileSync: () => expect.unreachable('Should not be called'),
+    readFileSync: () => expect.unreachable('Should not be called'),
+  }
+
+  const input = Input.from({getInput: inputs, getBooleanInput: () => false}, files, Logger.noOp)
+
+  const expected = 'Unable to read GitHub repository from `github-repository` input'
+
+  expect(() => input.githubRepository()).toThrow(new Error(expected))
+})
