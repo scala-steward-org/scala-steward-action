@@ -58,9 +58,19 @@ export async function install(wrapperUrl?: string): Promise<void> {
 /**
  * Rewrites the Maven Central URL in the wrapper script with the
  * given Maven repository. Trailing slashes are stripped from it.
+ *
+ * The repository is substituted into a shell script that later runs,
+ * so anything but a plain https URL is rejected to keep shell
+ * metacharacters out of it.
  */
 export function withMavenRepository(wrapper: string, repository: string): string {
-  return wrapper.replaceAll(mavenCentral, repository.replace(/\/+$/v, ''))
+  const stripped = repository.replace(/\/+$/v, '')
+
+  if (!/^https?:\/\/[\w.~:\/@%+\-]+$/v.test(stripped)) {
+    throw new Error(`Invalid mill-repository URL "${repository}"`)
+  }
+
+  return wrapper.replaceAll(mavenCentral, stripped)
 }
 
 /**
