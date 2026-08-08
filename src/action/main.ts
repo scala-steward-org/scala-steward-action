@@ -43,15 +43,16 @@ async function run(): Promise<void> {
     const files: Files = {...fs, ...io}
     const inputs = Input.from(core, files, logger).all()
     const gitHubApiUrl = inputs.github.apiUrl.value
-    const gitHubToken = async () => await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation') ?? inputs.github.token.value
+    const gitHubToken = async () =>
+      (await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'installation')) ?? inputs.github.token.value
     const octokit = getOctokit(await gitHubToken(), {baseUrl: gitHubApiUrl})
     const github = GitHub.from(logger, octokit)
     const workspace = Workspace.from(logger, files, os, cache)
 
     const user = await gitHubAppToken(inputs.github.app, gitHubApiUrl, 'app')
-      .then(appToken => appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined)
-      .then(async octokit => octokit ? octokit.rest.apps.getAuthenticated() : undefined)
-      .then(async response => response?.data?.slug ? github.getAppUser(response.data.slug) : github.getAuthUser())
+      .then(appToken => (appToken ? getOctokit(appToken, {baseUrl: gitHubApiUrl}) : undefined))
+      .then(async appOctokit => (appOctokit ? appOctokit.rest.apps.getAuthenticated() : undefined))
+      .then(async response => (response?.data?.slug ? github.getAppUser(response.data.slug) : github.getAuthUser()))
 
     await workspace.prepare(inputs.steward.repos, gitHubToken, inputs.github.app)
     await workspace.restoreWorkspaceCache()
@@ -67,30 +68,40 @@ async function run(): Promise<void> {
       : 'scala-steward'
 
     try {
-      await coursier.launch(app, [
-        argument('--workspace', workspace.workspace),
-        argument('--repos-file', workspace.repos_md),
-        argument('--git-ask-pass', workspace.askpass_sh),
-        argument('--git-author-email', inputs.commits.author.email ?? user.email()),
-        argument('--git-author-name', inputs.commits.author.name ?? user.name()),
-        argument('--forge-login', user.login()),
-        argument('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
-        argument('--process-timeout', inputs.steward.timeout),
-        argument('--forge-api-host', inputs.github.apiUrl),
-        argument('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
-        argument('--sign-commits', inputs.commits.sign.enabled),
-        argument('--git-author-signing-key', inputs.commits.sign.key),
-        argument('--cache-ttl', inputs.steward.cacheTtl),
-        argument('--max-buffer-size', inputs.steward.maxBufferSize),
-        argument('--scalafix-migrations', inputs.migrations.scalafix),
-        argument('--artifact-migrations', inputs.migrations.artifacts),
-        argument('--repo-config', inputs.steward.defaultConfiguration),
-        argument('--github-app-id', inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined),
-        argument('--github-app-key-file', inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined),
-        inputs.steward.doNotFork ? '--do-not-fork' : [],
-        '--disable-sandbox',
-        inputs.steward.extraArgs?.value.split(' ') ?? [],
-      ], inputs.steward.extraJars)
+      await coursier.launch(
+        app,
+        [
+          argument('--workspace', workspace.workspace),
+          argument('--repos-file', workspace.repos_md),
+          argument('--git-ask-pass', workspace.askpass_sh),
+          argument('--git-author-email', inputs.commits.author.email ?? user.email()),
+          argument('--git-author-name', inputs.commits.author.name ?? user.name()),
+          argument('--forge-login', user.login()),
+          argument('--env-var', nonEmpty('"SBT_OPTS=-Xmx2048m -Xss8m -XX:MaxMetaspaceSize=512m"')),
+          argument('--process-timeout', inputs.steward.timeout),
+          argument('--forge-api-host', inputs.github.apiUrl),
+          argument('--ignore-opts-files', inputs.steward.ignoreOptsFiles),
+          argument('--sign-commits', inputs.commits.sign.enabled),
+          argument('--git-author-signing-key', inputs.commits.sign.key),
+          argument('--cache-ttl', inputs.steward.cacheTtl),
+          argument('--max-buffer-size', inputs.steward.maxBufferSize),
+          argument('--scalafix-migrations', inputs.migrations.scalafix),
+          argument('--artifact-migrations', inputs.migrations.artifacts),
+          argument('--repo-config', inputs.steward.defaultConfiguration),
+          argument(
+            '--github-app-id',
+            inputs.github.app && !inputs.github.app.authOnly ? inputs.github.app.id : undefined,
+          ),
+          argument(
+            '--github-app-key-file',
+            inputs.github.app && !inputs.github.app.authOnly ? workspace.app_pem : undefined,
+          ),
+          inputs.steward.doNotFork ? '--do-not-fork' : [],
+          '--disable-sandbox',
+          inputs.steward.extraArgs?.value.split(' ') ?? [],
+        ],
+        inputs.steward.extraJars,
+      )
     } finally {
       if (files.existsSync(workspace.runSummary_md)) {
         logger.info(`✓ Run Summary file: ${workspace.runSummary_md}`)
@@ -128,9 +139,12 @@ async function gitHubAppToken(app: GitHubAppInfo | undefined, gitHubApiUrl: stri
     }),
   })
 
-  const response = type === 'app'
-    ? await auth({type: 'app'})
-    : (app.installation ? await auth({type: 'installation', installationId: app.installation.value, refresh: true}) : undefined)
+  const response =
+    type === 'app'
+      ? await auth({type: 'app'})
+      : app.installation
+        ? await auth({type: 'installation', installationId: app.installation.value, refresh: true})
+        : undefined
 
   return response?.token
 }
@@ -154,5 +168,4 @@ function argument(name: string, value: NonEmptyString | boolean | undefined) {
   return value ? [name] : []
 }
 
-// eslint-disable-next-line unicorn/prefer-top-level-await
 void run()

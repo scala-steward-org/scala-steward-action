@@ -14,8 +14,9 @@ export async function execute(tool: string, ...arguments_: string[]): Promise<st
     ignoreReturnCode: true,
     listeners: {
       stdout(data) {
-        (output += data.toString())
-      }, errline: core.debug,
+        output += data.toString()
+      },
+      errline: core.debug,
     },
   })
 

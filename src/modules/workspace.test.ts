@@ -1,6 +1,4 @@
-import {
-  afterAll, beforeAll, expect, test, vi,
-} from 'vitest'
+import {afterAll, beforeAll, expect, test, vi} from 'vitest'
 import {type ActionCache} from '../core/cache.js'
 import {type Files} from '../core/files.js'
 import {Logger} from '../core/logger.js'
@@ -8,10 +6,10 @@ import {mandatory} from '../core/types.js'
 import {Workspace} from './workspace.js'
 
 type Overrides = {
-  logger?: Logger;
-  mkdirP?: Files['mkdirP'];
-  restoreCache?: ActionCache['restoreCache'];
-  saveCache?: ActionCache['saveCache'];
+  logger?: Logger
+  mkdirP?: Files['mkdirP']
+  restoreCache?: ActionCache['restoreCache']
+  saveCache?: ActionCache['saveCache']
 }
 
 /** The failure paths are only observable through what got logged. */
@@ -49,9 +47,11 @@ function fixture(repos_md = '', overrides: Overrides = {}) {
     chmodSync(path, mode) {
       calls.push(`chmodSync("${path}", ${mode})`)
     },
-    mkdirP: overrides.mkdirP ?? (async path => {
-      calls.push(`mkdirP("${path}")`)
-    }),
+    mkdirP:
+      overrides.mkdirP ??
+      (async path => {
+        calls.push(`mkdirP("${path}")`)
+      }),
     writeFileSync(path, content) {
       calls.push(`writeFileSync("${path}", "${content}")`)
     },
@@ -68,10 +68,12 @@ function fixture(repos_md = '', overrides: Overrides = {}) {
   const os = {homedir: () => '/home/'}
 
   const cache: ActionCache = {
-    restoreCache: overrides.restoreCache ?? (async (paths, primaryKey, restoreKeys) => {
-      calls.push(`restoreCache([${paths.toString()}], "${primaryKey}", [${restoreKeys?.toString() ?? ''}])`)
-      return 'hit'
-    }),
+    restoreCache:
+      overrides.restoreCache ??
+      (async (paths, primaryKey, restoreKeys) => {
+        calls.push(`restoreCache([${paths.toString()}], "${primaryKey}", [${restoreKeys?.toString() ?? ''}])`)
+        return 'hit'
+      }),
     saveCache: overrides.saveCache ?? (async (paths, key) => calls.push(`saveCache([${paths.toString()}], "${key}")`)),
   }
 
@@ -153,9 +155,7 @@ test('`Workspace.writeAskPass()` → writes a token to the askpass.sh', async ()
 
   await workspace.writeAskPass(async () => '123')
 
-  const expected: string[] = [
-    'writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")',
-  ]
+  const expected: string[] = ['writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'123\'")']
 
   expect(calls).toStrictEqual(expected)
 })
@@ -165,9 +165,7 @@ test('`Workspace.remove()` → removes the workspace', async () => {
 
   await workspace.remove()
 
-  const expected: string[] = [
-    'rmRF("/home/scala-steward")',
-  ]
+  const expected: string[] = ['rmRF("/home/scala-steward")']
 
   expect(calls).toStrictEqual(expected)
 })
@@ -238,7 +236,8 @@ test('`Workspace.saveWorkspaceCache()` → saves cache', async () => {
 test('`Workspace.restoreWorkspaceCache()` → says so when there was nothing cached', async () => {
   const {logger, logs} = recordingLogger()
   const {workspace} = fixture('- owner/repo', {
-    logger, async restoreCache() {
+    logger,
+    async restoreCache() {
       return undefined
     },
   })
@@ -251,7 +250,8 @@ test('`Workspace.restoreWorkspaceCache()` → says so when there was nothing cac
 test('`Workspace.restoreWorkspaceCache()` → warns instead of failing when the cache is unreachable', async () => {
   const {logger, logs} = recordingLogger()
   const {workspace} = fixture('- owner/repo', {
-    logger, async restoreCache() {
+    logger,
+    async restoreCache() {
       throw new Error('cache service unavailable')
     },
   })
@@ -265,7 +265,8 @@ test('`Workspace.restoreWorkspaceCache()` → warns instead of failing when the 
 test('`Workspace.restoreWorkspaceCache()` → closes the log group even after a failure', async () => {
   const {logger, logs} = recordingLogger()
   const {workspace} = fixture('- owner/repo', {
-    logger, async restoreCache() {
+    logger,
+    async restoreCache() {
       throw new Error('boom')
     },
   })
@@ -278,7 +279,8 @@ test('`Workspace.restoreWorkspaceCache()` → closes the log group even after a 
 test('`Workspace.saveWorkspaceCache()` → warns instead of failing when the cache cannot be written', async () => {
   const {logger, logs} = recordingLogger()
   const {workspace} = fixture('- owner/repo', {
-    logger, async saveCache() {
+    logger,
+    async saveCache() {
       throw new Error('cache upload failed')
     },
   })
@@ -298,8 +300,9 @@ test('`Workspace.prepare()` → keeps the original failure as the cause', async 
     },
   })
 
-  await expect(workspace.prepare('- owner/repo', async () => '123', undefined))
-    .rejects.toThrow(new Error('Unable to create Scala Steward workspace'))
+  await expect(workspace.prepare('- owner/repo', async () => '123', undefined)).rejects.toThrow(
+    new Error('Unable to create Scala Steward workspace'),
+  )
 
   const {workspace: another} = fixture('', {
     async mkdirP() {
@@ -307,8 +310,7 @@ test('`Workspace.prepare()` → keeps the original failure as the cause', async 
     },
   })
 
-  await expect(another.prepare('- owner/repo', async () => '123', undefined))
-    .rejects.toHaveProperty('cause', cause)
+  await expect(another.prepare('- owner/repo', async () => '123', undefined)).rejects.toHaveProperty('cause', cause)
 })
 
 test('`Workspace.prepare()` → rewrites the askpass file with a fresh token every fifty minutes', async () => {
@@ -317,10 +319,14 @@ test('`Workspace.prepare()` → rewrites the askpass file with a fresh token eve
 
   let issued = 0
 
-  await workspace.prepare('- owner/repo', async () => {
-    issued += 1
-    return `token-${issued}`
-  }, undefined)
+  await workspace.prepare(
+    '- owner/repo',
+    async () => {
+      issued += 1
+      return `token-${issued}`
+    },
+    undefined,
+  )
 
   expect(calls).toContain('writeFileSync("/home/scala-steward/askpass.sh", "#!/bin/sh\n\necho \'token-1\'")')
 
@@ -337,10 +343,14 @@ test('`Workspace.cancelTokenRefresh()` → stops the token from being rewritten 
 
   let issued = 0
 
-  await workspace.prepare('- owner/repo', async () => {
-    issued += 1
-    return `token-${issued}`
-  }, undefined)
+  await workspace.prepare(
+    '- owner/repo',
+    async () => {
+      issued += 1
+      return `token-${issued}`
+    },
+    undefined,
+  )
 
   await workspace.cancelTokenRefresh()
 
@@ -364,7 +374,8 @@ test('`Workspace` → survives cache failures that are not Errors', async () => 
 
   const restore = recordingLogger()
   const {workspace} = fixture('- owner/repo', {
-    logger: restore.logger, async restoreCache() {
+    logger: restore.logger,
+    async restoreCache() {
       throw notAnError
     },
   })
@@ -375,7 +386,8 @@ test('`Workspace` → survives cache failures that are not Errors', async () => 
 
   const save = recordingLogger()
   const {workspace: saving} = fixture('- owner/repo', {
-    logger: save.logger, async saveCache() {
+    logger: save.logger,
+    async saveCache() {
       throw notAnError
     },
   })
@@ -389,13 +401,15 @@ test('`Workspace.prepare()` → survives a failure that is not an Error', async 
   const notAnError: unknown = 'mkdir returned a string'
   const {logger, logs} = recordingLogger()
   const {workspace} = fixture('', {
-    logger, async mkdirP() {
+    logger,
+    async mkdirP() {
       throw notAnError
     },
   })
 
-  await expect(workspace.prepare('- owner/repo', async () => '123', undefined))
-    .rejects.toThrow(new Error('Unable to create Scala Steward workspace'))
+  await expect(workspace.prepare('- owner/repo', async () => '123', undefined)).rejects.toThrow(
+    new Error('Unable to create Scala Steward workspace'),
+  )
 
   expect(logs).toContain('debug("mkdir returned a string")')
 })

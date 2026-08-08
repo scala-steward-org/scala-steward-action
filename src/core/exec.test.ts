@@ -1,8 +1,6 @@
 import {Buffer} from 'node:buffer'
 import * as exec from '@actions/exec'
-import {
-  beforeEach, expect, test, vi,
-} from 'vitest'
+import {beforeEach, expect, test, vi} from 'vitest'
 import {execute} from './exec.js'
 
 vi.mock('@actions/exec')
@@ -66,7 +64,7 @@ test('`execute()` → reads the exit code itself instead of letting the tool thr
 test('`execute()` → throws naming the failed command when the exit code is not zero', async () => {
   vi.mocked(exec.exec).mockResolvedValue(1)
 
-  const expected = 'There was an error while executing \'cs launch scalafmt -- --version\''
+  const expected = "There was an error while executing 'cs launch scalafmt -- --version'"
 
   await expect(execute('cs', 'launch', 'scalafmt', '--', '--version')).rejects.toThrow(new Error(expected))
 })
@@ -74,7 +72,7 @@ test('`execute()` → throws naming the failed command when the exit code is not
 test('`execute()` → names the tool alone when it was called without arguments', async () => {
   vi.mocked(exec.exec).mockResolvedValue(127)
 
-  await expect(execute('cs')).rejects.toThrow(new Error('There was an error while executing \'cs \''))
+  await expect(execute('cs')).rejects.toThrow(new Error("There was an error while executing 'cs '"))
 })
 
 test('`execute()` → discards the output collected before a failure', async () => {

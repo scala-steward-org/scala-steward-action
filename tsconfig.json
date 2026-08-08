@@ -5,6 +5,6 @@
     "module": "es2022",
     "target": "es2024",
     "moduleResolution": "bundler",
-    "rootDir": "./src"
+    "noEmit": true
   }
 }

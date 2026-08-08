@@ -1,13 +1,12 @@
-
 import {type Files} from '../core/files.js'
 import {type Logger} from '../core/logger.js'
 import {mandatory, nonEmpty, type NonEmptyString} from '../core/types.js'
 
 export type GitHubAppInfo = {
-  authOnly: boolean;
-  id: NonEmptyString;
-  installation: NonEmptyString | undefined;
-  key: NonEmptyString;
+  authOnly: boolean
+  id: NonEmptyString
+  installation: NonEmptyString | undefined
+  key: NonEmptyString
 }
 
 /**
@@ -182,7 +181,10 @@ export class Input {
 
     if (id && key) {
       return {
-        authOnly, id, installation, key,
+        authOnly,
+        id,
+        installation,
+        key,
       }
     }
 

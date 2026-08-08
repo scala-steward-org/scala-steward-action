@@ -3,14 +3,13 @@
   "description": "A GitHub Action to launch Scala Steward in your repository",
   "type": "module",
   "scripts": {
-    "build": "npm run build-main && npm run build-post",
-    "build-main": "ncc build --target es2024 src/action/main.ts && mv dist/index.js dist/main.js && rm -f dist/mill",
-    "build-post": "ncc build --target es2024 src/action/post.ts && mv dist/index.js dist/post.js && rm -f dist/mill",
+    "build": "tsdown",
     "docs": "node src/utils/docs.ts && markdown-toc-gen update README.md",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "contributors:check": "all-contributors check",
-    "test": "xo && vitest run --coverage",
+    "fmt": "oxfmt src tsdown.config.ts vitest.config.js",
+    "test": "oxfmt --check src tsdown.config.ts vitest.config.js && oxlint && tsc --noEmit && vitest run --coverage",
     "all": "npm run build && npm test"
   },
   "engines": {
@@ -42,29 +41,15 @@
     "@tsconfig/node24": "^24.0.4",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.13.3",
-    "@vercel/ncc": "^0.38.4",
     "@vitest/coverage-v8": "^4.1.10",
     "all-contributors-cli": "^6.26.1",
     "js-yaml": "^4.3.0",
     "markdown-toc-gen": "^1.2.0",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.77.0",
     "ts-pattern": "^5.9.0",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
-    "xo": "^2.0.2"
-  },
-  "xo": {
-    "space": true,
-    "semicolon": false,
-    "rules": {
-      "@typescript-eslint/naming-convention": 0,
-      "@stylistic/curly-newline": [
-        "error",
-        {
-          "multiline": true,
-          "minElements": 1,
-          "consistent": true
-        }
-      ]
-    }
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }

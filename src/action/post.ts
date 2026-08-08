@@ -19,7 +19,7 @@ async function run(): Promise<void> {
     const workspace = Workspace.from(logger, files, os, cache)
 
     await workspace.remove()
-    core.info('🗑 Scala Steward\'s workspace removed')
+    core.info("🗑 Scala Steward's workspace removed")
 
     await coursier.remove()
     core.info('🗑 Coursier binary removed')
@@ -31,5 +31,4 @@ async function run(): Promise<void> {
   }
 }
 
-// eslint-disable-next-line unicorn/prefer-top-level-await
 void run()

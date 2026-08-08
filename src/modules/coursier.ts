@@ -79,14 +79,10 @@ export async function install(): Promise<void> {
 
     const scalafixBinaryPath = path.join(binary, 'scalafix')
 
-    await exec.exec(
-      'cs',
-      ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', scalafixBinaryPath],
-      {
-        silent: true,
-        listeners: {stdline: core.debug, errline: core.debug},
-      },
-    )
+    await exec.exec('cs', ['bootstrap', '--main', 'scalafix.cli.Cli', scalafixDependency, '-o', scalafixBinaryPath], {
+      silent: true,
+      listeners: {stdline: core.debug, errline: core.debug},
+    })
 
     const scalafmtVersion = await execute('cs', 'launch', 'scalafmt', '--', '--version')
 
@@ -117,11 +113,11 @@ export function versionedApp(app: string, version: string): string {
  * `selfInstall()` first).
  */
 export const connectivityProbe: ConnectivityProbe = async () => {
-  const code = await exec.exec(
-    'cs',
-    ['resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12'],
-    {silent: true, ignoreReturnCode: true, listeners: {stdline: core.debug, errline: core.debug}},
-  )
+  const code = await exec.exec('cs', ['resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12'], {
+    silent: true,
+    ignoreReturnCode: true,
+    listeners: {stdline: core.debug, errline: core.debug},
+  })
 
   return code === 0
 }

