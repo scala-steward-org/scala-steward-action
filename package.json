@@ -43,7 +43,7 @@
     "@types/node": "^24.13.3",
     "@vitest/coverage-v8": "^4.1.10",
     "all-contributors-cli": "^6.26.1",
-    "js-yaml": "^4.3.0",
+    "js-yaml": "^4.3.1",
     "markdown-toc-gen": "^1.2.0",
     "oxfmt": "^0.62.0",
     "oxlint": "^1.77.0",
