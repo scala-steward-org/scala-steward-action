@@ -10,7 +10,10 @@ export class HealthCheck {
     return new HealthCheck(logger, probe)
   }
 
-  constructor(private readonly logger: Logger, private readonly probe: ConnectivityProbe) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly probe: ConnectivityProbe,
+  ) {}
 
   /**
    * Checks connectivity to the configured Maven repositories. Throws if
@@ -20,10 +23,12 @@ export class HealthCheck {
     const success = await this.probe()
 
     if (!success) {
-      throw new Error('Unable to connect to the configured Maven repositories. '
-        + 'Set the COURSIER_REPOSITORIES and COURSIER_CREDENTIALS environment '
-        + 'variables to point Coursier at a reachable mirror if you are being '
-        + 'rate-limited by Maven Central.')
+      throw new Error(
+        'Unable to connect to the configured Maven repositories. ' +
+          'Set the COURSIER_REPOSITORIES and COURSIER_CREDENTIALS environment ' +
+          'variables to point Coursier at a reachable mirror if you are being ' +
+          'rate-limited by Maven Central.',
+      )
     }
 
     this.logger.info('✓ Connected to the configured Maven repositories')

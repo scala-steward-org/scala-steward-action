@@ -1,19 +1,16 @@
 import {type Logger} from '../core/logger.js'
 import {mandatory, type NonEmptyString} from '../core/types.js'
 
-const emailErrorMessage
-  = 'Unable to find author\'s email. Either ensure that the token\'s GitHub Account has the email '
-    + 'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
+const emailErrorMessage =
+  "Unable to find author's email. Either ensure that the token's GitHub Account has the email " +
+  'privacy feature disabled for at least one email or use the `author-email` input to provide one.'
 
-const nameErrorMessage
-  = 'Unable to find author\'s name. Either ensure that the token\'s GitHub Account has a valid name '
-    + 'set in its profile or use the `author-name` input to provide one.'
+const nameErrorMessage =
+  "Unable to find author's name. Either ensure that the token's GitHub Account has a valid name " +
+  'set in its profile or use the `author-name` input to provide one.'
 
 export class GitHub {
-  static from(
-    logger: Logger,
-    github: GitHubClient,
-  ) {
+  static from(logger: Logger, github: GitHubClient) {
     return new GitHub(logger, github)
   }
 
@@ -50,7 +47,9 @@ export class GitHub {
         name: () => mandatory(name ?? '', nameErrorMessage),
       }
     } catch (error: unknown) {
-      this.logger.debug(`- User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`)
+      this.logger.debug(
+        `- User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`,
+      )
       return this.defaultUser
     }
   }
@@ -67,7 +66,6 @@ export class GitHub {
       const response = await this.github.rest.users.getByUsername({username: slug + '[bot]'})
 
       // Workaround until https://github.com/github/rest-api-description/issues/288 is fixed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       const {login, id} = (response as {data: {login: string; id: string}}).data
 
       this.logger.info('✓ GitHub App information retrieved from GitHub')
@@ -78,24 +76,25 @@ export class GitHub {
         name: () => mandatory(login),
       }
     } catch (error: unknown) {
-      this.logger.debug(`- GitHub App User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`)
+      this.logger.debug(
+        `- GitHub App User information retrieve failed. Error: ${error instanceof Error ? error.message : String(error)}`,
+      )
       return this.defaultUser
     }
   }
 }
 
 type AuthUser = {
-  email: () => NonEmptyString;
-  login: () => NonEmptyString;
-  name: () => NonEmptyString;
+  email: () => NonEmptyString
+  login: () => NonEmptyString
+  name: () => NonEmptyString
 }
 
 export type GitHubClient = {
   rest: {
     users: {
-      // eslint-disable-next-line @typescript-eslint/no-restricted-types
-      getAuthenticated: () => Promise<{data: {login: string; email: string | null; name: string | null}}>;
-      getByUsername: (parameters?: {username: string}) => Promise<unknown>;
-    };
-  };
+      getAuthenticated: () => Promise<{data: {login: string; email: string | null; name: string | null}}>
+      getByUsername: (parameters?: {username: string}) => Promise<unknown>
+    }
+  }
 }

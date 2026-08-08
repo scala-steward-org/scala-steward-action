@@ -3,14 +3,10 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as io from '@actions/io'
 import * as tc from '@actions/tool-cache'
-import {
-  beforeEach, expect, test, vi,
-} from 'vitest'
+import {beforeEach, expect, test, vi} from 'vitest'
 import {execute} from '../core/exec.js'
 import {mandatory} from '../core/types.js'
-import {
-  connectivityProbe, install, launch, remove, selfInstall, versionedApp,
-} from './coursier.js'
+import {connectivityProbe, install, launch, remove, selfInstall, versionedApp} from './coursier.js'
 
 vi.mock('node:os', () => ({homedir: vi.fn()}))
 vi.mock('@actions/core')
@@ -31,7 +27,11 @@ function setup(inputs: Record<string, string> = {}) {
 
 /** Returns the argument list of the `cs` invocation that starts with `subcommand`. */
 function coursierCall(subcommand: string): string[] | undefined {
-  return vi.mocked(exec.exec).mock.calls.find(([tool, arguments_]) => tool === 'cs' && Array.isArray(arguments_) && arguments_[0] === subcommand)?.[1]
+  return vi
+    .mocked(exec.exec)
+    .mock.calls.find(
+      ([tool, arguments_]) => tool === 'cs' && Array.isArray(arguments_) && arguments_[0] === subcommand,
+    )?.[1]
 }
 
 beforeEach(() => {
@@ -53,7 +53,8 @@ test('`selfInstall()` → downloads the configured coursier binary and unpacks i
 
   expect(vi.mocked(io.mkdirP).mock.calls[0]?.[0]).toBe(binary)
   expect(vi.mocked(tc.downloadTool).mock.calls[0]).toStrictEqual([
-    'https://example.com/cs-x86_64-pc-linux.gz', `${binary}/cs.gz`,
+    'https://example.com/cs-x86_64-pc-linux.gz',
+    `${binary}/cs.gz`,
   ])
   expect(vi.mocked(exec.exec).mock.calls[0]?.[0]).toBe('gzip')
   expect(vi.mocked(exec.exec).mock.calls[0]?.[1]).toStrictEqual(['-df', `${binary}/cs.gz`])
@@ -89,7 +90,12 @@ test('`install()` → installs the managed tools at their configured versions', 
   await install()
 
   expect(coursierCall('install')).toStrictEqual([
-    'install', 'scalafmt:3.8.3', 'scala-cli:1.5.0', 'sbt:1.10.2', '--install-dir', binary,
+    'install',
+    'scalafmt:3.8.3',
+    'scala-cli:1.5.0',
+    'sbt:1.10.2',
+    '--install-dir',
+    binary,
   ])
 })
 
@@ -98,9 +104,7 @@ test('`install()` → leaves the managed tools unpinned when no version is confi
 
   await install()
 
-  expect(coursierCall('install')).toStrictEqual([
-    'install', 'scalafmt', 'scala-cli', 'sbt', '--install-dir', binary,
-  ])
+  expect(coursierCall('install')).toStrictEqual(['install', 'scalafmt', 'scala-cli', 'sbt', '--install-dir', binary])
 })
 
 test('`install()` → bootstraps scalafix from the configured dependency', async () => {
@@ -141,9 +145,7 @@ test('`connectivityProbe` → reports success when coursier resolves the probe a
   setup()
 
   await expect(connectivityProbe()).resolves.toBe(true)
-  expect(coursierCall('resolve')).toStrictEqual([
-    'resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12',
-  ])
+  expect(coursierCall('resolve')).toStrictEqual(['resolve', '--intransitive', 'org.scala-lang:scala-library:2.13.12'])
 })
 
 test('`connectivityProbe` → reports failure when coursier cannot resolve it', async () => {
@@ -221,9 +223,7 @@ test('`launch()` → runs with no arguments at all when none are given', async (
 
   await launch('app')
 
-  expect(coursierCall('launch')).toStrictEqual([
-    'launch', '--contrib', '-r', 'central:maven-snapshots', 'app', '--',
-  ])
+  expect(coursierCall('launch')).toStrictEqual(['launch', '--contrib', '-r', 'central:maven-snapshots', 'app', '--'])
 })
 
 test('`launch()` → closes the log group even though the app failed', async () => {

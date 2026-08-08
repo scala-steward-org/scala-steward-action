@@ -8,12 +8,7 @@ import {mandatory, type NonEmptyString} from '../core/types.js'
 import {type GitHubAppInfo} from './input.js'
 
 export class Workspace {
-  static from(
-    logger: Logger,
-    files: Files,
-    os: OSInfo,
-    cache: ActionCache,
-  ) {
+  static from(logger: Logger, files: Files, os: OSInfo, cache: ActionCache) {
     return new Workspace(logger, files, os, cache)
   }
 
@@ -58,7 +53,7 @@ export class Workspace {
       if (cacheHit) {
         this.logger.info('Scala Steward workspace contents restored from cache')
       } else {
-        this.logger.info('Scala Steward workspace contents weren\'t found on cache')
+        this.logger.info("Scala Steward workspace contents weren't found on cache")
       }
 
       this.logger.endGroup()
@@ -113,7 +108,11 @@ export class Workspace {
    * @param token The GitHub Token used to authenticate into GitHub.
    * @param gitHubAppInfo The GitHub App information as provided by the user.
    */
-  async prepare(reposList: string, token: () => Promise<string>, gitHubAppInfo: GitHubAppInfo | undefined): Promise<void> {
+  async prepare(
+    reposList: string,
+    token: () => Promise<string>,
+    gitHubAppInfo: GitHubAppInfo | undefined,
+  ): Promise<void> {
     try {
       await this.files.mkdirP(this.directory)
 
@@ -125,12 +124,15 @@ export class Workspace {
       }
 
       await this.writeAskPass(token)
-      this.intervalId = setInterval(() => {
-        void (async () => {
-          await this.writeAskPass(token)
-          this.logger.info('✓ GitHub Token refreshed')
-        })()
-      }, 1000 * 60 * 50)
+      this.intervalId = setInterval(
+        () => {
+          void (async () => {
+            await this.writeAskPass(token)
+            this.logger.info('✓ GitHub Token refreshed')
+          })()
+        },
+        1000 * 60 * 50,
+      )
 
       this.files.chmodSync(this.askpass_sh.value, 0o755)
 

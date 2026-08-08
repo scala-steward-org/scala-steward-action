@@ -16,8 +16,6 @@ updates:
       interval: "monthly"
     allow:
       - dependency-type: "all"
-    ignore:
-      - dependency-name: "xo"
     groups:
       deps:
         patterns:
