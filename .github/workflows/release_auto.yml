@@ -35,7 +35,7 @@ jobs:
         run: npm run build
 
       - name: Release new version
-        uses: int128/release-typescript-action@6f9f7cb3067af6287e183fb4f06d97bba74c3756 # v1.76.0
+        uses: int128/release-typescript-action@6543d4f401adf441e44cabcb2ba4b5e303c82d8e # v1.77.0
         with:
           major-version: 2
 
