@@ -119,6 +119,7 @@ test('`install()` → bootstraps scalafix from the configured dependency', async
     'ch.epfl.scala:scalafix-cli_2.13.14:0.13.0',
     '-o',
     `${binary}/scalafix`,
+    '--force',
   ])
 })
 
